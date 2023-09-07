@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "162499372255",
+    "project_id": "database-caseddu",
+    "storage_bucket": "database-caseddu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162499372255:android:6cc4c5101b770dbd33356a",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "162499372255-149d58olv5t9s68ap9p97p8l2tpls751.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPbfiLumMibgrjJGTlKbua_kqhNcd1CaU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "162499372255-149d58olv5t9s68ap9p97p8l2tpls751.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
