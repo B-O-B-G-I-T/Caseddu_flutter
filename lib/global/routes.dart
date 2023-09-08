@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_application_1/pages/chat/chat_page.dart';
 import 'package:flutter_application_1/pages/login/login_screen.dart';
 import 'package:flutter_application_1/pages/parameter_page/parameter_page.dart';
 import 'package:flutter_application_1/widget/bottombar.dart';

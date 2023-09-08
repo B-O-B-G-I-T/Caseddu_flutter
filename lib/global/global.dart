@@ -42,7 +42,7 @@ class Global extends ChangeNotifier {
   }
 
   void updateConnectedDevices(List<Device> devices) {
-    this.connectedDevices = devices;
+    connectedDevices = devices;
     notifyListeners();
   }
 
@@ -68,5 +68,7 @@ class Global extends ChangeNotifier {
     notifyListeners();
   }
 
-  
+  void supprimerConversationDe(String laPersonne) {
+    conversations.remove(laPersonne);
+  }
 }

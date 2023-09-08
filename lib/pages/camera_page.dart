@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/main.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
@@ -40,7 +39,7 @@ class _CameraPageState extends State<CameraPage> {
                       },
                     );
                   },
-                  icon: Icon(Icons.close_rounded))
+                  icon: const Icon(Icons.close_rounded))
               : null,
         ),
         body: FutureBuilder(
@@ -86,7 +85,7 @@ class _CameraPageState extends State<CameraPage> {
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            customBorder: CircleBorder(),
+                            customBorder: const CircleBorder(),
                             child: Icon(
                               Icons.photo_album_outlined,
                               color: Colors.white.withOpacity(0.5),
@@ -115,7 +114,7 @@ class _CameraPageState extends State<CameraPage> {
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
-                            customBorder: CircleBorder(),
+                            customBorder: const CircleBorder(),
                             child: Icon(
                               Icons.loop_outlined,
                               color: Colors.white.withOpacity(0.5),
@@ -137,7 +136,7 @@ class _CameraPageState extends State<CameraPage> {
                             "Publication",
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
-                          SpinKitWave(
+                          const SpinKitWave(
                             color: Colors.white,
                             size: 12,
                           ),
@@ -148,14 +147,14 @@ class _CameraPageState extends State<CameraPage> {
                 ],
               );
             }
-            return Center(
+            return const Center(
               child: Text("Chargement"),
             );
           },
         ),
         floatingActionButton: _lastImage == ''
             ? Container(
-                margin: EdgeInsets.fromLTRB(10, 0, 0, 30),
+                margin: const EdgeInsets.fromLTRB(10, 0, 0, 30),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
@@ -177,7 +176,7 @@ class _CameraPageState extends State<CameraPage> {
                 onPressed: () async {
                   setState(() => _loading = !_loading);
 
-                  await Future.delayed(Duration(seconds: 3));
+                  await Future.delayed(const Duration(seconds: 3));
                   setState(() => _lastImage = '');
                   setState(() => _loading = !_loading);
                 },
@@ -185,7 +184,7 @@ class _CameraPageState extends State<CameraPage> {
                   'Publish',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
-                icon: Icon(
+                icon: const Icon(
                   Icons.send,
                   color: Colors.white,
                 ),

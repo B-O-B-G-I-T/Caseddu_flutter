@@ -143,6 +143,7 @@ void startAdvertising() async {
   await Global.nearbyService!.startAdvertisingPeer();
 }
 
+
 // This function is supposed to broadcast all messages in the cache
 // when the message ids don't match
 void broadcast(BuildContext context) async {
@@ -217,7 +218,7 @@ void compareMessageId({
 }) async {
   String sentId = await MessageDB.instance.getLastMessageId(type: "sent");
   if (sentId != receivedId) {
-    broadcast(context);
+   //! broadcast(context);
   }
 }
 
@@ -299,16 +300,18 @@ void init(BuildContext context) async {
       Global.cache.remove(decodedMessage["id"]);
       deleteFromMessageTable(decodedMessage["id"]);
     }
-    // print("350|" +
-    //     decodedMessage['type'].toString() +
-    //     ":Payload |" +
-    //     decodedMessage['receiver'].toString() +
-    //     ":" +
-    //     Global.myName.toString());
+    print("350|" +
+        decodedMessage['type'].toString() +
+        ":Payload |" +
+        decodedMessage['receiver'].toString() +
+        ":" +
+        Global.myName.toString());
+
     if (decodedMessage['type'] == "Payload" &&
         decodedMessage['receiver'] == Global.myName) {
       Provider.of<Global>(context, listen: false)
           .receivedToConversations(decodedMessage, context);
+      
       if (Global.cache[decodedMessage["id"]] == null) {
         Global.cache[decodedMessage["id"]] = Ack(decodedMessage["id"]);
         insertIntoMessageTable(Ack(decodedMessage['id']));
@@ -316,6 +319,7 @@ void init(BuildContext context) async {
         Global.cache[decodedMessage["id"]] = Ack(decodedMessage["id"]);
         updateMessageTable(decodedMessage["id"], Ack(decodedMessage['id']));
       }
+
     } else {}
   });
 }

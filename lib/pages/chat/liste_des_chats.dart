@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/modeles/messages_model.dart';
 import 'package:flutter_application_1/utils/fonctions.dart';
-import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../../database/databasehelper.dart';
 import '../../database/messages_database.dart';
 import '../../global/global.dart';
-import '../../p2p/adhoc_housekeeping.dart';
 import 'chat_page.dart';
 
 class ListeDesChatsPage extends StatefulWidget {
@@ -35,7 +33,7 @@ class _ListeDesChatsPage extends State<ListeDesChatsPage> {
     // The names are inserted into the list conversers here and then displayed
     // with the help of ListView.builder.
     conversers = [];
-    List<Device> devices = [];
+    //List<Device> devices = [];
     List<Msg> lastMessage = [];
 
     Provider.of<Global>(context).conversations.forEach((key, value) {
@@ -94,11 +92,15 @@ class _ListeDesChatsPage extends State<ListeDesChatsPage> {
                       "{$index.toString()} - ${DateTime.now().millisecondsSinceEpoch}"),
                   direction: DismissDirection.endToStart,
                   onDismissed: (direction) {
-                    // TODO: pour supprimé les convs
+                    // TODO: pour supprimé les convs supprimé dans les conversations de global qui ce gere avec le cache
+
                     MessageDB.instance.deleteFromConversationsByConverserTable(
                         conversers[index]);
+                    Provider.of<Global>(context, listen: false)
+                        .conversations
+                        .remove(conversers[index]);
                     //Global.cache.remove(decodedMessage["id"]);
-                    
+
                     Fluttertoast.showToast(
                         msg: 'conversation supprimé',
                         toastLength: Toast.LENGTH_LONG,

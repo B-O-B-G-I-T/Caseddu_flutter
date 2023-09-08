@@ -61,7 +61,7 @@ class MenuPage extends StatelessWidget {
 class PostCard extends StatelessWidget {
   final Map postData;
 
-  PostCard(this.postData);
+  const PostCard(this.postData, {super.key});
 
   @override
   Widget build(BuildContext context) {

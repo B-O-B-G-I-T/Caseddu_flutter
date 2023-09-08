@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 
 import '../../global/global.dart';
 import '../../modeles/messages_model.dart';
-import '../../p2p/adhoc_housekeeping.dart';
 import '../../widget/P2P_widget/connection_button.dart';
 import 'ecritoire.dart';
 
@@ -45,6 +44,16 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    // essai de trouver le device associe et de détermine si il est a coté ou loin
+    try {
+      device = Provider.of<Global>(context)
+          .devices
+          .firstWhere((element) => element.deviceName == widget.converser);
+      longDistance = false;
+    } catch (e) {
+      longDistance = true;
+    }
+
     /// If we have previously conversed with the device, it is going to store
     /// the conversations in the messageList
     if (Provider.of<Global>(context).conversations[widget.converser] != null) {
@@ -54,15 +63,6 @@ class _ChatPageState extends State<ChatPage> {
           .forEach((key, value) {
         messageList.add(value);
       });
-
-      try {
-        device = Provider.of<Global>(context)
-            .devices
-            .firstWhere((element) => element.deviceName == widget.converser);
-        longDistance = false;
-      } catch (e) {
-        longDistance = true;
-      }
 
       // Since there can be long list of message, the scroll controller
       // auto scrolls to bottom of the list.
@@ -88,48 +88,6 @@ class _ChatPageState extends State<ChatPage> {
                   ? const Center(
                       child: Text('Lancé la conversation'),
                     )
-                  // : StreamBuilder<List<Msg>>(
-                  //     stream: messageStream,
-                  //     builder: (context, snapshot) {
-                  //       if (!snapshot.hasData)
-                  //         return CircularProgressIndicator();
-                  //       final messages = snapshot.data!;
-                  //       return ListView.builder(
-                  //         // Builder to view messages chronologically
-                  //         shrinkWrap: true,
-                  //         controller: _scrollController,
-                  //         padding: const EdgeInsets.all(8),
-                  //         itemCount: messages.length,
-                  //         itemBuilder: (BuildContext context, int index) {
-                  //           return Bubble(
-                  //             margin: const BubbleEdges.only(top: 10),
-                  //             nip: messages[index].msgtype == 'sent'
-                  //                 ? BubbleNip.rightTop
-                  //                 : BubbleNip.leftTop,
-                  //             color: messages[index].msgtype == 'sent'
-                  //                 ? const Color(0xffd1c4e9)
-                  //                 : const Color(0xff80DEEA),
-                  //             child: ListTile(
-                  //               dense: true,
-                  //               title: Text(
-                  //                 "${messages[index].msgtype}: ${messages[index].message}",
-                  //                 textAlign: messages[index].msgtype == 'sent'
-                  //                     ? TextAlign.right
-                  //                     : TextAlign.left,
-                  //               ),
-                  //               subtitle: Text(
-                  //                 dateFormatter(
-                  //                   timeStamp: messages[index].timestamp,
-                  //                 ),
-                  //                 textAlign: messages[index].msgtype == 'sent'
-                  //                     ? TextAlign.right
-                  //                     : TextAlign.left,
-                  //               ),
-                  //             ),
-                  //           );
-                  //         },
-                  //       );
-                  //     },
                   : ListView.builder(
                       // Builder to view messages chronologically
                       shrinkWrap: true,

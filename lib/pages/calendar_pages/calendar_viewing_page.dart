@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/calendar_pages/event_editing_page.dart';
 
-import '../../widget/bottombar.dart';
 import '../../widget/calendar_widget.dart';
 
 class CalendarViewingPage extends StatefulWidget {
@@ -19,14 +18,14 @@ class _CalendarViewingPageState extends State<CalendarViewingPage> {
         leading: IconButton(
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => EventEditing(),
+              builder: (context) => const EventEditing(),
             ),
           ),
-          icon: Icon(Icons.add),
+          icon: const Icon(Icons.add),
         ),
-        title: Text('Calendrier'),
+        title: const Text('Calendrier'),
       ),
-      body: MyCalendar(),
+      body: const MyCalendar(),
     );
   }
 }

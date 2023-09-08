@@ -19,10 +19,11 @@ void readAllUpdateCache() {
     }
     for (var element in messages) {
       print("line 16 dbhelper");
-      if (element.type == 'Ack')
+      if (element.type == 'Ack') {
         Global.cache[element.id] = convertToAck(element);
-      else
+      } else {
         Global.cache[element.id] = convertToPayload(element);
+      }
     }
   });
 }
@@ -58,6 +59,7 @@ Future<void> readAllUpdateConversation(BuildContext context) async {
     Msg(element.msg, element.type, element.timestamp, element.id);
   }
 }
+
 // Inserting message to the conversation table in the database
 void insertIntoConversationsTable(Msg msg, String converser) {
   MessageDB.instance.insertIntoConversationsTable(ConversationFromDB(
@@ -66,10 +68,11 @@ void insertIntoConversationsTable(Msg msg, String converser) {
 
 // Inserting message to the messages table in the database
 void insertIntoMessageTable(dynamic msg) {
-  if (msg.runtimeType == Payload)
+  if (msg.runtimeType == Payload) {
     MessageDB.instance.insertIntoMessagesTable(convertFromPayload(msg));
-  else
+  } else {
     MessageDB.instance.insertIntoMessagesTable(convertFromAck(msg));
+  }
 }
 
 MessageFromDB convertFromPayload(Payload msg) {
@@ -97,14 +100,14 @@ MessageFromDB convertFromAck(Ack msg) {
   return MessageFromDB(id, type, jsonEncode(message));
 }
 
-
 void deleteFromMessageTable(String id) {
   MessageDB.instance.deleteFromMessagesTable(id);
 }
 
 void updateMessageTable(String id, dynamic msg) {
-  if (msg.runtimeType == Payload)
+  if (msg.runtimeType == Payload) {
     MessageDB.instance.updateMessageTable(convertFromPayload(msg));
-  else
+  } else {
     MessageDB.instance.updateMessageTable(convertFromAck(msg));
+  }
 }

@@ -27,7 +27,7 @@ class _EventEditingState extends State<EventEditing> {
     super.initState();
     if (widget.event == null) {
       fromDate = DateTime.now();
-      toDate = DateTime.now().add(Duration(hours: 1));
+      toDate = DateTime.now().add(const Duration(hours: 1));
       recurrence = 'Jamais';
       description = '';
     } else {
@@ -43,25 +43,25 @@ class _EventEditingState extends State<EventEditing> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          leading: CloseButton(),
+          leading: const CloseButton(),
           actions: buildEditingActions(),
         ),
         body: SingleChildScrollView(
-          padding: EdgeInsets.all(15),
+          padding: const EdgeInsets.all(15),
           child: Form(
             key: _formKey,
             child: Column(
               children: <Widget>[
                 buildTitle(),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 buildDataTimePickers(),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 buildRepliquer(),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 buildDescription(),
@@ -73,13 +73,13 @@ class _EventEditingState extends State<EventEditing> {
 
   List<Widget> buildEditingActions() => [
         ElevatedButton.icon(
-          icon: Icon(Icons.done),
-          label: Text("Valide"),
+          icon: const Icon(Icons.done),
+          label: const Text("Valide"),
           onPressed: saveForm,
         )
       ];
   Widget buildTitle() => TextFormField(
-        decoration: InputDecoration(
+        decoration: const InputDecoration(
             border: UnderlineInputBorder(), hintText: 'Ajoute un titre'),
         validator: (title) =>
             title != null && title.isEmpty ? 'Il faut un titre' : null,
@@ -207,7 +207,7 @@ class _EventEditingState extends State<EventEditing> {
   }) =>
       ListTile(
         title: Text(text),
-        trailing: Icon(Icons.arrow_drop_down_circle_outlined),
+        trailing: const Icon(Icons.arrow_drop_down_circle_outlined),
         onTap: onClicked,
       ); // ListTile
 
@@ -266,7 +266,7 @@ class _EventEditingState extends State<EventEditing> {
       Expanded(
         child: DropdownButton(
           value: recurrence,
-          icon: Icon(Icons.keyboard_arrow_down_rounded),
+          icon: const Icon(Icons.keyboard_arrow_down_rounded),
           items: listDesChoix.map((elu) {
             return DropdownMenuItem(value: elu, child: Text(elu));
           }).toList(),
@@ -285,7 +285,7 @@ class _EventEditingState extends State<EventEditing> {
     return buildHeader(
       header: "Description :",
       child: TextFormField(
-        decoration: InputDecoration(hintText: 'Faites une description'),
+        decoration: const InputDecoration(hintText: 'Faites une description'),
         validator: (texte) =>
             texte != null && texte.isEmpty ? 'Il faut un titre' : null,
         onFieldSubmitted: (_) => saveForm(),

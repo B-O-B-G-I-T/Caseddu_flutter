@@ -69,7 +69,8 @@ class _MessagePanelState extends State<MessagePanel> {
                 myController.text,
                 DateTime.now().toUtc().toString(),
               );
-              Global.cache[msgId] = payload;
+              
+    //!---------------------------------- fonction pas il faudrais supprimé le cache Global.cache[msgId] = payload;
               insertIntoMessageTable(payload);
 
               if (widget.longDistance) {

@@ -26,7 +26,10 @@ class ConnectionButton extends StatelessWidget {
         : GestureDetector(
             // GestureDetector act as onPressed() and enables
             // to connect/disconnect with any device
-            onTap: () => connectToDevice(device),
+            onTap: () {
+              connectToDevice(device);
+              
+            },
             child: Container(
               margin:
                   const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
