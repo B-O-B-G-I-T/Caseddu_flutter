@@ -105,33 +105,29 @@ bool search(String sender, String id, BuildContext context) {
 // Function to connect to a device
 Future connectToDevice(Device device) async {
   // TODO: Faire une alerte lorsque l'on n'arrive pas a ce connecté
+  // TODO: peut etre faire une validation pour l'invite
+
+  //Global.nearbyService!.sendMessage(device.deviceId, "message");
+
   switch (device.state) {
     case SessionState.notConnected:
       await Global.nearbyService!.invitePeer(
         deviceID: device.deviceId,
         deviceName: device.deviceName,
       );
-
-      Fluttertoast.showToast(
-          msg: '${device.deviceName.toString()} connected',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.TOP,
-          timeInSecForIosWeb: 10,
-          backgroundColor: Colors.blue,
-          fontSize: 16.0);
       log("Want to connect");
       break;
 
     case SessionState.connected:
       await Global.nearbyService!.disconnectPeer(deviceID: device.deviceId);
 
-      Fluttertoast.showToast(
-          msg: '${device.deviceName.toString()} disconnected',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.TOP,
-          timeInSecForIosWeb: 10,
-          backgroundColor: Colors.red,
-          fontSize: 16.0);
+      // Fluttertoast.showToast(
+      //     msg: '${device.deviceName.toString()} disconnected',
+      //     toastLength: Toast.LENGTH_LONG,
+      //     gravity: ToastGravity.TOP,
+      //     timeInSecForIosWeb: 10,
+      //     backgroundColor: Colors.red,
+      //     fontSize: 16.0);
       break;
     case SessionState.connecting:
       break;
@@ -157,10 +153,10 @@ void broadcast(BuildContext context) async {
   Global.cache.forEach((key, value) {
     // if a message is supposed to be broadcasted to all devices in proximity then
     if (value.runtimeType == Payload && value.broadcast) {
-      Payload payload = value;
+      //Payload payload = value;
       var data = {
         "sender": value.sender,
-        "receiver": payload.receiver,
+        "receiver": value.receiver,
         "message": value.message,
         "id": key,
         "Timestamp": value.timestamp,
@@ -225,7 +221,7 @@ void compareMessageId({
 }) async {
   String sentId = await MessageDB.instance.getLastMessageId(type: "sent");
   if (sentId != receivedId) {
-    //! broadcast(context);
+    broadcast(context);
   }
 }
 
@@ -307,12 +303,12 @@ void init(BuildContext context) async {
       Global.cache.remove(decodedMessage["id"]);
       deleteFromMessageTable(decodedMessage["id"]);
     }
-    print("350|" +
-        decodedMessage['type'].toString() +
-        ":Payload |" +
-        decodedMessage['receiver'].toString() +
-        ":" +
-        Global.myName.toString());
+    //print("350|" +
+    // decodedMessage['type'].toString() +
+    // ":Payload |" +
+    // decodedMessage['receiver'].toString() +
+    // ":" +
+    // Global.myName.toString());
 
     if (decodedMessage['type'] == "Payload" &&
         decodedMessage['receiver'] == Global.myName) {

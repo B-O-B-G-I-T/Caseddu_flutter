@@ -25,8 +25,7 @@ class _MyAppBarState extends State<MyAppBar> {
             const Icon(
               Icons.account_circle_outlined,
             ),
-            //Text(_utilisateur.displayName!)
-            Text(_utilisateur.email!)
+            Text(_utilisateur.displayName!)
           ],
         ),
         onTap: () {

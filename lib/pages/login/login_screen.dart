@@ -156,6 +156,7 @@ class _loginPageState extends State<loginPage> {
                           },
                           controller: _emailController,
                           autofocus: true,
+                          keyboardType: TextInputType.emailAddress,
                           enableIMEPersonalizedLearning: true,
                           decoration: const InputDecoration(
                             hintText: "Entre ton email",

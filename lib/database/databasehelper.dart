@@ -36,10 +36,10 @@ Ack convertToAck(MessageFromDB msg) {
 Payload convertToPayload(MessageFromDB message) {
   String id = message.id;
   String payload = message.msg;
-  print("#61: $payload");
+  //print("#61: $payload");
   var json = jsonDecode(payload);
-  print("#63" + json.toString());
-  print("#62 ${json['id']}| ${json['sender']}");
+  //print("#63" + json.toString());
+  //print("#62 ${json['id']}| ${json['sender']}");
   return Payload(
       id, json['sender'], json['receiver'], json['message'], json['timestamp']);
 }
@@ -61,7 +61,7 @@ Future<void> readAllUpdateConversation(BuildContext context) async {
 }
 
 // Inserting message to the conversation table in the database
-void insertIntoConversationsTable(Msg msg, String converser) {
+void  insertIntoConversationsTable(Msg msg, String converser) {
   MessageDB.instance.insertIntoConversationsTable(ConversationFromDB(
       msg.id, msg.msgtype, msg.message, msg.timestamp, msg.ack, converser));
 }

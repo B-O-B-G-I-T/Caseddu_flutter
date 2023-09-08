@@ -28,98 +28,96 @@ class _DevicesListPage extends State<DevicesListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return  SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
-              child: TextField(
-                decoration: InputDecoration(
-                  hintText: "Search...",
-                  hintStyle: TextStyle(color: Colors.grey.shade600),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.grey.shade600,
-                    size: 20,
-                  ),
-                  filled: true,
-                  fillColor: Colors.grey.shade100,
-                  contentPadding: const EdgeInsets.all(8),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Colors.grey.shade100)),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: "Search...",
+                hintStyle: TextStyle(color: Colors.grey.shade600),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: Colors.grey.shade600,
+                  size: 20,
                 ),
+                filled: true,
+                fillColor: Colors.grey.shade100,
+                contentPadding: const EdgeInsets.all(8),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(color: Colors.grey.shade100)),
               ),
             ),
+          ),
 
-            // liste des devices
-            ListView.builder(
-              // Builds a screen with list of devices in the proximity
-              itemCount: Provider.of<Global>(context).devices.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                // Getting a device from the provider
-                final device = Provider.of<Global>(context).devices[index];
-                return Container(
-                  margin: const EdgeInsets.all(8.0),
-                  child: Column(
-                    children: [
-                      ListTile(
-                        title: Text(device.deviceName),
-                        subtitle: Text(
-                          getStateName(device.state),
-                          style: TextStyle(color: getStateColor(device.state)),
-                        ),
+          // liste des devices
+          ListView.builder(
+            // Builds a screen with list of devices in the proximity
+            itemCount: Provider.of<Global>(context).devices.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              // Getting a device from the provider
+              final device = Provider.of<Global>(context).devices[index];
+              return Container(
+                margin: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text(device.deviceName),
+                      subtitle: Text(
+                        getStateName(device.state),
+                        style: TextStyle(color: getStateColor(device.state)),
+                      ),
 
-                        // gere la connection et la deconnexion
-                        trailing: GestureDetector(
-                          // GestureDetector act as onPressed() and enables
-                          // to connect/disconnect with any device
-                          onTap: () => connectToDevice(device),
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                            padding: const EdgeInsets.all(8.0),
-                            height: 35,
-                            width: 100,
-                            color: getButtonColor(device.state),
-                            child: Center(
-                              child: Text(
-                                getButtonStateName(device),
-                                style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                      // gere la connection et la deconnexion
+                      trailing: GestureDetector(
+                        // GestureDetector act as onPressed() and enables
+                        // to connect/disconnect with any device
+                        onTap: () => connectToDevice(device),
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                          padding: const EdgeInsets.all(8.0),
+                          height: 35,
+                          width: 100,
+                          color: getButtonColor(device.state),
+                          child: Center(
+                            child: Text(
+                              getButtonStateName(device),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ),
                         ),
-                        onTap: () {
-                          // a modifé avec une route 
-                          // On clicking any device tile, we navigate to the
-                          // ChatPage.
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return ChatPage(
-                                  converser: device.deviceName,
-
-                                );
-                              },
-                            ),
-                          );
-                        },
                       ),
-                      const Divider(
-                        height: 1,
-                        color: Colors.grey,
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      
+                      onTap: () {
+                        // a modifé avec une route
+                        // On clicking any device tile, we navigate to the
+                        // ChatPage.
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return ChatPage(
+                                converser: device.deviceName,
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                    const Divider(
+                      height: 1,
+                      color: Colors.grey,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

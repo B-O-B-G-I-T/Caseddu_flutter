@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/global/payload.dart';
 
 import '../database/databasehelper.dart';
 import '../modeles/messages_model.dart';
@@ -28,12 +30,34 @@ class Global extends ChangeNotifier {
       conversations[converser] = {};
     }
     conversations[converser]![msg.id] = msg;
+
     if (addToTable) {
       insertIntoConversationsTable(msg, converser);
     }
+    var dernierEnCache = cache.entries.last;
+
+    if (dernierEnCache.value.runtimeType == Payload) {
+      Payload payload = dernierEnCache.value;
+      var data = {
+        "sender": payload.sender,
+        "receiver": payload.receiver,
+        "message": payload.message,
+        "id": msg.id,
+        "Timestamp": payload.timestamp,
+        "type": "Payload"
+      };
+      var toSend = jsonEncode(data);
+      Global.nearbyService!.sendMessage(converser, toSend); //make this async
+    } else if (dernierEnCache.runtimeType == Ack) {
+      var data = {"id": msg.id, "type": "Ack"};
+      Global.nearbyService!.sendMessage(converser, jsonEncode(data));
+    }
+    // String toSend = jsonEncode(msg);
+    // Global.nearbyService!.sendMessage(converser, toSend);
     notifyListeners();
     // First push the new message for one time when new message is sent
-    broadcast(scaffoldKey.currentContext!);
+
+    //broadcast(scaffoldKey.currentContext!);
   }
 
   void updateDevices(List<Device> devices) {
