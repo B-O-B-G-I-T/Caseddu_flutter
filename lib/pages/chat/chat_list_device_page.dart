@@ -84,7 +84,7 @@ class _DevicesListPage extends State<DevicesListPage> {
                             color: getButtonColor(device.state),
                             child: Center(
                               child: Text(
-                                getButtonStateName(device.state),
+                                getButtonStateName(device),
                                 style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold),

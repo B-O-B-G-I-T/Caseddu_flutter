@@ -69,8 +69,8 @@ class _MessagePanelState extends State<MessagePanel> {
                 myController.text,
                 DateTime.now().toUtc().toString(),
               );
-              
-    //!---------------------------------- fonction pas il faudrais supprimé le cache Global.cache[msgId] = payload;
+
+              Global.cache[msgId] = payload;
               insertIntoMessageTable(payload);
 
               if (widget.longDistance) {
@@ -81,7 +81,6 @@ class _MessagePanelState extends State<MessagePanel> {
                     timeInSecForIosWeb: 10,
                     backgroundColor: Colors.grey,
                     fontSize: 16.0);
-                
               } else {
                 Provider.of<Global>(context, listen: false).sentToConversations(
                   Msg(myController.text, "sent", data["Timestamp"]!, msgId),

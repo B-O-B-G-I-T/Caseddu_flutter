@@ -31,13 +31,20 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future signup() async {
-    try {
-      if (_confirmPasswordController.text.trim() ==
-          _passwordController.text.trim()) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: _emailController.text.trim(),
-            password: _passwordController.text.trim());
+    String email = _emailController.text.trim();
+    String pwd = _passwordController.text.trim();
+    String confirmPwd = _confirmPasswordController.text.trim();
+    String pseudo = _pseudoController.text.trim();
+    String phone = _cellPhone.text.trim();
 
+    try {
+      if (confirmPwd == pwd) {
+        UserCredential result = await FirebaseAuth.instance
+            .createUserWithEmailAndPassword(email: email, password: pwd);
+
+        User? user = result.user;
+        user?.updateDisplayName(pseudo);
+        //user?.updatePhoneNumber(phone);
         return true;
       } else {
         return false;
@@ -94,12 +101,12 @@ class _RegisterPageState extends State<RegisterPage> {
                             if (value == null || value.isEmpty) {
                               return 'Entre un pseudo';
                             }
-                            bool emailValid = RegExp(
-                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                .hasMatch(value);
-                            if (!emailValid) {
-                              return 'Entre un pseudo valide';
-                            }
+                            // bool emailValid = RegExp(
+                            //         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                            //     .hasMatch(value);
+                            // if (!emailValid) {
+                            //   return 'Entre un pseudo valide';
+                            // }
 
                             return null;
                           },
@@ -137,7 +144,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                             return null;
                           },
-                          controller: _pseudoController,
+                          controller: _cellPhone,
                           autofocus: true,
                           enableIMEPersonalizedLearning: true,
                           decoration: const InputDecoration(

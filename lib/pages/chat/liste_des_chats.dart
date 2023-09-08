@@ -91,9 +91,8 @@ class _ListeDesChatsPage extends State<ListeDesChatsPage> {
                   key: Key(
                       "{$index.toString()} - ${DateTime.now().millisecondsSinceEpoch}"),
                   direction: DismissDirection.endToStart,
+                  // gere la suppréssion des conversations
                   onDismissed: (direction) {
-                    // TODO: pour supprimé les convs supprimé dans les conversations de global qui ce gere avec le cache
-
                     MessageDB.instance.deleteFromConversationsByConverserTable(
                         conversers[index]);
                     Provider.of<Global>(context, listen: false)

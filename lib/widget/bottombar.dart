@@ -24,14 +24,10 @@ class _BottomBarState extends State<BottomBar> {
 
   @override
   void initState() {
-    setNameGlobal();
     super.initState();
   }
 
-  Future<void> setNameGlobal() async {
-    final userName = await FirebaseAuth.instance.currentUser!.email.toString();
-    Global.myName = userName;
-  }
+  
 
   static final List<Widget> _pages = <Widget>[
     MenuPage(),
@@ -41,7 +37,7 @@ class _BottomBarState extends State<BottomBar> {
     const ChatHomeScreen(),
     const CalendarViewingPage(),
   ];
-  
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;

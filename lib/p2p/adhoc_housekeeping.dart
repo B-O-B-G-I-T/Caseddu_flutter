@@ -26,13 +26,21 @@ String getStateName(SessionState state) {
 }
 
 // Get the button state name of the connection
-String getButtonStateName(SessionState state) {
-  switch (state) {
+String getButtonStateName(Device device) {
+  switch (device.state) {
     case SessionState.notConnected:
       return "Connect";
+
     case SessionState.connecting:
       return "Connecting";
     default:
+      Fluttertoast.showToast(
+          msg: '${device.deviceName.toString()} connected',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 10,
+          backgroundColor: Colors.blue,
+          fontSize: 16.0);
       return "Disconnect";
   }
 }
@@ -96,7 +104,6 @@ bool search(String sender, String id, BuildContext context) {
 
 // Function to connect to a device
 Future connectToDevice(Device device) async {
-
   // TODO: Faire une alerte lorsque l'on n'arrive pas a ce connecté
   switch (device.state) {
     case SessionState.notConnected:
@@ -117,6 +124,7 @@ Future connectToDevice(Device device) async {
 
     case SessionState.connected:
       await Global.nearbyService!.disconnectPeer(deviceID: device.deviceId);
+
       Fluttertoast.showToast(
           msg: '${device.deviceName.toString()} disconnected',
           toastLength: Toast.LENGTH_LONG,
@@ -142,7 +150,6 @@ void startAdvertising() async {
   await Global.nearbyService!.stopAdvertisingPeer();
   await Global.nearbyService!.startAdvertisingPeer();
 }
-
 
 // This function is supposed to broadcast all messages in the cache
 // when the message ids don't match
@@ -218,7 +225,7 @@ void compareMessageId({
 }) async {
   String sentId = await MessageDB.instance.getLastMessageId(type: "sent");
   if (sentId != receivedId) {
-   //! broadcast(context);
+    //! broadcast(context);
   }
 }
 
@@ -227,7 +234,7 @@ void checkDevices(BuildContext context) {
   Global.deviceSubscription =
       Global.nearbyService!.stateChangedSubscription(callback: (devicesList) {
     for (var element in devicesList) {
-      // if (element.state != SessionState.connected) connectToDevice(element);
+      //if (element.state != SessionState.connected) connectToDevice(element);
       //print(
       //    "deviceId: ${element.deviceId} | deviceName: ${element.deviceName} | state: ${element.state}");
 
@@ -311,7 +318,7 @@ void init(BuildContext context) async {
         decodedMessage['receiver'] == Global.myName) {
       Provider.of<Global>(context, listen: false)
           .receivedToConversations(decodedMessage, context);
-      
+
       if (Global.cache[decodedMessage["id"]] == null) {
         Global.cache[decodedMessage["id"]] = Ack(decodedMessage["id"]);
         insertIntoMessageTable(Ack(decodedMessage['id']));
@@ -319,7 +326,6 @@ void init(BuildContext context) async {
         Global.cache[decodedMessage["id"]] = Ack(decodedMessage["id"]);
         updateMessageTable(decodedMessage["id"], Ack(decodedMessage['id']));
       }
-
     } else {}
   });
 }

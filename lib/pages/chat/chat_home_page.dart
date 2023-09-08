@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../database/databasehelper.dart';
@@ -35,10 +36,16 @@ class _ChatHomeScreenState extends State<ChatHomeScreen>
     setState(() => isLoading = false);
   }
 
+  Future<void> setNameGlobal() async {
+    final userName = FirebaseAuth.instance.currentUser!.displayName.toString();
+    Global.myName = userName;
+  }
+
   @override
   void initState() {
     super.initState();
 
+    setNameGlobal();
     _tabController = TabController(vsync: this, length: myTabs.length);
     // init(context);
     refreshMessages();
