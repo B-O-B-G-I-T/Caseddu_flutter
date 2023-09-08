@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages, avoid_print
+
 import 'dart:io';
 
 import 'package:camera/camera.dart';
@@ -49,7 +51,7 @@ class _CameraPageState extends State<CameraPage> {
               return Stack(
                 alignment: AlignmentDirectional.bottomStart,
                 children: [
-                  Container(
+                  SizedBox(
                     width: double.infinity,
                     height: double.infinity,
                     child: FittedBox(
@@ -115,11 +117,11 @@ class _CameraPageState extends State<CameraPage> {
                           color: Colors.transparent,
                           child: InkWell(
                             customBorder: const CircleBorder(),
+                            onTap: _cameraToggle,
                             child: Icon(
                               Icons.loop_outlined,
                               color: Colors.white.withOpacity(0.5),
                             ),
-                            onTap: _cameraToggle,
                           ),
                         ),
                       ),

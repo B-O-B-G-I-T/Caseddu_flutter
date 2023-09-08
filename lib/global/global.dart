@@ -9,7 +9,6 @@ import '../modeles/messages_model.dart';
 
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 
-import '../p2p/adhoc_housekeeping.dart';
 
 class Global extends ChangeNotifier {
   static String myName = '';

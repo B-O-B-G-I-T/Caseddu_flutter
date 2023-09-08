@@ -1,5 +1,3 @@
-import 'package:camera/camera.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/pages/calendar_pages/calendar_viewing_page.dart';
@@ -7,7 +5,6 @@ import 'package:flutter_application_1/pages/camera_page.dart';
 import 'package:flutter_application_1/pages/menu_page.dart';
 import 'package:flutter_application_1/widget/appBar.dart';
 
-import '../global/global.dart';
 import '../pages/chat/chat_home_page.dart';
 
 class BottomBar extends StatefulWidget {
@@ -19,7 +16,8 @@ class BottomBar extends StatefulWidget {
 
 class _BottomBarState extends State<BottomBar> {
   int _selectedIndex = 0; //New
-  late CameraController _controller;
+  // TODO voir la camera si on la passe en provider 
+  //late CameraController _controller;
   late Future<void> initialiseControllerFuture;
 
   @override

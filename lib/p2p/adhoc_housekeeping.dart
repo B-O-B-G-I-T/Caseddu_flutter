@@ -1,5 +1,7 @@
 /// This is the Adhoc part where the messages are received and sent.
 /// Each and every function have there purpose mentioned above them.
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -147,8 +149,8 @@ void startAdvertising() async {
   await Global.nearbyService!.startAdvertisingPeer();
 }
 
-// This function is supposed to broadcast all messages in the cache
-// when the message ids don't match
+//! This function is supposed to broadcast all messages in the cache
+//! when the message ids don't match
 void broadcast(BuildContext context) async {
   Global.cache.forEach((key, value) {
     // if a message is supposed to be broadcasted to all devices in proximity then
@@ -173,7 +175,7 @@ void broadcast(BuildContext context) async {
       });
     } else if (value.runtimeType == Ack) {
       Provider.of<Global>(context, listen: false).devices.forEach((element) {
-        var data = {"id": "$key", "type": "Ack"};
+        var data = {"id": key, "type": "Ack"};
         Global.nearbyService!.sendMessage(element.deviceId, jsonEncode(data));
       });
     }
@@ -181,6 +183,7 @@ void broadcast(BuildContext context) async {
   //print("current cache:" + Global.cache.toString());
 }
 
+//! je comprend pas l'utilité
 // Broadcasting update request message to the connected devices to receive
 // fresh messages that are yet to be recieved
 void broadcastLastMessageID(BuildContext context) async {
@@ -189,6 +192,7 @@ void broadcastLastMessageID(BuildContext context) async {
     String id = await MessageDB.instance.getLastMessageId(type: "received");
     // log("Last message id: " + id);
 
+    // ignore: use_build_context_synchronously
     Provider.of<Global>(context, listen: false)
         .devices
         .forEach((element) async {
@@ -254,7 +258,7 @@ void checkDevices(BuildContext context) {
 void init(BuildContext context) async {
   initiateNearbyService();
   checkDevices(context);
-  broadcastLastMessageID(context);
+  //! broadcastLastMessageID(context);
   Global.receivedDataSubscription =
       Global.nearbyService!.dataReceivedSubscription(callback: (data) {
     var decodedMessage = jsonDecode(data['message']);

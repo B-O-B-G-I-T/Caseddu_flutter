@@ -29,6 +29,7 @@ void main() async {
     );
     cameras = await availableCameras();
   } on CameraException catch (e) {
+    // ignore: avoid_print
     print('Error in fetching the cameras: $e');
   }
 

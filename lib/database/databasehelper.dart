@@ -14,11 +14,11 @@ void readAllUpdateCache() {
   MessageDB.instance.readAllFromMessagesTable().then((value) {
     messages = value;
 
-    for (var element in value) {
-      print("_id ${element.id} type ${element.type} msg: ${element.msg}\n");
-    }
+    // for (var element in value) {
+    //   print("_id ${element.id} type ${element.type} msg: ${element.msg}\n");
+    // }
     for (var element in messages) {
-      print("line 16 dbhelper");
+      //print("line 16 dbhelper");
       if (element.type == 'Ack') {
         Global.cache[element.id] = convertToAck(element);
       } else {
@@ -51,6 +51,7 @@ Future<void> readAllUpdateConversation(BuildContext context) async {
   var value = await MessageDB.instance.readAllFromConversationsTable();
   conversations = value;
   for (var element in conversations) {
+    // ignore: use_build_context_synchronously
     Provider.of<Global>(context, listen: false).sentToConversations(
       Msg(element.msg, element.type, element.timestamp, element.id),
       element.converser,
@@ -86,7 +87,7 @@ MessageFromDB convertFromPayload(Payload msg) {
     "sender": msg.sender,
     "receiver": msg.receiver
   };
-  print("#80" + jsonEncode(message));
+  //print("#80" + jsonEncode(message));
   return MessageFromDB(id, type, jsonEncode(message));
 }
 

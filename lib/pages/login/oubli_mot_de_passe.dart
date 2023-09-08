@@ -115,8 +115,9 @@ class _OubliMotDePasseScreenState extends State<OubliMotDePasseScreen> {
                         );
                       },
                     );
-                  } else
+                  } else {
                     null;
+                  }
                 },
               );
             },

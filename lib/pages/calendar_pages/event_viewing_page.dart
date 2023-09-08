@@ -13,28 +13,28 @@ class EventViewingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: CloseButton(),
+        leading: const CloseButton(),
         actions: buildViewingActions(context, event),
       ),
       body: ListView(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         children: <Widget>[
           Text(
             event.title,
             style: Theme.of(context).textTheme.displayMedium,
           ),
-          SizedBox(
+          const SizedBox(
             height: 32,
           ),
           buildDateTime(context, event),
-          SizedBox(
+          const SizedBox(
             height: 32,
           ),
           Text(
             'Description :',
             style: Theme.of(context).textTheme.titleLarge,
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Text(event.description)
@@ -54,7 +54,7 @@ class EventViewingPage extends StatelessWidget {
 
   Widget buildDate(BuildContext context, String title, DateTime date) {
     return Container(
-      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -72,7 +72,7 @@ class EventViewingPage extends StatelessWidget {
     List<Widget> actions = [];
     actions.add(
       IconButton(
-        icon: Icon(Icons.edit_calendar_outlined),
+        icon: const Icon(Icons.edit_calendar_outlined),
         onPressed: () => Navigator.of(context).pushReplacement(
           MaterialPageRoute(
             builder: (context) => EventEditing(
@@ -85,7 +85,7 @@ class EventViewingPage extends StatelessWidget {
 
     actions.add(
       IconButton(
-        icon: Icon(Icons.delete_forever_outlined),
+        icon: const Icon(Icons.delete_forever_outlined),
         onPressed: () {
           final provider = Provider.of<EventProvider>(context, listen: false);
           provider.deleteEvent(event);

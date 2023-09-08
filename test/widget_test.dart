@@ -18,7 +18,7 @@ void main() {
     final themeStr = await rootBundle.loadString('assets/appainter_theme.json');
   final themeJson = jsonDecode(themeStr);
   final theme = ThemeDecoder.decodeThemeData(themeJson)!;
-    await tester.pumpWidget( MyApp(theme: theme,cameras: [],));
+    await tester.pumpWidget( MyApp(theme: theme,cameras: const [],));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

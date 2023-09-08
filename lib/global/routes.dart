@@ -33,7 +33,7 @@ class Routes {
       GoRoute(
         path: '/login',
         builder: (context, state) {
-          return const loginPage();
+          return const LoginPage();
         },
       ),
       GoRoute(

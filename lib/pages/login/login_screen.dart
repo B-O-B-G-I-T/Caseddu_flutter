@@ -2,14 +2,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class loginPage extends StatefulWidget {
-  const loginPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<loginPage> createState() => _loginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _loginPageState extends State<loginPage> {
+class _LoginPageState extends State<LoginPage> {
   // tous les controllers
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();

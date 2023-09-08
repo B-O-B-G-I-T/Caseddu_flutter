@@ -10,7 +10,7 @@ class ParameterPage extends StatefulWidget {
 }
 
 class _ParameterPageState extends State<ParameterPage> {
-  TextEditingController _txt = TextEditingController();
+  final TextEditingController _txt = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(

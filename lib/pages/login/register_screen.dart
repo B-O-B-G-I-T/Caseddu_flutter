@@ -35,7 +35,10 @@ class _RegisterPageState extends State<RegisterPage> {
     String pwd = _passwordController.text.trim();
     String confirmPwd = _confirmPasswordController.text.trim();
     String pseudo = _pseudoController.text.trim();
-    String phone = _cellPhone.text.trim();
+    
+    // TODO avoir le numéro de la personne dans FirebaseAuth.instance
+
+    //String phone = _cellPhone.text.trim();
 
     try {
       if (confirmPwd == pwd) {

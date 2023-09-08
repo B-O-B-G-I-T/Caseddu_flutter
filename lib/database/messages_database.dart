@@ -1,4 +1,6 @@
 /// It is the database for the messages.
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:async';
 import 'dart:developer';
 import 'package:flutter_application_1/database/tables/conversations_table.dart';

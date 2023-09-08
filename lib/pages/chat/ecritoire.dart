@@ -57,7 +57,7 @@ class _MessagePanelState extends State<MessagePanel> {
                 "sender": "$Global.myName",
                 "receiver": "$widget.device.deviceName",
                 "message": "$myController.text",
-                "id": "$msgId",
+                "id": msgId,
                 "Timestamp": DateTime.now().toUtc().toString(),
                 "type": "Payload"
               };

@@ -21,7 +21,7 @@ class _TasksWidgetState extends State<TasksWidget> {
     final seletedEvents = provider.eventsSelectedDate;
 
     if (seletedEvents.isEmpty) {
-      return Center(
+      return const Center(
         child: Text("Pas d'événements"),
       );
     }
