@@ -1,4 +1,4 @@
-import 'package:bubble/bubble.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/utils/fonctions.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
@@ -41,6 +41,9 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   final ScrollController _scrollController = ScrollController();
+
+// TODO partage de fichiers et image
+// TODO création de groupe
 
   @override
   Widget build(BuildContext context) {
@@ -88,40 +91,83 @@ class _ChatPageState extends State<ChatPage> {
                   ? const Center(
                       child: Text('Lancé la conversation'),
                     )
-                  : ListView.builder(
-                      // Builder to view messages chronologically
-                      shrinkWrap: true,
-                      controller: _scrollController,
-                      padding: const EdgeInsets.all(8),
-                      itemCount: messageList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Bubble(
-                          margin: const BubbleEdges.only(top: 10),
-                          nip: messageList[index].msgtype == 'sent'
-                              ? BubbleNip.rightTop
-                              : BubbleNip.leftTop,
-                          color: messageList[index].msgtype == 'sent'
-                              ? const Color(0xffd1c4e9)
-                              : const Color(0xff80DEEA),
-                          child: ListTile(
-                            dense: true,
-                            title: Text(
-                              "${messageList[index].msgtype}: ${messageList[index].message}",
-                              textAlign: messageList[index].msgtype == 'sent'
-                                  ? TextAlign.right
-                                  : TextAlign.left,
-                            ),
-                            subtitle: Text(
-                              Utils.dateFormatter(
-                                timeStamp: messageList[index].timestamp,
-                              ),
-                              textAlign: messageList[index].msgtype == 'sent'
-                                  ? TextAlign.right
-                                  : TextAlign.left,
-                            ),
+                  : SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Text(
+                            Utils.depuisQuandCeMessageEstRecu(
+                                timeStamp: messageList.first.timestamp),
+                            style: const TextStyle(color: Colors.grey),
                           ),
-                        );
-                      },
+                          ListView.builder(
+                            // Builder to view messages chronologically
+                            shrinkWrap: true,
+                            controller: _scrollController,
+                            padding: const EdgeInsets.all(0),
+                            itemCount: messageList.length,
+
+                            itemBuilder: (BuildContext context, int index) {
+                              return IntrinsicHeight(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        // barre coloré
+                                        laBarre(messageList[index].msgtype),
+                                        // titre et text
+                                        Expanded(
+                                          flex: 6,
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              // titre et date de reception
+                                              // titre
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  receptionOuEnvoi(
+                                                      messageList[index]
+                                                          .msgtype),
+                                                  // date de reception
+                                                  dateDuMessage(
+                                                      messageList[index]
+                                                          .timestamp),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 5,
+                                              ),
+                                              // texte
+                                              Image.asset(
+                                                  messageList[index].message),
+                                              messageList[index].msgtype ==
+                                                      'Image'
+                                                  ? Image.asset(
+                                                      messageList[index]
+                                                          .message)
+                                                  : Text(
+                                                      messageList[index]
+                                                          .message,
+                                                      textAlign: TextAlign.left,
+                                                      style: const TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 14),
+                                                    ),
+                                            ],
+                                          ),
+                                        ),
+                                      ]),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
             ),
             MessagePanel(
@@ -133,4 +179,42 @@ class _ChatPageState extends State<ChatPage> {
       ),
     );
   }
+}
+
+@override
+Widget laBarre(String messageDeReceptionOuEnvoi) {
+  return Row(
+    children: [
+      Container(
+        width: 2,
+        height: double.infinity,
+        color: messageDeReceptionOuEnvoi == 'sent' ? Colors.red : Colors.blue,
+      ),
+      const SizedBox(
+        width: 5,
+      )
+    ],
+  );
+}
+
+@override
+Widget receptionOuEnvoi(
+  String messageDeReceptionOuEnvoi,
+) {
+  return Text(
+    messageDeReceptionOuEnvoi,
+    style: TextStyle(
+      color: messageDeReceptionOuEnvoi == 'sent' ? Colors.red : Colors.blue,
+    ),
+  );
+}
+
+@override
+Widget dateDuMessage(String dateDeLaReception) {
+  return Text(
+    Utils.dateFormatter(
+      timeStamp: dateDeLaReception,
+    ),
+    style: const TextStyle(fontSize: 10),
+  );
 }

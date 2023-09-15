@@ -9,7 +9,6 @@ import '../modeles/messages_model.dart';
 
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 
-
 class Global extends ChangeNotifier {
   static String myName = '';
   List<Device> devices = [];
@@ -24,10 +23,11 @@ class Global extends ChangeNotifier {
   static StreamSubscription? receivedDataSubscription;
 
   void sentToConversations(Msg msg, String converser,
-      {bool addToTable = true}) {
+      {bool addToTable = true, bool isImage = false}) {
     if (conversations[converser] == null) {
       conversations[converser] = {};
     }
+
     conversations[converser]![msg.id] = msg;
 
     if (addToTable) {
@@ -35,16 +35,30 @@ class Global extends ChangeNotifier {
     }
     var dernierEnCache = cache.entries.last;
 
+    // TODO: defini un type pour data
+    // ignore: prefer_typing_uninitialized_variables
+    var data;
     if (dernierEnCache.value.runtimeType == Payload) {
       Payload payload = dernierEnCache.value;
-      var data = {
-        "sender": payload.sender,
-        "receiver": payload.receiver,
-        "message": payload.message,
-        "id": msg.id,
-        "Timestamp": payload.timestamp,
-        "type": "Payload"
-      };
+      if (isImage) {
+        data = {
+          "sender": payload.sender,
+          "receiver": payload.receiver,
+          "message": payload.message,
+          "id": msg.id,
+          "Timestamp": payload.timestamp,
+          "type": "Image"
+        };
+      } else {
+        data = {
+          "sender": payload.sender,
+          "receiver": payload.receiver,
+          "message": payload.message,
+          "id": msg.id,
+          "Timestamp": payload.timestamp,
+          "type": "Payload"
+        };
+      }
       var toSend = jsonEncode(data);
       Global.nearbyService!.sendMessage(converser, toSend); //make this async
     } else if (dernierEnCache.runtimeType == Ack) {

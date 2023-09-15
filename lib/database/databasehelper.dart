@@ -62,7 +62,7 @@ Future<void> readAllUpdateConversation(BuildContext context) async {
 }
 
 // Inserting message to the conversation table in the database
-void  insertIntoConversationsTable(Msg msg, String converser) {
+void insertIntoConversationsTable(Msg msg, String converser) {
   MessageDB.instance.insertIntoConversationsTable(ConversationFromDB(
       msg.id, msg.msgtype, msg.message, msg.timestamp, msg.ack, converser));
 }
@@ -78,7 +78,6 @@ void insertIntoMessageTable(dynamic msg) {
 
 MessageFromDB convertFromPayload(Payload msg) {
   String id = msg.id;
-  String type = 'Payload';
   Map<String, String> message = {
     "id": msg.id,
     "type": msg.type,
@@ -88,7 +87,7 @@ MessageFromDB convertFromPayload(Payload msg) {
     "receiver": msg.receiver
   };
   //print("#80" + jsonEncode(message));
-  return MessageFromDB(id, type, jsonEncode(message));
+  return MessageFromDB(id, msg.message, jsonEncode(message));
 }
 
 MessageFromDB convertFromAck(Ack msg) {

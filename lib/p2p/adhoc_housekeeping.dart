@@ -183,7 +183,7 @@ void broadcast(BuildContext context) async {
   //print("current cache:" + Global.cache.toString());
 }
 
-//! je comprend pas l'utilité
+//! je comprend pas l'utilité sert a evité les doublons lors de la reprise de conversations
 // Broadcasting update request message to the connected devices to receive
 // fresh messages that are yet to be recieved
 void broadcastLastMessageID(BuildContext context) async {
@@ -192,7 +192,6 @@ void broadcastLastMessageID(BuildContext context) async {
     String id = await MessageDB.instance.getLastMessageId(type: "received");
     // log("Last message id: " + id);
 
-    // ignore: use_build_context_synchronously
     Provider.of<Global>(context, listen: false)
         .devices
         .forEach((element) async {
@@ -253,47 +252,60 @@ void checkDevices(BuildContext context) {
   });
 }
 
+File base64StringToImage(String base64String) {
+  final bytes = base64Decode(base64String);
+  final uniqueId = DateTime.now().millisecondsSinceEpoch;
+  final path =
+      '/Users/bobsmac/Desktop/Caseddu_flutter/conversation_images/$uniqueId.png';
+  File imageFile = File(path);
+  imageFile.writeAsBytesSync(bytes);
+  return imageFile;
+}
+
 // The the protocol service. It receives the messages from the
 // dataReceivedSubscription service and decode it.
 void init(BuildContext context) async {
   initiateNearbyService();
   checkDevices(context);
-  //! broadcastLastMessageID(context);
+  //broadcastLastMessageID(context);
   Global.receivedDataSubscription =
       Global.nearbyService!.dataReceivedSubscription(callback: (data) {
     var decodedMessage = jsonDecode(data['message']);
 
-// affiche un toast
-    Fluttertoast.showToast(
-        msg: decodedMessage.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.TOP,
-        timeInSecForIosWeb: 10,
-        fontSize: 16.0);
+    // if (decodedMessage["type"] == "Update") {
+    //   //log("Update Message ${decodedMessage["id"]}");
+    //   String sentDeviceName = decodedMessage["sender"];
+    //   compareMessageId(
+    //     receivedId: decodedMessage["id"],
+    //     sentDeviceName: sentDeviceName,
+    //     context: context,
+    //   );
+    // }
 
-    if (decodedMessage["type"] == "Update") {
-      //log("Update Message ${decodedMessage["id"]}");
-      String sentDeviceName = decodedMessage["sender"];
-      compareMessageId(
-        receivedId: decodedMessage["id"],
-        sentDeviceName: sentDeviceName,
-        context: context,
-      );
-    }
     if (Global.cache.containsKey(decodedMessage["id"]) == false) {
       if (decodedMessage["type"].toString() == 'Payload') {
-        Global.cache[decodedMessage["id"]] = Payload(
+        Payload payload = Payload(
+          decodedMessage["id"],
+          decodedMessage['sender'],
+          decodedMessage['receiver'],
+          decodedMessage['message'],
+          decodedMessage['Timestamp'],
+        );
+
+        Global.cache[decodedMessage["id"]] = payload;
+        insertIntoMessageTable(payload);
+        // TODO finir l'envoie de photo
+      } else if (decodedMessage["type"].toString() == 'Image') {
+        File imageStocke = base64StringToImage(decodedMessage['message']);
+        Payload payload = Payload(
             decodedMessage["id"],
             decodedMessage['sender'],
             decodedMessage['receiver'],
-            decodedMessage['message'],
+            imageStocke.path,
             decodedMessage['Timestamp']);
-        insertIntoMessageTable(Payload(
-            decodedMessage["id"],
-            decodedMessage['sender'],
-            decodedMessage['receiver'],
-            decodedMessage['message'],
-            decodedMessage['Timestamp']));
+
+        Global.cache[decodedMessage["id"]] = payload;
+        insertIntoMessageTable(payload);
       } else {
         Global.cache[decodedMessage["id"]] = Ack(decodedMessage["id"]);
         insertIntoMessageTable(Ack(decodedMessage["id"]));
@@ -327,6 +339,16 @@ void init(BuildContext context) async {
         updateMessageTable(decodedMessage["id"], Ack(decodedMessage['id']));
       }
     } else {}
+
+    // affiche un toast
+    String resume =
+        "${decodedMessage['sender']} t'envoi ${decodedMessage['message']}";
+    Fluttertoast.showToast(
+        msg: resume,
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.TOP,
+        timeInSecForIosWeb: 10,
+        fontSize: 16.0);
   });
 }
 
