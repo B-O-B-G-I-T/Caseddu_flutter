@@ -23,43 +23,44 @@ class Global extends ChangeNotifier {
   static StreamSubscription? receivedDataSubscription;
 
   void sentToConversations(Msg msg, String converser,
-      {bool addToTable = true, bool isImage = false}) {
+      {bool addToTable = true, String isImage = ''}) {
     if (conversations[converser] == null) {
       conversations[converser] = {};
     }
 
-    conversations[converser]![msg.id] = msg;
-
-    if (addToTable) {
-      insertIntoConversationsTable(msg, converser);
-    }
     var dernierEnCache = cache.entries.last;
 
-    // TODO: defini un type pour data
     // ignore: prefer_typing_uninitialized_variables
-    var data;
+    Map<String, String> data;
     if (dernierEnCache.value.runtimeType == Payload) {
-      Payload payload = dernierEnCache.value;
-      if (isImage) {
+      Msg msglocal =
+          Msg(isImage, msg.sendOrReceived, msg.timestamp, msg.typeMsg, msg.id);
+
+      conversations[converser]![msg.id] = msglocal;
+      if (addToTable) {
+        insertIntoConversationsTable(msglocal, converser);
+      }
+
+      if (isImage.isNotEmpty) {
         data = {
-          "sender": payload.sender,
-          "receiver": payload.receiver,
-          "message": payload.message,
+          "sender": myName,
+          "receiver": converser,
+          "message": msg.message,
           "id": msg.id,
-          "Timestamp": payload.timestamp,
+          "Timestamp": msg.timestamp,
           "type": "Image"
         };
       } else {
         data = {
-          "sender": payload.sender,
-          "receiver": payload.receiver,
-          "message": payload.message,
+          "sender": myName,
+          "receiver": converser,
+          "message": msg.message,
           "id": msg.id,
-          "Timestamp": payload.timestamp,
+          "Timestamp": msg.timestamp,
           "type": "Payload"
         };
       }
-      var toSend = jsonEncode(data);
+      String toSend = jsonEncode(data);
       Global.nearbyService!.sendMessage(converser, toSend); //make this async
     } else if (dernierEnCache.runtimeType == Ack) {
       var data = {"id": msg.id, "type": "Ack"};
@@ -83,23 +84,29 @@ class Global extends ChangeNotifier {
     notifyListeners();
   }
 
-  void receivedToConversations(dynamic decodedMessage, BuildContext context) {
-    if (conversations[decodedMessage['sender']] == null) {
-      conversations[decodedMessage['sender']] = <String, Msg>{};
+  void receivedToConversations(Payload decodedMessage, BuildContext context) {
+    if (conversations[decodedMessage.sender] == null) {
+      conversations[decodedMessage.sender] = <String, Msg>{};
     }
-    if (conversations[decodedMessage['sender']] != null &&
-        !(conversations[decodedMessage['sender']]!
-            .containsKey(decodedMessage['id']))) {
-      conversations[decodedMessage['sender']]![decodedMessage["id"]] = Msg(
-        decodedMessage['message'],
+    if (conversations[decodedMessage.sender] != null &&
+        !(conversations[decodedMessage.sender]!
+            .containsKey(decodedMessage.id))) {
+      conversations[decodedMessage.sender]![decodedMessage.id] = Msg(
+        decodedMessage.message,
         "received",
-        decodedMessage['Timestamp'],
-        decodedMessage["id"],
+        decodedMessage.timestamp,
+        decodedMessage.type,
+        decodedMessage.id,
       );
       insertIntoConversationsTable(
-          Msg(decodedMessage['message'], "received",
-              decodedMessage['Timestamp'], decodedMessage["id"]),
-          decodedMessage['sender']);
+          Msg(
+            decodedMessage.message,
+            "received",
+            decodedMessage.timestamp,
+            decodedMessage.type,
+            decodedMessage.id,
+          ),
+          decodedMessage.sender);
     }
 
     notifyListeners();

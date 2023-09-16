@@ -271,7 +271,7 @@ void init(BuildContext context) async {
   Global.receivedDataSubscription =
       Global.nearbyService!.dataReceivedSubscription(callback: (data) {
     var decodedMessage = jsonDecode(data['message']);
-
+    Payload? payload;
     // if (decodedMessage["type"] == "Update") {
     //   //log("Update Message ${decodedMessage["id"]}");
     //   String sentDeviceName = decodedMessage["sender"];
@@ -284,31 +284,34 @@ void init(BuildContext context) async {
 
     if (Global.cache.containsKey(decodedMessage["id"]) == false) {
       if (decodedMessage["type"].toString() == 'Payload') {
-        Payload payload = Payload(
-          decodedMessage["id"],
-          decodedMessage['sender'],
-          decodedMessage['receiver'],
-          decodedMessage['message'],
-          decodedMessage['Timestamp'],
-        );
+        payload = Payload(
+            decodedMessage["id"],
+            decodedMessage['sender'],
+            decodedMessage['receiver'],
+            decodedMessage['message'],
+            decodedMessage['Timestamp'],
+            decodedMessage["type"]);
 
         Global.cache[decodedMessage["id"]] = payload;
         insertIntoMessageTable(payload);
-        // TODO finir l'envoie de photo
+        // gestion de la récupération des photos
       } else if (decodedMessage["type"].toString() == 'Image') {
         File imageStocke = base64StringToImage(decodedMessage['message']);
-        Payload payload = Payload(
+        payload = Payload(
             decodedMessage["id"],
             decodedMessage['sender'],
             decodedMessage['receiver'],
             imageStocke.path,
-            decodedMessage['Timestamp']);
+            decodedMessage['Timestamp'],
+            decodedMessage["type"]);
 
         Global.cache[decodedMessage["id"]] = payload;
         insertIntoMessageTable(payload);
       } else {
         Global.cache[decodedMessage["id"]] = Ack(decodedMessage["id"]);
         insertIntoMessageTable(Ack(decodedMessage["id"]));
+        payload = Payload("indeterminé", "indeterminé", "indeterminé",
+            'indeterminé', "indeterminé", "indeterminé");
       }
     } else if (Global.cache[decodedMessage["id"]].runtimeType == Payload) {
       if (decodedMessage["type"] == 'Ack') {
@@ -326,10 +329,11 @@ void init(BuildContext context) async {
     // ":" +
     // Global.myName.toString());
 
-    if (decodedMessage['type'] == "Payload" &&
-        decodedMessage['receiver'] == Global.myName) {
+    if (decodedMessage['type'] == "Payload" ||
+        decodedMessage['type'] == "Image" &&
+            decodedMessage['receiver'] == Global.myName) {
       Provider.of<Global>(context, listen: false)
-          .receivedToConversations(decodedMessage, context);
+          .receivedToConversations(payload!, context);
 
       if (Global.cache[decodedMessage["id"]] == null) {
         Global.cache[decodedMessage["id"]] = Ack(decodedMessage["id"]);

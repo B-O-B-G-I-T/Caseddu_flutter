@@ -6,8 +6,8 @@ class Payload {
   String message = '';
   String timestamp = '';
   bool broadcast = true;
-  String type = 'Payload';
-  Payload(this.id, this.sender, this.receiver, this.message, this.timestamp);
+  String type = '';
+  Payload(this.id, this.sender, this.receiver, this.message, this.timestamp, this.type);
 }
 
 class Ack {

@@ -6,11 +6,11 @@ const String publicKeyTableName = 'publicKey';
 /// Message model
 class Msg {
   String message;
-  String msgtype; //sent or received
+  String sendOrReceived; //sent or received
   String timestamp;
-  String ack = 'false';
+  String typeMsg = 'Payload';
   String id;
-  Msg(this.message, this.msgtype, this.timestamp, this.id);
+  Msg(this.message, this.sendOrReceived, this.timestamp,this.typeMsg, this.id);
 }
 
 
@@ -52,22 +52,22 @@ class MessageFromDB {
 
 
 class ConversationFromDB {
-  final String type;
+  final String sendOrReceived;
   final String msg;
   final String id;
   final String converser;
   final String timestamp;
-  final String ack;
+  final String typeMsg;
 
   ConversationFromDB(
-      this.id, this.type, this.msg, this.timestamp, this.ack, this.converser);
+      this.id, this.sendOrReceived, this.msg, this.timestamp, this.typeMsg, this.converser);
 
   Map<String, Object?> toJson() => {
         ConversationTableFields.id: id,
-        ConversationTableFields.type: type,
+        ConversationTableFields.type: sendOrReceived,
         ConversationTableFields.msg: msg,
         ConversationTableFields.converser: converser,
-        ConversationTableFields.ack: ack,
+        ConversationTableFields.ack: typeMsg,
         ConversationTableFields.timestamp: timestamp
       };
 

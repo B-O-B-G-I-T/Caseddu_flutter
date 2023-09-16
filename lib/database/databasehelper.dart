@@ -41,7 +41,7 @@ Payload convertToPayload(MessageFromDB message) {
   //print("#63" + json.toString());
   //print("#62 ${json['id']}| ${json['sender']}");
   return Payload(
-      id, json['sender'], json['receiver'], json['message'], json['timestamp']);
+      id, json['sender'], json['receiver'], json['message'], json['timestamp'], "Text");
 }
 
 Future<void> readAllUpdateConversation(BuildContext context) async {
@@ -53,18 +53,20 @@ Future<void> readAllUpdateConversation(BuildContext context) async {
   for (var element in conversations) {
     // ignore: use_build_context_synchronously
     Provider.of<Global>(context, listen: false).sentToConversations(
-      Msg(element.msg, element.type, element.timestamp, element.id),
+      Msg(element.msg, element.sendOrReceived, element.timestamp,
+          element.typeMsg, element.id),
       element.converser,
       addToTable: false,
     );
-    Msg(element.msg, element.type, element.timestamp, element.id);
+    Msg(element.msg, element.sendOrReceived, element.timestamp, element.typeMsg,
+        element.id);
   }
 }
 
 // Inserting message to the conversation table in the database
 void insertIntoConversationsTable(Msg msg, String converser) {
-  MessageDB.instance.insertIntoConversationsTable(ConversationFromDB(
-      msg.id, msg.msgtype, msg.message, msg.timestamp, msg.ack, converser));
+  MessageDB.instance.insertIntoConversationsTable(ConversationFromDB(msg.id,
+      msg.sendOrReceived, msg.message, msg.timestamp, msg.typeMsg, converser));
 }
 
 // Inserting message to the messages table in the database
@@ -77,7 +79,6 @@ void insertIntoMessageTable(dynamic msg) {
 }
 
 MessageFromDB convertFromPayload(Payload msg) {
-  String id = msg.id;
   Map<String, String> message = {
     "id": msg.id,
     "type": msg.type,
@@ -87,7 +88,7 @@ MessageFromDB convertFromPayload(Payload msg) {
     "receiver": msg.receiver
   };
   //print("#80" + jsonEncode(message));
-  return MessageFromDB(id, msg.message, jsonEncode(message));
+  return MessageFromDB(msg.id, msg.message, jsonEncode(message));
 }
 
 MessageFromDB convertFromAck(Ack msg) {

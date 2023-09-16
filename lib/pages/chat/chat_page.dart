@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/utils/fonctions.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
@@ -115,7 +114,8 @@ class _ChatPageState extends State<ChatPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         // barre coloré
-                                        laBarre(messageList[index].msgtype),
+                                        laBarre(
+                                            messageList[index].sendOrReceived),
                                         // titre et text
                                         Expanded(
                                           flex: 6,
@@ -132,7 +132,7 @@ class _ChatPageState extends State<ChatPage> {
                                                 children: [
                                                   receptionOuEnvoi(
                                                       messageList[index]
-                                                          .msgtype),
+                                                          .sendOrReceived),
                                                   // date de reception
                                                   dateDuMessage(
                                                       messageList[index]
@@ -142,10 +142,8 @@ class _ChatPageState extends State<ChatPage> {
                                               const SizedBox(
                                                 height: 5,
                                               ),
-                                              // texte
-                                              Image.asset(
-                                                  messageList[index].message),
-                                              messageList[index].msgtype ==
+                                              // texte ou image
+                                              messageList[index].typeMsg ==
                                                       'Image'
                                                   ? Image.asset(
                                                       messageList[index]

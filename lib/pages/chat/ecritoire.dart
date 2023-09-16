@@ -80,22 +80,17 @@ class _MessagePanelState extends State<MessagePanel> {
           File file = File(
               '/Users/bobsmac/Desktop/Caseddu_flutter/assets/images/cerf.jpg');
           var imageToBase64String = ImageToBase64String(file);
-          var payload = Payload(
-            msgId,
-            Global.myName,
-            widget.converser,
-            imageToBase64String.toString(),
-            DateTime.now().toUtc().toString(),
-          );
+          var payload = Payload(msgId, Global.myName, widget.converser,
+              file.path, DateTime.now().toUtc().toString(), "Image");
 
           Global.cache[msgId] = payload;
           insertIntoMessageTable(payload);
 
           Provider.of<Global>(context, listen: false).sentToConversations(
-            Msg(myController.text, "sent", payload.timestamp, msgId),
-            widget.converser,
-            isImage: true
-          );
+              Msg(imageToBase64String, "sent", payload.timestamp, "Image",
+                  msgId),
+              widget.converser,
+              isImage: file.path);
         },
         icon: const Icon(Icons.image_outlined));
   }
@@ -105,13 +100,8 @@ class _MessagePanelState extends State<MessagePanel> {
       onPressed: () {
         var msgId = nanoid(21);
 
-        var payload = Payload(
-          msgId,
-          Global.myName,
-          widget.converser,
-          myController.text,
-          DateTime.now().toUtc().toString(),
-        );
+        var payload = Payload(msgId, Global.myName, widget.converser,
+            myController.text, DateTime.now().toUtc().toString(), "Text");
 
         Global.cache[msgId] = payload;
         insertIntoMessageTable(payload);
@@ -126,7 +116,7 @@ class _MessagePanelState extends State<MessagePanel> {
               fontSize: 16.0);
         } else {
           Provider.of<Global>(context, listen: false).sentToConversations(
-            Msg(myController.text, "sent", payload.timestamp, msgId),
+            Msg(myController.text, "sent", payload.timestamp, "Payload", msgId),
             widget.converser,
           );
         }
