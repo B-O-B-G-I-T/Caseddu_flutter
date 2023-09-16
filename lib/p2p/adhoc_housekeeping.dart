@@ -345,8 +345,13 @@ void init(BuildContext context) async {
     } else {}
 
     // affiche un toast
-    String resume =
-        "${decodedMessage['sender']} t'envoi ${decodedMessage['message']}";
+    String resume;
+    if (decodedMessage["type"] == 'Image') {
+      resume = "${decodedMessage['sender']} t'envoi une photo";
+    } else {
+      resume =
+          "${decodedMessage['sender']} t'envoi ${decodedMessage['message']}";
+    }
     Fluttertoast.showToast(
         msg: resume,
         toastLength: Toast.LENGTH_SHORT,

@@ -101,7 +101,7 @@ class _MessagePanelState extends State<MessagePanel> {
         var msgId = nanoid(21);
 
         var payload = Payload(msgId, Global.myName, widget.converser,
-            myController.text, DateTime.now().toUtc().toString(), "Text");
+            myController.text, DateTime.now().toUtc().toString(), "Payload");
 
         Global.cache[msgId] = payload;
         insertIntoMessageTable(payload);

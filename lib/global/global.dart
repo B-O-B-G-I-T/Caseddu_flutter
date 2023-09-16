@@ -27,21 +27,13 @@ class Global extends ChangeNotifier {
     if (conversations[converser] == null) {
       conversations[converser] = {};
     }
-
     var dernierEnCache = cache.entries.last;
 
     // ignore: prefer_typing_uninitialized_variables
     Map<String, String> data;
     if (dernierEnCache.value.runtimeType == Payload) {
-      Msg msglocal =
-          Msg(isImage, msg.sendOrReceived, msg.timestamp, msg.typeMsg, msg.id);
-
-      conversations[converser]![msg.id] = msglocal;
-      if (addToTable) {
-        insertIntoConversationsTable(msglocal, converser);
-      }
-
       if (isImage.isNotEmpty) {
+// mise en forme des données
         data = {
           "sender": myName,
           "receiver": converser,
@@ -50,6 +42,15 @@ class Global extends ChangeNotifier {
           "Timestamp": msg.timestamp,
           "type": "Image"
         };
+
+// ajout en cache dans le global
+        Msg msglocal = Msg(
+            isImage, msg.sendOrReceived, msg.timestamp, msg.typeMsg, msg.id);
+
+        conversations[converser]![msg.id] = msglocal;
+        if (addToTable) {
+          insertIntoConversationsTable(msglocal, converser);
+        }
       } else {
         data = {
           "sender": myName,
@@ -59,6 +60,10 @@ class Global extends ChangeNotifier {
           "Timestamp": msg.timestamp,
           "type": "Payload"
         };
+        conversations[converser]![msg.id] = msg;
+        if (addToTable) {
+          insertIntoConversationsTable(msg, converser);
+        }
       }
       String toSend = jsonEncode(data);
       Global.nearbyService!.sendMessage(converser, toSend); //make this async
