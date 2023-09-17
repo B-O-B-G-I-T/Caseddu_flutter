@@ -3,9 +3,9 @@
 /// connected devices.
 import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/photo_pages/gallery_widget.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nanoid/nanoid.dart';
@@ -33,36 +33,41 @@ class MessagePanel extends StatefulWidget {
 
 class _MessagePanelState extends State<MessagePanel> {
   TextEditingController myController = TextEditingController();
-
-  // Future<bool> forceConnexion() async {
-  // }
+  bool _showGallery = false;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(2.0),
-      child: Row(
+      child: Column(
         children: [
-          const Icon(Icons.person),
-          Expanded(
-            child: TextFormField(
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-              onTap: () async {
-                if (widget.device.state == SessionState.notConnected &&
-                    !widget.longDistance) {
-                  await connectToDevice(widget.device);
-                }
-              },
-              controller: myController,
-            ),
-          ),
           Row(
             children: [
-              sendImage(),
-              sendMessage(),
+              const Icon(Icons.person),
+              Expanded(
+                child: TextFormField(
+                  autofocus: true,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  onTap: () async {
+                    _showGallery = false;
+                    if (widget.device.state == SessionState.notConnected &&
+                        !widget.longDistance) {
+                      await connectToDevice(widget.device);
+                    }
+                  },
+                  controller: myController,
+                ),
+              ),
+              Row(
+                children: [
+                  sendImage(),
+                  sendMessage(),
+                ],
+              ),
             ],
           ),
+          _showGallery ? GalerieWidget2() : const Center()
         ],
       ),
     );
@@ -76,22 +81,31 @@ class _MessagePanelState extends State<MessagePanel> {
 
     return IconButton(
         onPressed: () {
-          var msgId = nanoid(21);
-          File file = File(
-              '/Users/bobsmac/Desktop/Caseddu_flutter/assets/images/cerf.jpg');
-          var imageToBase64String = ImageToBase64String(file);
-          var payload = Payload(msgId, Global.myName, widget.converser,
-              file.path, DateTime.now().toUtc().toString(), "Image");
-
-          Global.cache[msgId] = payload;
-          insertIntoMessageTable(payload);
-
-          Provider.of<Global>(context, listen: false).sentToConversations(
-              Msg(imageToBase64String, "sent", payload.timestamp, "Image",
-                  msgId),
-              widget.converser,
-              isImage: file.path);
+          setState(() {
+            FocusScope.of(context).unfocus();
+            _showGallery = !_showGallery;
+          });
         },
+
+        // gere l'envoie de photo ajout du d'un chemin dinamyque avec une selection dans une galerie
+        // onPressed: () {
+        //   var msgId = nanoid(21);
+        //   // TODO modifier le chemin pour avoir les photo en dossier
+        //   File file = File(
+        //       '/Users/bobsmac/Desktop/Caseddu_flutter/assets/images/cerf.jpg');
+        //   var imageToBase64String = ImageToBase64String(file);
+        //   var payload = Payload(msgId, Global.myName, widget.converser,
+        //       file.path, DateTime.now().toUtc().toString(), "Image");
+
+        //   Global.cache[msgId] = payload;
+        //   insertIntoMessageTable(payload);
+
+        //   Provider.of<Global>(context, listen: false).sentToConversations(
+        //       Msg(imageToBase64String, "sent", payload.timestamp, "Image",
+        //           msgId),
+        //       widget.converser,
+        //       isImage: file.path);
+        // },
         icon: const Icon(Icons.image_outlined));
   }
 

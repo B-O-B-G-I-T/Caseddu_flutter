@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../global/global.dart';
@@ -51,7 +52,19 @@ class _DevicesListPage extends State<DevicesListPage> {
               ),
             ),
           ),
-
+          MaterialButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return ChatPage(
+                        converser: "testChatPage",
+                      );
+                    },
+                  ),
+                );
+              },
+              child: const Text("test chatPage")),
           // liste des devices
           ListView.builder(
             // Builds a screen with list of devices in the proximity
@@ -93,18 +106,8 @@ class _DevicesListPage extends State<DevicesListPage> {
                         ),
                       ),
                       onTap: () {
-                        // a modifé avec une route
-                        // On clicking any device tile, we navigate to the
-                        // ChatPage.
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return ChatPage(
-                                converser: device.deviceName,
-                              );
-                            },
-                          ),
-                        );
+                       
+                        context.push('/ChatPage/${device.deviceName}');
                       },
                     ),
                     const Divider(

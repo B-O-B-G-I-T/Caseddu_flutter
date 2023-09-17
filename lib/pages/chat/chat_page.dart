@@ -80,7 +80,9 @@ class _ChatPageState extends State<ChatPage> {
       // resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(widget.converser),
-        actions: [ConnectionButton(device: device, longDistance: longDistance)],
+        actions: [
+          ConnectionButton(device: device, longDistance: longDistance),
+        ],
       ),
       body: SafeArea(
         child: Column(

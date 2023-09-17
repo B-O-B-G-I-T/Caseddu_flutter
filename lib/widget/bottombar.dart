@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/pages/calendar_pages/calendar_viewing_page.dart';
-import 'package:flutter_application_1/pages/camera_page.dart';
+import 'package:flutter_application_1/pages/photo_pages/camera_page.dart';
 import 'package:flutter_application_1/pages/menu_page.dart';
 import 'package:flutter_application_1/widget/appBar.dart';
 

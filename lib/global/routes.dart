@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application_1/pages/chat/chat_page.dart';
 import 'package:flutter_application_1/pages/login/login_screen.dart';
 import 'package:flutter_application_1/pages/parameter_page/parameter_page.dart';
 import 'package:flutter_application_1/widget/bottombar.dart';
@@ -15,7 +16,7 @@ class Routes {
   // GoRouter configuration
   final _router = GoRouter(
     // l'écarn de login
-    initialLocation: '/bottomBar',
+    initialLocation: '/',
     //redige la ou l'on veut
     redirect: (context, state) {
       if (FirebaseAuth.instance.currentUser == null &&
@@ -49,7 +50,7 @@ class Routes {
         },
       ),
       GoRoute(
-        path: '/bottomBar',
+        path: '/',
         builder: (context, state) {
           return const BottomBar();
         },
@@ -58,6 +59,16 @@ class Routes {
         path: '/parameter',
         builder: (context, state) {
           return const ParameterPage();
+        },
+      ),
+      GoRoute(
+        path: '/ChatPage/:deviceName',
+        builder: (context, state) {
+          final String deviceName =
+              state.pathParameters['deviceName'].toString();
+          return ChatPage(
+            converser: deviceName,
+          );
         },
       ),
     ],

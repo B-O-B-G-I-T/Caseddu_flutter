@@ -62,6 +62,9 @@ dependencies:
   firebase_core: ^2.15.0
   cloud_firestore: ^4.8.4
 
+  # pour parcourir la galery 
+  image_picker: ^1.0.4
+  
   # pour le peer to peer
   #impossible de faire marche instance deprecier 
   # difficulter sur la reception de message plus facile avec flutter nearby connection
