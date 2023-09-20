@@ -1,13 +1,14 @@
 // ignore_for_file: depend_on_referenced_packages, avoid_print
-
 import 'dart:io';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/pages/photo_pages/envoie_de_photo.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 
+// TODO peut etre une bonne idée faire deux pages au lieu d'utilisé le wg visible
 class CameraPage extends StatefulWidget {
   //pour la camera
   final List<CameraDescription> cameras;
@@ -75,27 +76,26 @@ class _CameraPageState extends State<CameraPage> {
                       left: 20,
                       bottom: 120,
                       child: Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            width: 3,
-                            color: Colors.white.withOpacity(0.5),
-                          ),
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            customBorder: const CircleBorder(),
-                            child: Icon(
-                              Icons.photo_album_outlined,
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              width: 3,
                               color: Colors.white.withOpacity(0.5),
                             ),
-                            onTap: () => print("object"),
                           ),
-                        ),
-                      ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              customBorder: const CircleBorder(),
+                              child: Icon(
+                                Icons.photo_album_outlined,
+                                color: Colors.white.withOpacity(0.5),
+                              ),
+                              onTap: () => print("object"),
+                            ),
+                          )),
                     ),
                   ),
                   Visibility(
@@ -175,15 +175,18 @@ class _CameraPageState extends State<CameraPage> {
                 ),
               )
             : FloatingActionButton.extended(
-                onPressed: () async {
+                onPressed: () {
                   setState(() => _loading = !_loading);
 
-                  await Future.delayed(const Duration(seconds: 3));
+                  //await Future.delayed(const Duration(seconds: 3));
+
+                  context.push('/EnvoieDePhotoPage$_lastImage');
+
                   setState(() => _lastImage = '');
                   setState(() => _loading = !_loading);
                 },
                 label: Text(
-                  'Publish',
+                  'Publier',
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 icon: const Icon(
@@ -200,17 +203,17 @@ class _CameraPageState extends State<CameraPage> {
   Future<void> initCamera(CameraDescription camera) async {
     _controller = CameraController(
       camera,
-      ResolutionPreset.medium,
+      ResolutionPreset.ultraHigh,
     );
 
     //initialiseControllerFuture = _controller.initialize();
 
     // Initialize controller
-      try {
-        initialiseControllerFuture =  _controller.initialize();
-      } on CameraException catch (e) {
-        print('Error initializing camera: $e');
-      }
+    try {
+      initialiseControllerFuture = _controller.initialize();
+    } on CameraException catch (e) {
+      print('Error initializing camera: $e');
+    }
     _controller.addListener(() {
       if (mounted) {
         setState(() {});
@@ -242,6 +245,9 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   Future<void> _prendrePhoto() async {
+    // pour le faire en background
+    //initialiseControllerFuture.then((value) => null);
+
     try {
       await initialiseControllerFuture;
 
@@ -264,8 +270,7 @@ class _CameraPageState extends State<CameraPage> {
   void initState() {
     super.initState();
 
-      _cameraToggle();
-
+    _cameraToggle();
   }
 
   @override

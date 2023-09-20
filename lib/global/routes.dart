@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_application_1/pages/chat/chat_page.dart';
 import 'package:flutter_application_1/pages/login/login_screen.dart';
 import 'package:flutter_application_1/pages/parameter_page/parameter_page.dart';
+import 'package:flutter_application_1/pages/photo_pages/envoie_de_photo.dart';
 import 'package:flutter_application_1/widget/bottombar.dart';
 import 'package:go_router/go_router.dart';
 
@@ -68,6 +69,16 @@ class Routes {
               state.pathParameters['deviceName'].toString();
           return ChatPage(
             converser: deviceName,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/EnvoieDePhotoPage/:cheminImage',
+        builder: (context, state) {
+          final String cheminImage =
+              state.pathParameters['cheminImage'].toString();
+          return EnvoieDePhotoPage(
+            cheminVersImagePrise: cheminImage,
           );
         },
       ),
