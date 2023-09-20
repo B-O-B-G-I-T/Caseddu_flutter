@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/calendar_pages/event_editing_page.dart';
+import 'package:flutter_application_1/presentation/calendar_pages/event_editing_page.dart';
 import 'package:flutter_application_1/modeles/event.dart';
 import 'package:flutter_application_1/provider/event_provider.dart';
 import 'package:provider/provider.dart';

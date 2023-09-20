@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/utils/fonctions.dart';
+import 'package:flutter_application_1/global/utils/fonctions.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:provider/provider.dart';
 import '../../global/global.dart';
@@ -42,7 +42,7 @@ class _ChatPageState extends State<ChatPage> {
 
 // TODO partage de fichiers et image :: partilement fait un todo a ete creé
 // TODO création de groupe
-// TODO modifier le scroll car peut fonctionnelle problème avec les images bloqie le scroll et ne renvoie pas en bas de page
+// TODO modifier le scroll car peut fonctionnelle problème avec les images bloque le scroll et ne renvoie pas en bas de page
 
   @override
   Widget build(BuildContext context) {

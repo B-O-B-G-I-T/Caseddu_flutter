@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/calendar_pages/event_editing_page.dart';
+import 'package:flutter_application_1/presentation/calendar_pages/event_editing_page.dart';
 
-import '../../widget/calendar_widget.dart';
+import '../../widget/calendar_widget/calendar_widget.dart';
 
 class CalendarViewingPage extends StatefulWidget {
   const CalendarViewingPage({super.key});

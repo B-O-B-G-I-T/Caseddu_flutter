@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../database/databasehelper.dart';
 import '../../global/global.dart';
-import '../../p2p/adhoc_housekeeping.dart';
+import '../../global/utils/p2p/adhoc_housekeeping.dart';
 import 'chat_list_device_page.dart';
 import 'liste_des_chats.dart';
 

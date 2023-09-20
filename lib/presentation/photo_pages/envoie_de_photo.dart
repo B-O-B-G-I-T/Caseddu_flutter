@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
-import '../../database/messages_database.dart';
 import '../../global/global.dart';
 import '../../modeles/messages_model.dart';
-import '../../p2p/adhoc_housekeeping.dart';
-import '../../utils/fonctions.dart';
+import '../../global/utils/p2p/adhoc_housekeeping.dart';
+import '../../global/utils/fonctions.dart';
 
 class EnvoieDePhotoPage extends StatefulWidget {
   const EnvoieDePhotoPage({super.key, required String cheminVersImagePrise});
@@ -80,7 +77,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                         context.push('/ChatPage/${device.deviceName}');
                       },
                     ),
-                    
+
                     const Divider(
                       height: 1,
                       color: Colors.grey,

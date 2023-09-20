@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_application_1/pages/chat/chat_page.dart';
-import 'package:flutter_application_1/pages/login/login_screen.dart';
-import 'package:flutter_application_1/pages/parameter_page/parameter_page.dart';
-import 'package:flutter_application_1/pages/photo_pages/envoie_de_photo.dart';
+import 'package:flutter_application_1/presentation/chat/chat_page.dart';
+import 'package:flutter_application_1/presentation/login/login_screen.dart';
+import 'package:flutter_application_1/presentation/parameter_page/parameter_page.dart';
+import 'package:flutter_application_1/presentation/photo_pages/envoie_de_photo.dart';
 import 'package:flutter_application_1/widget/bottombar.dart';
 import 'package:go_router/go_router.dart';
 
-import '../pages/login/oubli_mot_de_passe.dart';
-import '../pages/login/register_screen.dart';
+import '../presentation/login/oubli_mot_de_passe.dart';
+import '../presentation/login/register_screen.dart';
 
 // doc officiel : https://docs.flutter.dev/ui/navigation
 // doc du package : https://pub.dev/documentation/go_router/latest/topics/Get%20started-topic.html

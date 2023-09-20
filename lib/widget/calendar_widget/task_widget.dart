@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 
-import '../pages/calendar_pages/event_viewing_page.dart';
+import '../../presentation/calendar_pages/event_viewing_page.dart';
 
 class TasksWidget extends StatefulWidget {
   const TasksWidget({super.key});

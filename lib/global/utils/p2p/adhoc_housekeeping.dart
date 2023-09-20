@@ -10,10 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import '../database/DatabaseHelper.dart';
-import '../database/messages_database.dart';
-import '../global/global.dart';
-import '../global/payload.dart';
+import '../../../database/DatabaseHelper.dart';
+import '../../../database/messages_database.dart';
+import '../../global.dart';
+import '../../payload.dart';
 
 // Get the state name of the connection
 String getStateName(SessionState state) {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/modeles/messages_model.dart';
-import 'package:flutter_application_1/utils/fonctions.dart';
+import 'package:flutter_application_1/global/utils/fonctions.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../../database/databasehelper.dart';
 import '../../database/messages_database.dart';
 import '../../global/global.dart';
-import '../../widget/search_widget.dart';
+import '../../widget/P2P_widget/search_widget.dart';
 import 'chat_page.dart';
 
 class ListeDesChatsPage extends StatefulWidget {

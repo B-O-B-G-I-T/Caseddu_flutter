@@ -14,7 +14,7 @@ import '../../database/DatabaseHelper.dart';
 import '../../global/global.dart';
 import '../../global/payload.dart';
 import '../../modeles/messages_model.dart';
-import '../../p2p/adhoc_housekeeping.dart';
+import '../../global/utils/p2p/adhoc_housekeeping.dart';
 
 class MessagePanel extends StatefulWidget {
   const MessagePanel(

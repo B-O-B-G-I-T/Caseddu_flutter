@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 
-import '../../p2p/adhoc_housekeeping.dart';
+import '../../global/utils/p2p/adhoc_housekeeping.dart';
 
 class ConnectionButton extends StatelessWidget {
   const ConnectionButton(

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/provider/event_provider.dart';
-import 'package:flutter_application_1/widget/task_widget.dart';
+import 'package:flutter_application_1/widget/calendar_widget/task_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-import '../pages/calendar_pages/event_editing_page.dart';
-import '../modeles/event_data_source.dart';
+import '../../presentation/calendar_pages/event_editing_page.dart';
+import '../../modeles/event_data_source.dart';
 
 class MyCalendar extends StatelessWidget {
   const MyCalendar({super.key});
