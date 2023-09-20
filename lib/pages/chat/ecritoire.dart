@@ -5,12 +5,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/pages/photo_pages/gallery_widget.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:provider/provider.dart';
-
 import '../../database/DatabaseHelper.dart';
 import '../../global/global.dart';
 import '../../global/payload.dart';
@@ -34,6 +33,7 @@ class MessagePanel extends StatefulWidget {
 class _MessagePanelState extends State<MessagePanel> {
   TextEditingController myController = TextEditingController();
   bool _showGallery = false;
+  String imagePath = "";
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,6 @@ class _MessagePanelState extends State<MessagePanel> {
               const Icon(Icons.person),
               Expanded(
                 child: TextFormField(
-                  autofocus: true,
                   keyboardType: TextInputType.multiline,
                   maxLines: null,
                   onTap: () async {
@@ -67,45 +66,72 @@ class _MessagePanelState extends State<MessagePanel> {
               ),
             ],
           ),
-          _showGallery ? GalerieWidget2() : const Center()
+          // TODO créé un widget pour faire la selection des images multiple et intgrer pas une itent comme suit
+          // _showGallery ? ImageGallery() : const Center()
         ],
       ),
     );
   }
 
+  Future<String> getImage() async {
+    ImagePicker picker = ImagePicker();
+    var pickedImage = await picker.pickImage(source: ImageSource.gallery);
+    imagePath = pickedImage!.path;
+    setState(() {});
+    return imagePath;
+  }
+
   Widget sendImage() {
-    String ImageToBase64String(File imageFile) {
+    String imageToBase64String(File imageFile) {
       final bytes = imageFile.readAsBytesSync();
       return base64Encode(bytes);
     }
 
     return IconButton(
-        onPressed: () {
-          setState(() {
-            FocusScope.of(context).unfocus();
-            _showGallery = !_showGallery;
-          });
+        // l'action ouvre une itent pour selectionner et envoyer a la paire
+        onPressed: () async {
+          if (widget.longDistance) {
+            Fluttertoast.showToast(
+                msg: 'Ta paire hors de portée',
+                toastLength: Toast.LENGTH_LONG,
+                gravity: ToastGravity.TOP,
+                timeInSecForIosWeb: 10,
+                backgroundColor: Colors.grey,
+                fontSize: 16.0);
+          } else {
+            if (widget.device.state == SessionState.connected) {
+              setState(() {
+                FocusScope.of(context).unfocus();
+                _showGallery = !_showGallery;
+              });
+              String path = await getImage();
+
+              var msgId = nanoid(21);
+
+              File file = File(path);
+              var imageTo64String = imageToBase64String(file);
+              var payload = Payload(msgId, Global.myName, widget.converser,
+                  path, DateTime.now().toUtc().toString(), "Image");
+
+              Global.cache[msgId] = payload;
+              insertIntoMessageTable(payload);
+
+              Provider.of<Global>(context, listen: false).sentToConversations(
+                  Msg(imageTo64String, "sent", payload.timestamp, "Image",
+                      msgId),
+                  widget.converser,
+                  isImage: path);
+            } else {
+              Fluttertoast.showToast(
+                  msg: 'Connecte toi à ta paire',
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.TOP,
+                  timeInSecForIosWeb: 10,
+                  backgroundColor: Colors.grey,
+                  fontSize: 16.0);
+            }
+          }
         },
-
-        // gere l'envoie de photo ajout du d'un chemin dinamyque avec une selection dans une galerie
-        // onPressed: () {
-        //   var msgId = nanoid(21);
-        //   // TODO modifier le chemin pour avoir les photo en dossier
-        //   File file = File(
-        //       '/Users/bobsmac/Desktop/Caseddu_flutter/assets/images/cerf.jpg');
-        //   var imageToBase64String = ImageToBase64String(file);
-        //   var payload = Payload(msgId, Global.myName, widget.converser,
-        //       file.path, DateTime.now().toUtc().toString(), "Image");
-
-        //   Global.cache[msgId] = payload;
-        //   insertIntoMessageTable(payload);
-
-        //   Provider.of<Global>(context, listen: false).sentToConversations(
-        //       Msg(imageToBase64String, "sent", payload.timestamp, "Image",
-        //           msgId),
-        //       widget.converser,
-        //       isImage: file.path);
-        // },
         icon: const Icon(Icons.image_outlined));
   }
 
@@ -120,7 +146,8 @@ class _MessagePanelState extends State<MessagePanel> {
         Global.cache[msgId] = payload;
         insertIntoMessageTable(payload);
 
-        if (widget.longDistance && myController.text != "") {
+        if (widget.longDistance &&
+            widget.device.state == SessionState.notConnected) {
           Fluttertoast.showToast(
               msg: 'hors de portée',
               toastLength: Toast.LENGTH_LONG,
@@ -129,10 +156,13 @@ class _MessagePanelState extends State<MessagePanel> {
               backgroundColor: Colors.grey,
               fontSize: 16.0);
         } else {
-          Provider.of<Global>(context, listen: false).sentToConversations(
-            Msg(myController.text, "sent", payload.timestamp, "Payload", msgId),
-            widget.converser,
-          );
+          if (myController.text != "") {
+            Provider.of<Global>(context, listen: false).sentToConversations(
+              Msg(myController.text, "sent", payload.timestamp, "Payload",
+                  msgId),
+              widget.converser,
+            );
+          }
         }
 
         // refreshMessages();

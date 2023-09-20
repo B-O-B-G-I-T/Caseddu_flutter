@@ -37,7 +37,6 @@ void main() async {
       await rootBundle.loadString('assets/theme/appainter_theme.json');
   final themeJson = jsonDecode(themeStr);
   final theme = ThemeDecoder.decodeThemeData(themeJson)!;
-
   if (Platform.isAndroid) {
     WidgetsFlutterBinding.ensureInitialized();
     [
@@ -45,10 +44,11 @@ void main() async {
       Permission.storage,
       Permission.bluetooth,
       Permission.bluetoothConnect,
-      Permission.bluetoothScan
+      Permission.bluetoothScan,
     ].request().then((status) {
       // runApp(MyApp(theme: theme, cameras: cameras));
     });
+  } else {
   } // else {
   runApp(
     MultiProvider(

@@ -34,7 +34,7 @@
 		<string>This app requires access to the photo library.</string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
-		
+
 		<key>NSBluetoothAlwaysUsageDescription</key>
 		<string>Need BLE permission</string>
 		<key>NSBluetoothPeripheralUsageDescription</key>
@@ -65,6 +65,13 @@
 		</array>
 		<key>UIViewControllerBasedStatusBarAppearance</key>
 		<false/>
-		
+
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Nous souhaitons avoir accès à ta bibliothèque de photos</string>
+		<key>NSMotionUsageDescription</key>
+		<string>Motion usage description</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>We need Photos access to allow you to update Profile Picture.</string>
+
 	</dict>
 </plist>

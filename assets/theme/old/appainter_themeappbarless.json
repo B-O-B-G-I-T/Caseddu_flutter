@@ -3,7 +3,7 @@
     "actionsIconTheme": {
       "color": "#ffffffff"
     },
-    "backgroundColor": "#fff44336",
+    "backgroundColor": "#00f44336",
     "elevation": 0,
     "foregroundColor": "#ffffffff",
     "iconTheme": {
@@ -26,10 +26,8 @@
       "textBaseline": "alphabetic"
     },
     "toolbarTextStyle": {
-      "backgroundColor": "#00121212",
       "color": "#ffffffff",
       "decoration": "none",
-      "decorationThickness": 0,
       "fontFamily": "Roboto",
       "fontSize": 14,
       "fontWeight": "w500",
@@ -279,7 +277,7 @@
   "hintColor": "#99000000",
   "hoverColor": "#0a000000",
   "iconTheme": {
-    "color": "#ff000000"
+    "color": "#dd000000"
   },
   "indicatorColor": "#fff44336",
   "inputDecorationTheme": {

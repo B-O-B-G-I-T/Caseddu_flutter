@@ -1,14 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/global/payload.dart';
-
 import '../database/databasehelper.dart';
 import '../modeles/messages_model.dart';
-
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 
+// TODO peut etre cool d'utilisé le path_prvider pour le cache
 class Global extends ChangeNotifier {
   static String myName = '';
   List<Device> devices = [];

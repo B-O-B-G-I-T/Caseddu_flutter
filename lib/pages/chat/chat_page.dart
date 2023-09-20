@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/utils/fonctions.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:provider/provider.dart';
-
 import '../../global/global.dart';
 import '../../modeles/messages_model.dart';
 import '../../widget/P2P_widget/connection_button.dart';
@@ -41,8 +40,9 @@ class _ChatPageState extends State<ChatPage> {
 
   final ScrollController _scrollController = ScrollController();
 
-// TODO partage de fichiers et image
+// TODO partage de fichiers et image :: partilement fait un todo a ete creé
 // TODO création de groupe
+// TODO modifier le scroll car peut fonctionnelle problème avec les images bloqie le scroll et ne renvoie pas en bas de page
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +108,7 @@ class _ChatPageState extends State<ChatPage> {
                             itemCount: messageList.length,
 
                             itemBuilder: (BuildContext context, int index) {
+                              // début de la structure des messages
                               return IntrinsicHeight(
                                 child: Padding(
                                   padding: const EdgeInsets.all(4.0),
@@ -147,9 +148,11 @@ class _ChatPageState extends State<ChatPage> {
                                               // texte ou image
                                               messageList[index].typeMsg ==
                                                       'Image'
-                                                  ? Image.asset(
-                                                      messageList[index]
-                                                          .message)
+                                                  ? IntrinsicHeight(
+                                                      child: Image.asset(
+                                                          messageList[index]
+                                                              .message),
+                                                    )
                                                   : Text(
                                                       messageList[index]
                                                           .message,
@@ -158,6 +161,7 @@ class _ChatPageState extends State<ChatPage> {
                                                           color: Colors.black,
                                                           fontSize: 14),
                                                     ),
+                                              
                                             ],
                                           ),
                                         ),

@@ -63,7 +63,12 @@ dependencies:
   cloud_firestore: ^4.8.4
 
   # pour parcourir la galery 
-  image_picker: ^1.0.4
+  image_picker: ^0.8.4+5 
+  oktoast: ^3.3.1
+  # cool mais pas personnalisable
+  # photo_gallery: ^2.1.1
+  photo_manager: ^2.7.1
+  album_image: ^0.0.2+1
   
   # pour le peer to peer
   #impossible de faire marche instance deprecier 
@@ -76,7 +81,7 @@ dependencies:
   flutter_nearby_connections: ^1.1.1
 
   # pour le chat 
-  bubble: ^1.2.1
+  # bubble: ^1.2.1
   # pour les toasts messages informatif
   fluttertoast: ^8.2.2
   # database
