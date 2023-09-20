@@ -80,6 +80,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                         context.push('/ChatPage/${device.deviceName}');
                       },
                     ),
+                    
                     const Divider(
                       height: 1,
                       color: Colors.grey,
