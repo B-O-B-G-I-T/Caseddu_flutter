@@ -3,6 +3,7 @@ import 'package:flutter_application_1/presentation/chat/chat_page.dart';
 import 'package:flutter_application_1/presentation/login/login_screen.dart';
 import 'package:flutter_application_1/presentation/parameter_page/parameter_page.dart';
 import 'package:flutter_application_1/presentation/photo_pages/envoie_de_photo.dart';
+import 'package:flutter_application_1/presentation/photo_pages/prise_photo.dart';
 import 'package:flutter_application_1/widget/bottombar.dart';
 import 'package:go_router/go_router.dart';
 
@@ -73,15 +74,27 @@ class Routes {
         },
       ),
       GoRoute(
-        path: '/EnvoieDePhotoPage/:cheminImage',
+        path: '/EnvoieDePhotoPage',
+        name: 'EnvoieDePhotoPage',
         builder: (context, state) {
-          final String cheminImage =
-              state.pathParameters['cheminImage'].toString();
+          final String filePath =
+              state.extra.toString();
           return EnvoieDePhotoPage(
-            cheminVersImagePrise: cheminImage,
+            cheminVersImagePrise: filePath,
           );
         },
       ),
+      GoRoute(
+        path: '/PrisePhoto',
+        name: 'PrisePhoto',
+        builder: (context, state) {
+          String filePath =
+              state.extra.toString(); // -> le casting est important
+          return PrisePhoto(
+            lastImage: filePath,
+          );
+        },
+      )
     ],
   );
 

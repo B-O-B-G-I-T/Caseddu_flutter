@@ -21,7 +21,7 @@ class _GalerieWidgetState extends State<GalerieWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
     );
   }
 }

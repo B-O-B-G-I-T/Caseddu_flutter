@@ -51,6 +51,7 @@ dependencies:
   json_theme: ^4.0.0
   # pour la camera
   camera: ^0.10.5+2
+  image: ^4.0.17
   # pour les chemins les photi
   path_provider: ^2.0.15
   # loading
