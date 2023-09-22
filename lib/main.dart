@@ -23,7 +23,6 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     cameras = await availableCameras();
-    
   } on CameraException catch (e) {
     // ignore: avoid_print
     print('Error in fetching the cameras: $e');
@@ -34,7 +33,7 @@ void main() async {
   final themeJson = jsonDecode(themeStr);
   final theme = ThemeDecoder.decodeThemeData(themeJson)!;
 
-SystemChrome.setPreferredOrientations([
+  SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
 
@@ -56,8 +55,7 @@ SystemChrome.setPreferredOrientations([
         ChangeNotifierProvider(create: (_) => Global()),
         ChangeNotifierProvider(create: (context) => EventProvider())
       ],
-      child: 
-      MyApp(theme: theme, cameras: cameras),
+      child: MyApp(theme: theme, cameras: cameras),
     ),
   );
   // }

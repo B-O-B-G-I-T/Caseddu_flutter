@@ -21,6 +21,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   int _selecteCameraIndex = -1;
   String _lastImage = '';
   final bool _loading = false;
+  bool _flashFront = false;
 
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
@@ -29,6 +30,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   @override
   void initState() {
     _cameraToggle();
+
     super.initState();
   }
 
@@ -62,51 +64,64 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       extendBodyBehindAppBar: true,
       body: Container(
         color: Colors.black,
-        child: FutureBuilder(
-          future: initialiseControllerFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return Stack(
-                alignment: AlignmentDirectional.bottomStart,
-                children: [
-                  widget.cameras.isEmpty
-                      ? const Center(
-                          child: Text("pas de cameras"),
-                        )
-                      : cameraWidget(),
-
-                  // galerie
-                  Positioned(
-                    left: 20,
-                    bottom: 120,
-                    child: extraButton(
-                      onTap: () {},
-                      icon: Icons.photo_album_outlined,
-                    ),
+        child: Stack(
+          children: [
+            widget.cameras.isEmpty
+                ? const Center(
+                    child: Text("pas de cameras"),
+                  )
+                : FutureBuilder(
+                    future: initialiseControllerFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        return cameraWidget();
+                      }
+                      return const Center();
+                    },
                   ),
 
-                  // toggle
-                  Positioned(
-                    left: 120,
-                    bottom: 90,
-                    child: extraButton(
-                      icon: Icons.loop_outlined,
-                      onTap: _cameraToggle,
-                    ),
-                  ),
-                  Positioned(
-                    left: 100,
-                    bottom: 60,
-                    child: extraButton(
-                      icon: Icons.light_mode_outlined,
-                      onTap: _cameraToggle,
-                    ),
-                  ),
-                ],
-              );
-            }
-            return const Center();
-          },
+            flashFrontWidget(on: _flashFront),
+            // galerie
+            Positioned(
+              left: 20,
+              bottom: 120,
+              child: extraButton(
+                onTap: () {},
+                icon: Icons.photo_album_outlined,
+              ),
+            ),
+
+            // toggle
+            Positioned(
+              left: 120,
+              bottom: 90,
+              child: extraButton(
+                icon: Icons.loop_outlined,
+                onTap: _cameraToggle,
+              ),
+            ),
+            Positioned(
+              left: 100,
+              bottom: 40,
+              child: extraButton(
+                icon: Icons.light_mode_outlined,
+                onTap: () async {
+                  if (_selecteCameraIndex == 1) {
+                    setState(() {
+                      _flashFront = !_flashFront;
+                    });
+                  } else {
+                    if (_cameraController.value.flashMode == FlashMode.off ||
+                        _cameraController.value.flashMode == FlashMode.auto) {
+                      _cameraController.setFlashMode(FlashMode.torch);
+                    } else {
+                      _cameraController.setFlashMode(FlashMode.off);
+                    }
+                  }
+                },
+              ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: Container(
@@ -181,11 +196,15 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       if (_lastImage != '') {
         _lastImage = '';
       }
-      _selecteCameraIndex = _selecteCameraIndex > -1
-          ? _selecteCameraIndex == 0
-              ? 1
-              : 0
-          : 0;
+      if (_selecteCameraIndex > -1) {
+        if (_selecteCameraIndex == 0) {
+          _selecteCameraIndex = 1;
+        } else {
+          _selecteCameraIndex = 0;
+        }
+      } else {
+        _selecteCameraIndex = 0;
+      }
     });
 
     await initCamera(widget.cameras[_selecteCameraIndex]);
@@ -303,4 +322,14 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   //     print(e);
   //   }
   // }
+}
+
+// TODO: à ameliorer gerer l'opaticiter ou laisser une sphère au millieu
+Widget flashFrontWidget({required bool on}) {
+  return Visibility(
+    visible: on,
+    child: Container(
+      color: Color.fromARGB(150, 255, 255, 255),
+    ),
+  );
 }
