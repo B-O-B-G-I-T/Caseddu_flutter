@@ -78,7 +78,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen>
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        key: Global.scaffoldKey,
+        // key: Global.scaffoldKey,
         appBar: AppBar(
           toolbarHeight: 0,
           bottom: TabBar(

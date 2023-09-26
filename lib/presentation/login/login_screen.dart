@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -31,6 +33,7 @@ class _LoginPageState extends State<LoginPage> {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         // No user found with that email
+        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -50,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
         );
       } else if (e.code == 'wrong-password') {
         // Show a popup saying the password is incorrect
+        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -250,7 +254,7 @@ class _LoginPageState extends State<LoginPage> {
                                 //         "tranquile ça arrive ... patience"),
                                 //   ),
                                 // );
-                                context.push('/bottomBar');
+                                context.push('/');
                               } else {
                                 null;
                               }

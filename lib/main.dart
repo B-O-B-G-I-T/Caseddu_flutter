@@ -75,15 +75,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       routerConfig: Routes().router,
-      debugShowCheckedModeBanner: false, title: 'Caseddu ',
-      //ThemeData(
-      //   primaryColor: COULEUR_NOIR,
-      //   primarySwatch: COULEUR_swatch,
-      //   colorScheme: ColorScheme.fromSeed(
-      //       seedColor: const Color.fromARGB(255, 255, 131, 122)),
-      //   useMaterial3: true,
-      // ),
-      //home: const LoginControllerPage(),
+      debugShowCheckedModeBanner: false,
+      title: 'Caseddu ', 
       theme: theme,
     );
   }

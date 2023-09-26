@@ -32,6 +32,8 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     namespace "com.example.flutter_application_1"
+
+    // TODO: modifier pour que ce soit initialiser dans flutter
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 

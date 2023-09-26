@@ -9,13 +9,29 @@ import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 // TODO peut etre cool d'utilisé le path_prvider pour le cache
 class Global extends ChangeNotifier {
   static String myName = '';
-  List<Device> devices = [];
-  List<Device> connectedDevices = [];
+  List<Device> devices = [
+    Device('deviceId1', 'userTest1', 0),
+    Device('deviceId2', 'userTest2', 2)
+  ];
+  List<Device> connectedDevices = [Device('deviceId2', 'userTest2', 2)];
   static NearbyService? nearbyService;
   static Map<String, dynamic> cache = {};
-  static final GlobalKey<ScaffoldState> scaffoldKey =
-      GlobalKey<ScaffoldState>();
-  Map<String, Map<String, Msg>> conversations = {};
+  //static final GlobalKey<ScaffoldState> scaffoldKey =
+  //   GlobalKey<ScaffoldState>();
+  Map<String, Map<String, Msg>> conversations = {
+    'userTest1': {
+      'message1':
+          Msg('Bonjour', 'sent', DateTime.now().toString(), 'Payload', 'id1'),
+      'message2': Msg('Comment ça va ?', 'received', DateTime.now().toString(),
+          'Payload', 'id2'),
+    },
+    'userTest2': {
+      'message1':
+          Msg('Salut', 'sent', DateTime.now().toString(), 'Payload', 'id3'),
+      'message2': Msg('Quoi de neuf ?', 'received', DateTime.now().toString(),
+          'Payload', 'id4'),
+    },
+  };
 
   static StreamSubscription? deviceSubscription;
   static StreamSubscription? receivedDataSubscription;

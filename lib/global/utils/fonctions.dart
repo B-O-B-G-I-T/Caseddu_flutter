@@ -1,3 +1,4 @@
+import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:intl/intl.dart';
 
 class Utils {
@@ -46,6 +47,18 @@ class Utils {
     }
   }
 
-
-
+  static List<T> runFilter<T>(String enteredKeyword, List<T> listeAFiltre,
+      String Function(T) selector) {
+    List<T> results = [];
+    if (enteredKeyword.isEmpty) {
+      results = listeAFiltre;
+    } else {
+      results = listeAFiltre
+          .where((item) => selector(item)
+              .toLowerCase()
+              .contains(enteredKeyword.toLowerCase()))
+          .toList();
+    }
+    return results;
+  }
 }

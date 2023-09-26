@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/global/utils/fonctions.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -39,29 +40,17 @@ class _DevicesListPage extends State<DevicesListPage> {
     deviceApproximiteFilter = deviceApproximite;
   }
 
-  void _runFilter(String enteredKeyword) {
-    List<Device> results = [];
-    if (enteredKeyword.isEmpty) {
-      results = deviceApproximite;
-    } else {
-      results = deviceApproximite
-          .where((user) => user.deviceName
-              .toLowerCase()
-              .contains(enteredKeyword.toLowerCase()))
-          .toList();
-    }
-
-    setState(() {
-      deviceApproximiteFilter = results;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         SearchWidget(
-          onChanged: _runFilter,
+          onChanged: (value) {
+            setState(() {
+              deviceApproximiteFilter = Utils.runFilter(
+                  value, deviceApproximite, (device) => device.deviceName);
+            });
+          },
           searchController: _searchController,
         ),
 

@@ -49,28 +49,16 @@ class _ListeDesChatsPage extends State<ListeDesChatsPage> {
     conversersFiltre = conversers;
   }
 
-  void _runFilter(String enteredKeyword) {
-    List<String> results = [];
-    if (enteredKeyword.isEmpty) {
-      results = conversers;
-    } else {
-      results = conversers
-          .where((user) =>
-              user.toLowerCase().contains(enteredKeyword.toLowerCase()))
-          .toList();
-    }
-
-    setState(() {
-      conversersFiltre = results;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         SearchWidget(
-          onChanged: _runFilter,
+          onChanged: (value) {
+            setState(() {
+              conversersFiltre = Utils.runFilter(value, conversers, (p0) => p0);
+            });
+          },
           searchController: _searchController,
         ),
         Expanded(
