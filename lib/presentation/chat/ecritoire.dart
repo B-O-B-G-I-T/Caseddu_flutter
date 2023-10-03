@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/global/utils/fonctions.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -82,11 +83,6 @@ class _MessagePanelState extends State<MessagePanel> {
   }
 
   Widget sendImage() {
-    String imageToBase64String(File imageFile) {
-      final bytes = imageFile.readAsBytesSync();
-      return base64Encode(bytes);
-    }
-
     return IconButton(
         // l'action ouvre une itent pour selectionner et envoyer a la paire
         onPressed: () async {
@@ -109,7 +105,7 @@ class _MessagePanelState extends State<MessagePanel> {
               var msgId = nanoid(21);
 
               File file = File(path);
-              var imageTo64String = imageToBase64String(file);
+              var imageTo64String = Utils.imageToBase64String(file);
               var payload = Payload(msgId, Global.myName, widget.converser,
                   path, DateTime.now().toUtc().toString(), "Image");
 
@@ -117,7 +113,7 @@ class _MessagePanelState extends State<MessagePanel> {
               insertIntoMessageTable(payload);
 
               Provider.of<Global>(context, listen: false).sentToConversations(
-                  Msg(imageTo64String, "sent", payload.timestamp, "Image",
+                  Msg(imageTo64String, "sent", payload. timestamp, "Image",
                       msgId),
                   widget.converser,
                   isImage: path);
@@ -138,14 +134,6 @@ class _MessagePanelState extends State<MessagePanel> {
   Widget sendMessage() {
     return IconButton(
       onPressed: () {
-        var msgId = nanoid(21);
-
-        var payload = Payload(msgId, Global.myName, widget.converser,
-            myController.text, DateTime.now().toUtc().toString(), "Payload");
-
-        Global.cache[msgId] = payload;
-        insertIntoMessageTable(payload);
-
         if (widget.longDistance &&
             widget.device.state == SessionState.notConnected) {
           Fluttertoast.showToast(
@@ -157,11 +145,10 @@ class _MessagePanelState extends State<MessagePanel> {
               fontSize: 16.0);
         } else {
           if (myController.text != "") {
-            Provider.of<Global>(context, listen: false).sentToConversations(
-              Msg(myController.text, "sent", payload.timestamp, "Payload",
-                  msgId),
-              widget.converser,
-            );
+            Utils.envoieDeMessage(
+                destinataire: widget.converser,
+                message: myController.text,
+                context: context);
           }
         }
 

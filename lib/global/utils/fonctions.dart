@@ -1,5 +1,15 @@
-import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter_application_1/database/databasehelper.dart';
+import 'package:flutter_application_1/global/global.dart';
+import 'package:flutter_application_1/global/payload.dart';
+import 'package:flutter_application_1/modeles/messages_model.dart';
+import 'package:path/path.dart' show join;
 import 'package:intl/intl.dart';
+import 'package:nanoid/nanoid.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 
 class Utils {
   static String toDateTime(DateTime dateTime) {
@@ -60,5 +70,54 @@ class Utils {
           .toList();
     }
     return results;
+  }
+
+  static String imageToBase64String(File imageFile) {
+    final bytes = imageFile.readAsBytesSync();
+    return base64Encode(bytes);
+  }
+
+  static Future<File> base64StringToImage(String base64String) async {
+    final bytes = base64Decode(base64String);
+    final uniqueId = DateTime.now().millisecondsSinceEpoch;
+    String cheminVersImage = join(
+      (await getApplicationDocumentsDirectory()).path,
+      '$uniqueId.jpg',
+    );
+    File imageFile = File(cheminVersImage);
+    imageFile.writeAsBytesSync(bytes);
+    return imageFile;
+  }
+
+  static void envoieDeMessage(
+      {required String destinataire, required String message, context}) {
+    var msgId = nanoid(21);
+
+    var payload = Payload(msgId, Global.myName, destinataire, message,
+        DateTime.now().toUtc().toString(), "Payload");
+
+    Global.cache[msgId] = payload;
+    insertIntoMessageTable(payload);
+    Provider.of<Global>(context, listen: false).sentToConversations(
+      Msg(message, "sent", payload.timestamp, "Payload", msgId),
+      destinataire,
+    );
+  }
+
+  static void envoieDePhoto(
+      {required String destinataire, required String chemin, context}) {
+    var msgId = nanoid(21);
+    File file = File(chemin);
+    var imageTo64String = Utils.imageToBase64String(file);
+    var payload = Payload(msgId, Global.myName, destinataire, chemin,
+        DateTime.now().toUtc().toString(), "Image");
+
+    Global.cache[msgId] = payload;
+    insertIntoMessageTable(payload);
+
+    Provider.of<Global>(context, listen: false).sentToConversations(
+        Msg(imageTo64String, "sent", payload.timestamp, "Image", msgId),
+        destinataire,
+        isImage: chemin);
   }
 }

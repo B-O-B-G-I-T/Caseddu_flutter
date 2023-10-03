@@ -88,7 +88,9 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                           },
                         ),
 
+                  // fand blanc pour le flash Front
                   flashFrontWidget(on: _flashFront),
+
                   // galerie
                   Positioned(
                     left: 20,
@@ -108,6 +110,8 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                       onTap: _cameraToggle,
                     ),
                   ),
+
+                  // FLash
                   Positioned(
                     left: 120,
                     bottom: 30,
@@ -118,11 +122,14 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                             idCamera: _selecteCameraIndex,
                             camController: _cameraController);
                       },
-                      color: _cameraController.value.flashMode != FlashMode.auto
-                          ? const Color.fromARGB(180, 255, 255, 255)
-                          : const Color.fromARGB(180, 255, 235, 59),
+                      color:
+                          _cameraController.value.flashMode != FlashMode.torch
+                              ? const Color.fromARGB(180, 255, 255, 255)
+                              : const Color.fromARGB(180, 255, 235, 59),
                     ),
                   ),
+
+                  // FLASH AUTO
                   Positioned(
                     left: 60,
                     bottom: 30,
@@ -183,7 +190,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       await initialiseControllerFuture;
 
       String cheminVersImage = join(
-        (await getTemporaryDirectory()).path,
+        (await getApplicationDocumentsDirectory()).path,
         '${DateTime.now().millisecondsSinceEpoch}.jpg',
       );
 

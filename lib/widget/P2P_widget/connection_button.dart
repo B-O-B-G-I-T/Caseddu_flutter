@@ -28,7 +28,6 @@ class ConnectionButton extends StatelessWidget {
             // to connect/disconnect with any device
             onTap: () {
               connectToDevice(device);
-              
             },
             child: Container(
               margin:

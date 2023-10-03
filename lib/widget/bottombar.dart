@@ -15,7 +15,7 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
-  int _selectedIndex = 0; //New
+  int _selectedIndex = 0;
   // TODO voir la camera si on la passe en provider
   //late CameraController _controller;
   late Future<void> initialiseControllerFuture;
@@ -35,6 +35,21 @@ class _BottomBarState extends State<BottomBar> {
     const CalendarViewingPage(),
   ];
 
+  Widget _pages2() {
+    switch (_selectedIndex) {
+      case 0:
+        return MenuPage();
+      case 1:
+        return CameraPage(
+          cameras: cameras,
+        );
+      case 2:
+        return const ChatHomeScreen();
+      default:
+        return const CalendarViewingPage();
+    }
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -44,71 +59,6 @@ class _BottomBarState extends State<BottomBar> {
   @override
   Widget build(BuildContext context) {
     return _selectedIndex == 0 ? myAppBar2() : justBottomBar();
-  }
-
-// appbar custom
-  Widget myAppBar2() {
-    return Scaffold(
-      //appBar: const MyAppBar(),
-      body: NestedScrollView(
-        floatHeaderSlivers: true,
-        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-          return <Widget>[
-            SliverAppBar(
-              floating: true,
-              snap: true,
-              leadingWidth: 100,
-
-              leading: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.black,
-                      child: IconButton(
-                          color: Colors.white,
-                          icon: const Icon(Icons.account_circle_outlined),
-                          onPressed: () {
-                            // Obtenir une référence à l'instance de GoRouter
-                            final router = GoRouter.of(context);
-                            // Naviguer vers la page des paramètres
-                            router.push('/parameter');
-                          }),
-                    ),
-                    Text(
-                      _utilisateur.displayName!,
-                      style: const TextStyle(color: Colors.black),
-                    )
-                  ],
-                ),
-              ),
-
-              actions: const [
-                Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.black,
-                    child: IconButton(
-                      icon: Icon(
-                        Icons.zoom_in_map_rounded,
-                      ),
-                      onPressed: null,
-                    ),
-                  ),
-                ),
-              ],
-              //c'est cool si pas centrer
-              centerTitle: true,
-            ),
-          ];
-        },
-        body: IndexedStack(
-          index: _selectedIndex,
-          children: _pages,
-        ),
-      ),
-      bottomNavigationBar: buildBottomBar(context),
-    );
   }
 
   Widget justBottomBar() {
@@ -121,11 +71,72 @@ class _BottomBarState extends State<BottomBar> {
     );
   }
 
+// appbar custom
+  Widget myAppBar2() {
+    return Scaffold(
+      body: NestedScrollView(
+          floatHeaderSlivers: true,
+          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+            return <Widget>[
+              SliverAppBar(
+                floating: true,
+                snap: true,
+                leadingWidth: 100,
+                leading: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.black,
+                        child: IconButton(
+                            color: Colors.white,
+                            icon: const Icon(Icons.account_circle_outlined),
+                            onPressed: () {
+                              // Obtenir une référence à l'instance de GoRouter
+                              final router = GoRouter.of(context);
+                              // Naviguer vers la page des paramètres
+                              router.push('/parameter');
+                            }),
+                      ),
+                      Text(
+                        _utilisateur.displayName!,
+                        style: const TextStyle(color: Colors.black),
+                      )
+                    ],
+                  ),
+                ),
+
+                actions: const [
+                  Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.black,
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.zoom_in_map_rounded,
+                        ),
+                        onPressed: null,
+                      ),
+                    ),
+                  ),
+                ],
+                //c'est cool si pas centrer
+                centerTitle: true,
+              ),
+            ];
+          },
+          body: _pages2()),
+      bottomNavigationBar: buildBottomBar(context),
+    );
+  }
+
   Widget buildBottomBar(BuildContext context) {
-    return SizedBox(
+    return Container(
+      color: Theme.of(context).primaryColor,
       height: 70,
       child: Wrap(children: [
         BottomNavigationBar(
+          elevation: 0,
           showSelectedLabels: false,
           showUnselectedLabels: false,
           items: const <BottomNavigationBarItem>[

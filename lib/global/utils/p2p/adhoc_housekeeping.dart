@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/global/utils/fonctions.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -36,13 +37,6 @@ String getButtonStateName(Device device) {
     case SessionState.connecting:
       return "Connecting";
     default:
-      Fluttertoast.showToast(
-          msg: '${device.deviceName.toString()} connected',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.TOP,
-          timeInSecForIosWeb: 10,
-          backgroundColor: Colors.blue,
-          fontSize: 16.0);
       return "Disconnect";
   }
 }
@@ -123,13 +117,6 @@ Future connectToDevice(Device device) async {
     case SessionState.connected:
       await Global.nearbyService!.disconnectPeer(deviceID: device.deviceId);
 
-      // Fluttertoast.showToast(
-      //     msg: '${device.deviceName.toString()} disconnected',
-      //     toastLength: Toast.LENGTH_LONG,
-      //     gravity: ToastGravity.TOP,
-      //     timeInSecForIosWeb: 10,
-      //     backgroundColor: Colors.red,
-      //     fontSize: 16.0);
       break;
     case SessionState.connecting:
       break;
@@ -233,10 +220,6 @@ void checkDevices(BuildContext context) {
   Global.deviceSubscription =
       Global.nearbyService!.stateChangedSubscription(callback: (devicesList) {
     for (var element in devicesList) {
-      //if (element.state != SessionState.connected) connectToDevice(element);
-      //print(
-      //    "deviceId: ${element.deviceId} | deviceName: ${element.deviceName} | state: ${element.state}");
-
       if (Platform.isAndroid) {
         if (element.state == SessionState.connected) {
           Global.nearbyService!.stopBrowsingForPeers();
@@ -245,21 +228,12 @@ void checkDevices(BuildContext context) {
         }
       }
     }
+
     Provider.of<Global>(context, listen: false).updateDevices(devicesList);
     Provider.of<Global>(context, listen: false).updateConnectedDevices(
         devicesList.where((d) => d.state == SessionState.connected).toList());
     //log('Devices length: ${devicesList.length}');
   });
-}
-
-File base64StringToImage(String base64String) {
-  final bytes = base64Decode(base64String);
-  final uniqueId = DateTime.now().millisecondsSinceEpoch;
-  final path =
-      '/Users/bobsmac/Desktop/Caseddu_flutter/conversation_images/$uniqueId.png';
-  File imageFile = File(path);
-  imageFile.writeAsBytesSync(bytes);
-  return imageFile;
 }
 
 // The the protocol service. It receives the messages from the
@@ -269,9 +243,10 @@ void init(BuildContext context) async {
   checkDevices(context);
   //broadcastLastMessageID(context);
   Global.receivedDataSubscription =
-      Global.nearbyService!.dataReceivedSubscription(callback: (data) {
+      Global.nearbyService!.dataReceivedSubscription(callback: (data) async {
     var decodedMessage = jsonDecode(data['message']);
     Payload? payload;
+
     // if (decodedMessage["type"] == "Update") {
     //   //log("Update Message ${decodedMessage["id"]}");
     //   String sentDeviceName = decodedMessage["sender"];
@@ -281,6 +256,16 @@ void init(BuildContext context) async {
     //     context: context,
     //   );
     // }
+// gère les invitations
+    if (decodedMessage == "Invitation") {
+      //log("Update Message ${decodedMessage["id"]}");
+      String sentDeviceName = decodedMessage["sender"];
+      compareMessageId(
+        receivedId: decodedMessage["id"],
+        sentDeviceName: sentDeviceName,
+        context: context,
+      );
+    }
 
     if (Global.cache.containsKey(decodedMessage["id"]) == false) {
       if (decodedMessage["type"].toString() == 'Payload') {
@@ -296,7 +281,8 @@ void init(BuildContext context) async {
         insertIntoMessageTable(payload);
         // gestion de la récupération des photos
       } else if (decodedMessage["type"].toString() == 'Image') {
-        File imageStocke = base64StringToImage(decodedMessage['message']);
+        File imageStocke =
+            await Utils.base64StringToImage(decodedMessage['message']);
         payload = Payload(
             decodedMessage["id"],
             decodedMessage['sender'],

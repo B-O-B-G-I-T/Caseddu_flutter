@@ -40,8 +40,10 @@ void main() async {
   if (Platform.isAndroid) {
     WidgetsFlutterBinding.ensureInitialized();
     [
-      Permission.location,
+      Permission.camera,
+      Permission.microphone,
       Permission.storage,
+      Permission.location,
       Permission.bluetooth,
       Permission.bluetoothConnect,
       Permission.bluetoothScan,
@@ -76,7 +78,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       routerConfig: Routes().router,
       debugShowCheckedModeBanner: false,
-      title: 'Caseddu ', 
+      title: 'Caseddu ',
       theme: theme,
     );
   }
