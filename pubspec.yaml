@@ -64,7 +64,7 @@ dependencies:
   cloud_firestore: ^4.8.4
 
   # pour la google auth
-  google_sign_in: ^6.1.5
+  #google_sign_in: ^6.1.5
 
   # pour parcourir la galery 
   image_picker: ^0.8.4+5 
