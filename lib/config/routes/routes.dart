@@ -1,14 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application_1/features/auth/presentation/pages/login_screen.dart';
+import 'package:flutter_application_1/features/auth/presentation/pages/register_screen.dart';
+import 'package:flutter_application_1/features/authentification/presentation/pages/oubli_mot_de_passe.dart';
 import 'package:flutter_application_1/presentation/chat/chat_page.dart';
-import 'package:flutter_application_1/presentation/login/login_screen.dart';
 import 'package:flutter_application_1/presentation/parameter_page/parameter_page.dart';
 import 'package:flutter_application_1/presentation/photo_pages/envoie_de_photo.dart';
 import 'package:flutter_application_1/presentation/photo_pages/prise_photo.dart';
 import 'package:flutter_application_1/widget/bottombar.dart';
 import 'package:go_router/go_router.dart';
-
-import '../presentation/login/oubli_mot_de_passe.dart';
-import '../presentation/login/register_screen.dart';
+import 'package:provider/provider.dart';
 
 // doc officiel : https://docs.flutter.dev/ui/navigation
 // doc du package : https://pub.dev/documentation/go_router/latest/topics/Get%20started-topic.html
@@ -21,9 +21,10 @@ class Routes {
     initialLocation: '/',
     //redige la ou l'on veut
     redirect: (context, state) {
-      if (FirebaseAuth.instance.currentUser == null &&
-          state.matchedLocation != '/enroler' &&
-          state.matchedLocation != '/oubliMotDePasse') {
+      final user = Provider.of<User?>(context, listen: false);
+
+      // ignore: unnecessary_null_comparison
+      if (user == null && state.matchedLocation != '/enroler' && state.matchedLocation != '/oubliMotDePasse') {
         return '/login';
       } else {
         return null;
@@ -36,13 +37,13 @@ class Routes {
       GoRoute(
         path: '/login',
         builder: (context, state) {
-          return const LoginPage();
+          return const LoginPage2();
         },
       ),
       GoRoute(
         path: '/enroler',
         builder: (context, state) {
-          return const RegisterPage();
+          return const RegisterPage2();
         },
       ),
       GoRoute(
@@ -66,8 +67,7 @@ class Routes {
       GoRoute(
         path: '/ChatPage/:deviceName',
         builder: (context, state) {
-          final String deviceName =
-              state.pathParameters['deviceName'].toString();
+          final String deviceName = state.pathParameters['deviceName'].toString();
           return ChatPage(
             converser: deviceName,
           );
@@ -77,8 +77,7 @@ class Routes {
         path: '/EnvoieDePhotoPage',
         name: 'EnvoieDePhotoPage',
         builder: (context, state) {
-          final String filePath =
-              state.extra.toString();
+          final String filePath = state.extra.toString();
           return EnvoieDePhotoPage(
             cheminVersImagePrise: filePath,
           );
@@ -88,8 +87,7 @@ class Routes {
         path: '/PrisePhoto',
         name: 'PrisePhoto',
         builder: (context, state) {
-          String filePath =
-              state.extra.toString(); // -> le casting est important
+          String filePath = state.extra.toString(); // -> le casting est important
           return PrisePhoto(
             lastImage: filePath,
           );

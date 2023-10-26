@@ -17,7 +17,11 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+  @override
+  void initState() {
 
+    super.initState();
+  }
   Future<bool> signIn() async {
     // await FirebaseAuth.instance.signInWithEmailAndPassword(
     //   email: _nomController.text.trim(),
@@ -33,7 +37,6 @@ class _LoginPageState extends State<LoginPage> {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         // No user found with that email
-        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -53,7 +56,6 @@ class _LoginPageState extends State<LoginPage> {
         );
       } else if (e.code == 'wrong-password') {
         // Show a popup saying the password is incorrect
-        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -149,9 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                             if (value == null || value.isEmpty) {
                               return 'Entre ton email';
                             }
-                            bool emailValid = RegExp(
-                                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                .hasMatch(value);
+                            bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value);
                             if (!emailValid) {
                               return 'Entre ton email valide';
                             }
@@ -226,8 +226,7 @@ class _LoginPageState extends State<LoginPage> {
 
                   //BOUTTON CLICK
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
                     child: ElevatedButton(
                       child: const SizedBox(
                         height: 50,
@@ -256,7 +255,64 @@ class _LoginPageState extends State<LoginPage> {
                                 // );
                                 context.push('/');
                               } else {
-                                null;
+                                if (value == 'user-not-found') {
+                                  // No user found with that email
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Petit voyou'),
+                                        content: const Text('Rentre les bons identifiants.'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: const Text('OK'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                } else if (value == 'wrong-password') {
+                                  // Show a popup saying the password is incorrect
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Loupé'),
+                                        content: const Text('Rentre les bons identifiants.'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: const Text('OK'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                } else if (value == 'invalid-email') {
+                                  // Show a popup saying the password is incorrect
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Met au moins quelque chose de correct'),
+                                        content: const Text('Rentre les bons identifiants.'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: const Text('OK'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }
                               }
                             },
                           );

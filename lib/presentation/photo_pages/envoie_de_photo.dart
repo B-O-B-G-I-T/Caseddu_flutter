@@ -1,15 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/database/databasehelper.dart';
-import 'package:flutter_application_1/global/payload.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nanoid/nanoid.dart';
 import 'package:provider/provider.dart';
 import '../../global/global.dart';
 import '../../modeles/messages_model.dart';
-import '../../global/utils/p2p/adhoc_housekeeping.dart';
-import '../../global/utils/fonctions.dart';
+import '../../core/utils/p2p/adhoc_housekeeping.dart';
+import '../../core/utils/fonctions.dart';
 import '../../widget/P2P_widget/search_widget.dart';
 
 // TODO faire de faux device et de fausse conversation pour continué

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/global/utils/fonctions.dart';
+import 'package:flutter_application_1/core/utils/fonctions.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../global/global.dart';
-import '../../global/utils/p2p/adhoc_housekeeping.dart';
+import '../../core/utils/p2p/adhoc_housekeeping.dart';
 import '../../widget/P2P_widget/search_widget.dart';
 import 'chat_page.dart';
 

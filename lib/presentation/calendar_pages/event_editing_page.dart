@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/provider/event_provider.dart';
-import 'package:flutter_application_1/global/utils/fonctions.dart';
+import 'package:flutter_application_1/core/utils/fonctions.dart';
 import 'package:provider/provider.dart';
 import '../../modeles/event.dart';
 
