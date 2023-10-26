@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../../features/auth/presentation/pages/login_screen.dart';
 import '../../features/auth/presentation/pages/oubli_mot_de_passe.dart';
 import '../../features/auth/presentation/pages/register_screen.dart';

@@ -3,7 +3,7 @@ import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
-import '../../../../core/utils/p2p_utils.dart';
+import '../../../../core/utils/p2p/p2p_utils.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/P2P_widget/search_widget.dart';
 import 'chat_page.dart';

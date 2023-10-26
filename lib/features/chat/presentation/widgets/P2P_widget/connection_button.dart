@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../core/utils/p2p_utils.dart';
+import '../../../../../core/utils/p2p/p2p_utils.dart';
 import '../../providers/chat_provider.dart';
 
 class ConnectionButton extends StatelessWidget {
