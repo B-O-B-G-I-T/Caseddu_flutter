@@ -70,7 +70,6 @@ void main() async {
     // });
   } // else {
   runApp(
-    
     MultiProvider(
       providers: [
         Provider<AuthentificationRemoteDataSourceImpl>(
