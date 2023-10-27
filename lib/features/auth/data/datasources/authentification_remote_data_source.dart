@@ -14,6 +14,8 @@ class AuthentificationRemoteDataSourceImpl implements AuthentificationRemoteData
 
   AuthentificationRemoteDataSourceImpl({required this.firebaseAuth});
 
+  Stream<User?> get authStateChange => firebaseAuth.authStateChanges();
+
   @override
   Future<AuthentificationModel> getAuthentification({required AuthentificationParams authentificationParams}) async {
     try {
@@ -23,12 +25,8 @@ class AuthentificationRemoteDataSourceImpl implements AuthentificationRemoteData
       );
 
       return AuthentificationModel.fromJson(user: response.user!);
-    } on FirebaseException catch (e) {
-      print(e);
+    } on FirebaseAuthException catch (e) {
       throw FireBaseException(errMessage: e.code);
-    } catch (e) {
-      print(e);
-      throw e;
     }
   }
 

@@ -240,23 +240,30 @@ class _LoginPageState extends State<LoginPage2> {
                           ),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         if (_formKey.currentState!.validate()) {
                           // AuthentificationEntity? authentificationProvider = Provider.of<AuthentificationProvider>(context).authentification;
                           final String email = _emailController.text.trim();
                           final String password = _passwordController.text.trim();
 
-                            AuthentificationProvider a = Provider.of<AuthentificationProvider>(context, listen: false);
-                          
-                            a.eitherFailureOrAuthentification(email, password);
+                          AuthentificationProvider a = Provider.of<AuthentificationProvider>(context, listen: false);
 
-                            if (a.authentification != null) {
-                              context.push('/');
-                            } else {
-                              fireBaseError(context, "Connection", a.failure!.errorMessage);
-                              _emailController.clear();
-                              _passwordController.clear();
-                            }
+                          await a.eitherFailureOrAuthentification(email, password);
+
+                          if (a.authentification != null) {
+                            context.push('/');
+                          } else if (a.failure?.errorMessage != null) {
+                            fireBaseError(context, "Connection", a.failure!.errorMessage);
+                            _emailController.clear();
+                            _passwordController.clear();
+                          } else {
+                            const AlertDialog(
+                              title: Text('Veuillez patienter...'),
+                              content: Center(
+                                child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator()),
+                              ),
+                            );
+                          }
                         }
                       },
                     ),

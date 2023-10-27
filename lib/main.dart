@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/features/auth/data/datasources/authentification_remote_data_source.dart';
 import 'package:flutter_application_1/features/auth/presentation/providers/authentification_provider.dart';
 import 'package:flutter_application_1/features/authentification/data/data_source/auth_data_remote.dart';
 import 'package:flutter_application_1/global/global.dart';
@@ -34,7 +35,7 @@ void main() async {
   final themeStr = await rootBundle.loadString('assets/theme/appainter_theme.json');
   final themeJson = jsonDecode(themeStr);
   final theme = ThemeDecoder.decodeThemeData(themeJson)!;
-
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
@@ -54,15 +55,16 @@ void main() async {
     });
   } else {} // else {
   runApp(
+    
     MultiProvider(
       providers: [
-        Provider<AuthDataRemote>(create: (_) => AuthDataRemote(firebaseAuth: FirebaseAuth.instance)),
+        Provider<AuthentificationRemoteDataSourceImpl>(create: (_) => AuthentificationRemoteDataSourceImpl(firebaseAuth: firebaseAuth)),
         StreamProvider(
-          create: (context) => context.read<AuthDataRemote>().authStateChange,
-          initialData: null,
+          create: (context) => context.read<AuthentificationRemoteDataSourceImpl>().authStateChange,
+          initialData: firebaseAuth.currentUser,
         ),
         ChangeNotifierProvider(
-          create: (context) => AuthentificationProvider(),
+          create: (context) => AuthentificationProvider(firebaseAuth: firebaseAuth),
         ),
         ChangeNotifierProvider(create: (_) => Global()),
         ChangeNotifierProvider(create: (context) => EventProvider())
