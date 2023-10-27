@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter_application_1/features/auth/business/entities/register_entity.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
 import '../entities/authentification_entity.dart';
@@ -16,9 +15,16 @@ class GetAuthentification {
     return await authentificationRepository.getAuthentification(authentificationParams: authentificationParams);
   }
 
-  Future<Either<Failure, RegisterEntity>> create({
-    required RegisterParams registerParams,
+  Future<Either<Failure, AuthentificationEntity>> create({
+    required AuthentificationParams authentificationParams,
   }) async {
-    return await authentificationRepository.createUser(registerParams: registerParams);
+    return await authentificationRepository.createUser(authentificationParams: authentificationParams);
+  }
+
+  Future<Either<Failure, void>> changeMotDePasse({
+    required AuthentificationParams authentificationParams,
+  }) async {
+    return await authentificationRepository.changeMotDePasse(authentificationParams: authentificationParams);
+    
   }
 }

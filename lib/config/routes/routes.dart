@@ -1,8 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_application_1/features/auth/data/datasources/authentification_remote_data_source.dart';
 import 'package:flutter_application_1/features/auth/presentation/pages/login_screen.dart';
+import 'package:flutter_application_1/features/auth/presentation/pages/oubli_mot_de_passe.dart';
 import 'package:flutter_application_1/features/auth/presentation/pages/register_screen.dart';
-import 'package:flutter_application_1/features/authentification/presentation/pages/oubli_mot_de_passe.dart';
 import 'package:flutter_application_1/presentation/chat/chat_page.dart';
 import 'package:flutter_application_1/presentation/parameter_page/parameter_page.dart';
 import 'package:flutter_application_1/presentation/photo_pages/envoie_de_photo.dart';
@@ -38,19 +37,19 @@ class Routes {
       GoRoute(
         path: '/login',
         builder: (context, state) {
-          return const LoginPage2();
+          return const LoginPage();
         },
       ),
       GoRoute(
         path: '/enroler',
         builder: (context, state) {
-          return const RegisterPage2();
+          return const RegisterPage();
         },
       ),
       GoRoute(
         path: '/oubliMotDePasse',
         builder: (context, state) {
-          return const OubliMotDePasseScreen();
+          return const OubliMotDePassePage();
         },
       ),
       GoRoute(

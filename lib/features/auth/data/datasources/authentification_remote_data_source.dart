@@ -1,12 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_application_1/features/auth/data/models/register_model.dart';
-import '../../../../../core/errors/exceptions.dart';
+import '../../../../core/errors/firebase_exceptions.dart';
 import '../../../../../core/params/params.dart';
 import '../models/authentification_model.dart';
 
 abstract class AuthentificationRemoteDataSource {
   Future<AuthentificationModel> getAuthentification({required AuthentificationParams authentificationParams});
-  Future<RegisterModel> createUser({required RegisterParams registerParams});
+  Future<AuthentificationModel> createUser({required AuthentificationParams authentificationParams});
+  Future<void> changeMotDePasse({required AuthentificationParams authentificationParams});
 }
 
 class AuthentificationRemoteDataSourceImpl implements AuthentificationRemoteDataSource {
@@ -21,7 +21,7 @@ class AuthentificationRemoteDataSourceImpl implements AuthentificationRemoteData
     try {
       final response = await firebaseAuth.signInWithEmailAndPassword(
         email: authentificationParams.email,
-        password: authentificationParams.password,
+        password: authentificationParams.password!,
       );
 
       return AuthentificationModel.fromJson(user: response.user!);
@@ -31,26 +31,35 @@ class AuthentificationRemoteDataSourceImpl implements AuthentificationRemoteData
   }
 
   @override
-  Future<RegisterModel> createUser({required RegisterParams registerParams}) async {
+  Future<AuthentificationModel> createUser({required AuthentificationParams authentificationParams}) async {
     try {
-      if (registerParams.confirmPassword == registerParams.password) {
-        UserCredential result = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: registerParams.email, password: registerParams.password);
+      if (authentificationParams.confirmPassword == authentificationParams.password) {
+        UserCredential result = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: authentificationParams.email, password: authentificationParams.password!);
 
         User? user = result.user;
-        user?.updateDisplayName(registerParams.pseudo);
+        user?.updateDisplayName(authentificationParams.pseudo);
         //user?.updatePhoneNumber(phone);
-        return RegisterModel.fromJson(user: user!);
+        return AuthentificationModel.fromJson(user: user!);
       } else {
-        throw Exception("l'utilisateur ne peut pas etre créé");
+        throw Exception("L'utilisateur ne peut pas etre créé");
       }
     } on FirebaseAuthException catch (e) {
-      print(e.code);
+      // print(e.code);
       throw FireBaseException(errMessage: e.code);
     }
   }
-  // if (response == 200) {
-  //   return AuthentificationModel.fromJson(json: response.data);
-  // } else {
-  //   throw ServerException();
-  // }
+  
+  @override
+  Future<void> changeMotDePasse({required AuthentificationParams authentificationParams}) async {
+    try {
+      await FirebaseAuth.instance
+          .sendPasswordResetEmail(email: authentificationParams.email);
+          
+    } on FirebaseAuthException catch (e) {
+      // print(e);
+      throw FireBaseException(errMessage: e.code);
+    }
+  
+  }
+
 }

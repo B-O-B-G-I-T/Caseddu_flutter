@@ -1,18 +1,19 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/errors/widgets/attente_widget.dart';
 import 'package:flutter_application_1/core/errors/widgets/firebase_error.dart';
 import 'package:flutter_application_1/features/auth/presentation/providers/authentification_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-class LoginPage2 extends StatefulWidget {
-  const LoginPage2({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<LoginPage2> createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage2> {
+class _LoginPageState extends State<LoginPage> {
   // tous les controllers
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -22,80 +23,6 @@ class _LoginPageState extends State<LoginPage2> {
   void initState() {
     super.initState();
   }
-  // Future<bool> signIn() async {
-  //   // await FirebaseAuth.instance.signInWithEmailAndPassword(
-  //   //   email: _nomController.text.trim(),
-  //   //   password: _passwordController.text.trim(),
-  //   // );
-
-  //   try {
-  //     await FirebaseAuth.instance.signInWithEmailAndPassword(
-  //       email: _emailController.text.trim(),
-  //       password: _passwordController.text.trim(),
-  //     );
-  //     return true;
-  //   } on FirebaseAuthException catch (e) {
-  //     if (e.code == 'user-not-found') {
-  //       // No user found with that email
-  //       showDialog(
-  //         context: context,
-  //         builder: (BuildContext context) {
-  //           return AlertDialog(
-  //             title: const Text('Petit voyou'),
-  //             content: const Text('Rentre les bons identifiants.'),
-  //             actions: <Widget>[
-  //               TextButton(
-  //                 child: const Text('OK'),
-  //                 onPressed: () {
-  //                   Navigator.of(context).pop();
-  //                 },
-  //               ),
-  //             ],
-  //           );
-  //         },
-  //       );
-  //     } else if (e.code == 'wrong-password') {
-  //       // Show a popup saying the password is incorrect
-  //       showDialog(
-  //         context: context,
-  //         builder: (BuildContext context) {
-  //           return AlertDialog(
-  //             title: const Text('Loupé'),
-  //             content: const Text('Rentre les bons identifiants.'),
-  //             actions: <Widget>[
-  //               TextButton(
-  //                 child: const Text('OK'),
-  //                 onPressed: () {
-  //                   Navigator.of(context).pop();
-  //                 },
-  //               ),
-  //             ],
-  //           );
-  //         },
-  //       );
-  //     } else if (e.code == 'invalid-email') {
-  //       // Show a popup saying the password is incorrect
-  //       showDialog(
-  //         context: context,
-  //         builder: (BuildContext context) {
-  //           return AlertDialog(
-  //             title: const Text('Met au moins quelque chose de correct'),
-  //             content: const Text('Rentre les bons identifiants.'),
-  //             actions: <Widget>[
-  //               TextButton(
-  //                 child: const Text('OK'),
-  //                 onPressed: () {
-  //                   Navigator.of(context).pop();
-  //                 },
-  //               ),
-  //             ],
-  //           );
-  //         },
-  //       );
-  //     }
-  //     return false;
-  //   }
-  // }
 
   @override
   void dispose() {
@@ -242,27 +169,23 @@ class _LoginPageState extends State<LoginPage2> {
                       ),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                          // AuthentificationEntity? authentificationProvider = Provider.of<AuthentificationProvider>(context).authentification;
                           final String email = _emailController.text.trim();
                           final String password = _passwordController.text.trim();
 
-                          AuthentificationProvider a = Provider.of<AuthentificationProvider>(context, listen: false);
+                          AuthentificationProvider authentificationProvider = Provider.of<AuthentificationProvider>(context, listen: false);
 
-                          await a.eitherFailureOrAuthentification(email, password);
+                          AttenteWidget(context);
 
-                          if (a.authentification != null) {
+                          await authentificationProvider.eitherFailureOrAuthentification(email, password);
+
+                          context.pop(); // Ferme la boîte de dialogue
+
+                          if (authentificationProvider.authentification != null) {
                             context.push('/');
-                          } else if (a.failure?.errorMessage != null) {
-                            fireBaseError(context, "Connection", a.failure!.errorMessage);
+                          } else if (authentificationProvider.failure?.errorMessage != null) {
+                            fireBaseError(context, "Error", authentificationProvider.failure!.errorMessage);
                             _emailController.clear();
                             _passwordController.clear();
-                          } else {
-                            const AlertDialog(
-                              title: Text('Veuillez patienter...'),
-                              content: Center(
-                                child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator()),
-                              ),
-                            );
                           }
                         }
                       },
