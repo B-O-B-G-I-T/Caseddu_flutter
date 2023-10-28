@@ -15,3 +15,5 @@ int maxPokemonId = 1008;
 String kEmail = "email";
 String kPassword = "password";
 String kNumero = "numero";
+
+String kParametre = "parametrte";

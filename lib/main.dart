@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/features/parametre/presentation/providers/parametre_provider.dart';
 import 'package:flutter_application_1/features/auth/data/datasources/authentification_remote_data_source.dart';
 import 'package:flutter_application_1/features/auth/presentation/providers/authentification_provider.dart';
 import 'package:flutter_application_1/global/global.dart';
@@ -34,7 +36,10 @@ void main() async {
   final themeStr = await rootBundle.loadString('assets/theme/appainter_theme.json');
   final themeJson = jsonDecode(themeStr);
   final theme = ThemeDecoder.decodeThemeData(themeJson)!;
+
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
+   
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
@@ -56,13 +61,16 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        Provider<AuthentificationRemoteDataSourceImpl>(create: (_) => AuthentificationRemoteDataSourceImpl(firebaseAuth: firebaseAuth)),
+        Provider<AuthentificationRemoteDataSourceImpl>(create: (_) => AuthentificationRemoteDataSourceImpl(firebaseAuth: firebaseAuth,)),
         StreamProvider(
           create: (context) => context.read<AuthentificationRemoteDataSourceImpl>().authStateChange,
           initialData: firebaseAuth.currentUser,
         ),
         ChangeNotifierProvider(
           create: (context) => AuthentificationProvider(firebaseAuth: firebaseAuth),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ParametreProvider(),
         ),
         ChangeNotifierProvider(create: (_) => Global()),
         ChangeNotifierProvider(create: (context) => EventProvider())

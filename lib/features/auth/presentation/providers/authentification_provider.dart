@@ -1,5 +1,7 @@
+import 'package:data_connection_checker_tv/data_connection_checker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/connection/network_info.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
 import '../../domain/entities/authentification_entity.dart';
@@ -19,6 +21,9 @@ class AuthentificationProvider extends ChangeNotifier {
     AuthentificationRepositoryImpl repository = AuthentificationRepositoryImpl(
       remoteDataSource: AuthentificationRemoteDataSourceImpl(
         firebaseAuth: FirebaseAuth.instance,
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
       ),
     );
 
@@ -47,6 +52,8 @@ class AuthentificationProvider extends ChangeNotifier {
     AuthentificationRepositoryImpl repository = AuthentificationRepositoryImpl(
       remoteDataSource: AuthentificationRemoteDataSourceImpl(
         firebaseAuth: FirebaseAuth.instance,
+      ), networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
       ),
     );
 
@@ -74,10 +81,14 @@ class AuthentificationProvider extends ChangeNotifier {
     );
   }
 
-  Future eitherFailureOrPasswordChange(String email,) async {
+  Future eitherFailureOrPasswordChange(
+    String email,
+  ) async {
     AuthentificationRepositoryImpl repository = AuthentificationRepositoryImpl(
       remoteDataSource: AuthentificationRemoteDataSourceImpl(
         firebaseAuth: FirebaseAuth.instance,
+      ), networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
       ),
     );
 

@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application_1/features/parametre/presentation/pages/parameter_page.dart';
 import 'package:flutter_application_1/features/auth/presentation/pages/login_screen.dart';
 import 'package:flutter_application_1/features/auth/presentation/pages/oubli_mot_de_passe.dart';
 import 'package:flutter_application_1/features/auth/presentation/pages/register_screen.dart';
 import 'package:flutter_application_1/presentation/chat/chat_page.dart';
-import 'package:flutter_application_1/presentation/parameter_page/parameter_page.dart';
 import 'package:flutter_application_1/presentation/photo_pages/envoie_de_photo.dart';
 import 'package:flutter_application_1/presentation/photo_pages/prise_photo.dart';
 import 'package:flutter_application_1/widget/bottombar.dart';
@@ -61,7 +61,7 @@ class Routes {
       GoRoute(
         path: '/parameter',
         builder: (context, state) {
-          return const ParameterPage();
+          return const ParametrePage();
         },
       ),
       GoRoute(

@@ -18,3 +18,7 @@ class AuthentificationParams {
   AuthentificationParams({required this.email, this.password, this.confirmPassword, this.numero, this.pseudo });
   
 }
+
+class ParametreParams{
+  
+}
