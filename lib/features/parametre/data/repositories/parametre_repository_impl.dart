@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_application_1/features/parametre/data/datasources/parametre_local_data_source.dart';
 import 'package:flutter_application_1/features/parametre/data/datasources/parametre_remote_data_source.dart';
-import 'package:flutter_application_1/features/parametre/data/models/parametre_model.dart';
 import 'package:flutter_application_1/features/parametre/domain/repositories/parametre_repository.dart';
 
 import '../../../../../core/connection/network_info.dart';

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/presentation/calendar_pages/calendar_viewing_page.dart';
 import 'package:flutter_application_1/presentation/photo_pages/camera_page.dart';
-import 'package:flutter_application_1/presentation/menu_page.dart';
+import 'package:flutter_application_1/features/menu/presentation/pages/menu_page.dart';
 import 'package:go_router/go_router.dart';
 import '../presentation/chat/chat_home_page.dart';
 

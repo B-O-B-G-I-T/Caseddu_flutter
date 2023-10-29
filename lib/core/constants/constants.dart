@@ -17,3 +17,5 @@ String kPassword = "password";
 String kNumero = "numero";
 
 String kParametre = "parametrte";
+
+String kMenu = "menu";
