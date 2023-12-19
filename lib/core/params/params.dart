@@ -101,10 +101,4 @@ class EventParams {
   }
 }
 
-class ParametreParams{
-  
-}
 
-class MenuParams{
-  
-}
