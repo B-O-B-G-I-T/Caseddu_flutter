@@ -16,6 +16,7 @@ import 'features/chat/presentation/providers/chat_provider.dart';
 import 'features/parametre/presentation/providers/parametre_provider.dart';
 import 'firebase_options.dart';
 
+
 late List<CameraDescription> cameras;
 
 void main() async {
