@@ -1,7 +1,7 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter_application_1/features/parametre/domain/repositories/parametre_repository.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
+import '../repositories/parametre_repository.dart';
 
 class GetParametre {
   final ParametreRepository parametreRepository;

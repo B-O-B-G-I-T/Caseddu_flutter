@@ -1,12 +1,12 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter_application_1/features/parametre/data/datasources/parametre_local_data_source.dart';
-import 'package:flutter_application_1/features/parametre/data/datasources/parametre_remote_data_source.dart';
-import 'package:flutter_application_1/features/parametre/domain/repositories/parametre_repository.dart';
 
 import '../../../../../core/connection/network_info.dart';
 import '../../../../core/errors/firebase_exceptions.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
+import '../../domain/repositories/parametre_repository.dart';
+import '../datasources/parametre_local_data_source.dart';
+import '../datasources/parametre_remote_data_source.dart';
 
 class ParametreRepositoryImpl implements ParametreRepository {
   final ParametreRemoteDataSource remoteDataSource;

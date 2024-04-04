@@ -1,4 +1,4 @@
-name: flutter_application_1
+name: caseddu
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -35,7 +35,8 @@ dependencies:
 
   # pour la gestion des routes
   go_router: ^10.1.0
-
+  # pour la gestion du nom
+  rename_app: ^1.3.2
   # Pour le calendrier
   syncfusion_flutter_calendar: ^22.1.38
   syncfusion_flutter_core: ^22.1.38
@@ -82,14 +83,16 @@ dependencies:
   #flutter_blue: ^0.8.0
   
   # peer-to-peer
-  flutter_nearby_connections: ^1.1.1
-
+  # flutter_nearby_connections: ^1.1.1
+  flutter_nearby_connections: ^1.1.2
+  
   # pour le chat 
   # bubble: ^1.2.1
   # pour les toasts messages informatif
   fluttertoast: ^8.2.2
   # database
   sqflite: ^2.3.0
+  sqflite_common_ffi: ^2.0.0
   # pour l'encrytion
   nanoid: ^1.0.0
   # pour etheir
@@ -101,9 +104,11 @@ dependencies:
   # a supprimer
   dio: ^5.3.2
   data_connection_checker_tv: ^0.3.5-nullsafety
+  flutter_launcher_icons: ^0.13.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  mockito: ^5.4.4
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -129,6 +134,7 @@ flutter:
     - assets/images/femmephoto.jpg
     - assets/images/objectif.jpg
     - assets/images/pont.jpeg
+    - assets/
   #   - images/a_dot_ham.jpeg
   fonts:
     - family: AbrilFatface_regular

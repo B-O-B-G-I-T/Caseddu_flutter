@@ -1,13 +1,12 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/core/utils/fonctions.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:provider/provider.dart';
-import '../../../../global/global.dart';
-import '../../../../modeles/messages_model.dart';
-import '../../../../widget/P2P_widget/connection_button.dart';
+import '../../../../core/utils/p2p/fonctions.dart';
+import '../../domain/entities/chat_message_entity.dart';
+import '../providers/chat_provider.dart';
+import '../widgets/P2P_widget/connection_button.dart';
 import '../widgets/ecritoire.dart';
+import '../widgets/view_pictures_widget.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key, required this.converser});
@@ -20,35 +19,37 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
-  List<Msg> messageList = [];
-  late Device device = Device(widget.converser, widget.converser, 0);
+  List<ChatMessageEntity> messageList = [];
+  late Device device;
   TextEditingController myController = TextEditingController();
   bool longDistance = false;
-  late Stream<List<Msg>> messageStream;
+  late String myName = '';
+  late ChatProvider chatProvider;
 
   @override
   void initState() {
     super.initState();
+    chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    chatProvider.sender = widget.converser;
+    myName = chatProvider.myName;
+    device = chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser);
+    chatProvider.eitherFailureOrConversation(chatProvider.myName, widget.converser);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    // });
   }
 
-// TODO partage de fichiers et image :: partilement fait un todo a ete creé
 // TODO création de groupe
 // TODO soucis avec les images le scroll ne descend pas a la fin
   @override
   Widget build(BuildContext context) {
     // essai de trouver le device associe et de détermine si il est a coté ou loin
-
-    device = Provider.of<Global>(context)
-        .devices
-        .firstWhere((element) => element.deviceName == widget.converser);
+    //device = Provider.of<Global>(context).devices.firstWhere((element) => element.deviceName == widget.converser);
 
     if (device.deviceId == '') {
       longDistance = true;
@@ -56,131 +57,136 @@ class _ChatPageState extends State<ChatPage> {
       longDistance = false;
     }
 
-    /// If we have previously conversed with the device, it is going to store
-    /// the conversations in the messageList
-    if (Provider.of<Global>(context).conversations[widget.converser] != null) {
-      messageList = [];
-      Provider.of<Global>(context)
-          .conversations[widget.converser]!
-          .forEach((key, value) {
-        messageList.add(value);
-      });
-    }
-    return Scaffold(
-      // resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: Text(widget.converser),
-        actions: [
-          ConnectionButton(device: device, longDistance: longDistance),
-        ],
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: messageList.isEmpty
-                  ? const Center(
-                      child: Text('Lancé la conversation'),
-                    )
-                  : SingleChildScrollView(
-                      controller: _scrollController,
-                      child: Column(
-                        children: [
-                          Text(
-                            Utils.depuisQuandCeMessageEstRecu(
-                                timeStamp: messageList.first.timestamp),
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                          ListView.builder(
-                            // Builder to view messages chronologically
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            padding: const EdgeInsets.all(0),
-                            itemCount: messageList.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              // début de la structure des messages
-                              return IntrinsicHeight(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
+    return Consumer<ChatProvider>(
+      builder: (context, chatProvider, child) {
+        device = chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser);
+        messageList = chatProvider.chat;
+        return Scaffold(
+          // resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+            title: Text(widget.converser),
+            actions: [
+              ConnectionButton(
+                device: device,
+                longDistance: longDistance,
+              ),
+            ],
+          ),
+          body: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: messageList.isEmpty
+                      ? const Center(
+                          child: Text('Lancé la conversation'),
+                        )
+                      : SingleChildScrollView(
+                          controller: _scrollController,
+                          child: Column(
+                            children: [
+                              Text(
+                                Utils.depuisQuandCeMessageEstRecu(timeStamp: messageList.first.timestamp.toString()),
+                                style: const TextStyle(color: Colors.grey),
+                              ),
+                              ListView.builder(
+                                // Builder to view messages chronologically
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                padding: const EdgeInsets.all(0),
+                                itemCount: messageList.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  // début de la structure des messages
+                                  final bool isMe = messageList[index].sender != myName;
+
+                                  return IntrinsicHeight(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
                                         // barre coloré
-                                        laBarre(
-                                            messageList[index].sendOrReceived),
+                                        laBarre(isMe),
                                         // titre et text
                                         Expanded(
                                           flex: 6,
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               // titre et date de reception
                                               // titre
                                               Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  receptionOuEnvoi(
-                                                      messageList[index]
-                                                          .sendOrReceived),
+                                                  receptionOuEnvoi(widget.converser, isMe),
                                                   // date de reception
-                                                  dateDuMessage(
-                                                      messageList[index]
-                                                          .timestamp),
+                                                  dateDuMessage(messageList[index].timestamp.toString()),
                                                 ],
                                               ),
                                               const SizedBox(
                                                 height: 5,
                                               ),
                                               // texte ou image
-                                              messageList[index].typeMsg ==
-                                                      'Image'
-                                                  ? Image.file(
-                                                      File(messageList[index]
-                                                          .message),
+
+                                              messageList[index].images != ''
+// TODO faire des carte pour les images
+// gere les images et le texte
+                                                  ? Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        viewPicturesWidget(
+                                                          pictures: messageList[index].images.split(','),
+                                                        ),
+                                                        // Image.file(
+                                                        //   File(messageList[index].images),
+                                                        // ),
+                                                        messageList[index].message != ''
+                                                            ? Text(
+                                                                messageList[index].message,
+                                                                textAlign: TextAlign.left,
+                                                                style: const TextStyle(color: Colors.black, fontSize: 14),
+                                                              )
+                                                            : const SizedBox(),
+                                                      ],
                                                     )
+
+// gere le texte simple
                                                   : Text(
-                                                      messageList[index]
-                                                          .message,
+                                                      messageList[index].message,
                                                       textAlign: TextAlign.left,
-                                                      style: const TextStyle(
-                                                          color: Colors.black,
-                                                          fontSize: 14),
+                                                      style: const TextStyle(color: Colors.black, fontSize: 14),
                                                     ),
                                             ],
                                           ),
                                         ),
                                       ]),
-                                ),
-                              );
-                            },
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                ),
+                MessagePanel(
+                  converser: widget.converser,
+                  device: device,
+                  longDistance: longDistance,
+                ),
+              ],
             ),
-            MessagePanel(
-                converser: widget.converser,
-                device: device,
-                longDistance: longDistance),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
 
 @override
-Widget laBarre(String messageDeReceptionOuEnvoi) {
+Widget laBarre(bool messageDeReceptionOuEnvoi) {
   return Row(
     children: [
       Container(
         width: 2,
         height: double.infinity,
-        color: messageDeReceptionOuEnvoi == 'sent' ? Colors.red : Colors.blue,
+        color: messageDeReceptionOuEnvoi == true ? Colors.red : Colors.blue,
       ),
       const SizedBox(
         width: 5,
@@ -192,11 +198,12 @@ Widget laBarre(String messageDeReceptionOuEnvoi) {
 @override
 Widget receptionOuEnvoi(
   String messageDeReceptionOuEnvoi,
+  bool isMe,
 ) {
   return Text(
-    messageDeReceptionOuEnvoi,
+    isMe == true ? messageDeReceptionOuEnvoi : "Moi",
     style: TextStyle(
-      color: messageDeReceptionOuEnvoi == 'sent' ? Colors.red : Colors.blue,
+      color: isMe == true ? Colors.red : Colors.blue,
     ),
   );
 }

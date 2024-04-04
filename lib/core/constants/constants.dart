@@ -19,3 +19,12 @@ String kNumero = "numero";
 String kParametre = "parametrte";
 
 String kMenu = "menu";
+
+String kChat = "chat";
+String kChatMessage = "chat";
+String kChatSendOrReceived = "Send";
+String kChatTimeStamp = "timestamp";
+String kChatTypeMessage = "Image";
+String kChatId = "123";
+
+String kChatConverser = "converser";

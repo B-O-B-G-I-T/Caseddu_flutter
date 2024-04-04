@@ -1,8 +1,7 @@
 import 'dart:convert';
-
-import 'package:flutter_application_1/features/parametre/data/models/parametre_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/errors/firebase_exceptions.dart';
+import '../models/parametre_model.dart';
 
 
 abstract class ParametreLocalDataSource {

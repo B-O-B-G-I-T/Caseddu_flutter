@@ -1,13 +1,12 @@
 //TODO: controler les mot de passe entré
-
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/core/errors/widgets/attente_widget.dart';
-import 'package:flutter_application_1/core/errors/widgets/firebase_error.dart';
-import 'package:flutter_application_1/features/auth/presentation/providers/authentification_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+
+import '../../../../core/errors/widgets/attente_widget.dart';
+import '../../../../core/errors/widgets/firebase_error.dart';
+import '../providers/authentification_provider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -263,7 +262,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                           AuthentificationProvider authentificationProvider = Provider.of<AuthentificationProvider>(context, listen: false);
 
-                          AttenteWidget(context);
+                          attenteWidget(context);
 
                           await authentificationProvider.eitherFailureOrRegister(email, password, confirmPassword, "0",pseudo);
 

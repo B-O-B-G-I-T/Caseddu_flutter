@@ -1,21 +1,21 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
-import 'package:dio/dio.dart';
+import 'package:caseddu/features/calendar/presentation/providers/calendar_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/features/parametre/presentation/providers/parametre_provider.dart';
-import 'package:flutter_application_1/features/auth/data/datasources/authentification_remote_data_source.dart';
-import 'package:flutter_application_1/features/auth/presentation/providers/authentification_provider.dart';
-import 'package:flutter_application_1/global/global.dart';
-import 'package:flutter_application_1/config/routes/routes.dart';
-import 'package:flutter_application_1/provider/event_provider.dart';
 import 'package:json_theme/json_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
+import 'config/routes/routes.dart';
+import 'features/auth/data/datasources/authentification_remote_data_source.dart';
+import 'features/auth/presentation/providers/authentification_provider.dart';
+import 'features/chat/presentation/providers/chat_provider.dart';
+import 'features/parametre/presentation/providers/parametre_provider.dart';
 import 'firebase_options.dart';
+
 
 late List<CameraDescription> cameras;
 
@@ -39,13 +39,11 @@ void main() async {
 
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-   
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
 
   if (Platform.isAndroid) {
-    WidgetsFlutterBinding.ensureInitialized();
     [
       Permission.camera,
       Permission.microphone,
@@ -57,23 +55,45 @@ void main() async {
     ].request().then((status) {
       // runApp(MyApp(theme: theme, cameras: cameras));
     });
-  } else {} // else {
+  } else {
+    // [
+    //   Permission.camera,
+    //   Permission.microphone,
+    //   Permission.storage,
+    //   Permission.location,
+    //   Permission.bluetooth,
+    //   Permission.bluetoothConnect,
+    //   Permission.bluetoothScan,
+    // ].request().then((status) {
+    //   // runApp(MyApp(theme: theme, cameras: cameras));
+    // });
+  } // else {
   runApp(
     MultiProvider(
       providers: [
-        Provider<AuthentificationRemoteDataSourceImpl>(create: (_) => AuthentificationRemoteDataSourceImpl(firebaseAuth: firebaseAuth,)),
+        Provider<AuthentificationRemoteDataSourceImpl>(
+            create: (_) => AuthentificationRemoteDataSourceImpl(
+                  firebaseAuth: firebaseAuth,
+                )),
         StreamProvider(
           create: (context) => context.read<AuthentificationRemoteDataSourceImpl>().authStateChange,
           initialData: firebaseAuth.currentUser,
         ),
+
         ChangeNotifierProvider(
           create: (context) => AuthentificationProvider(firebaseAuth: firebaseAuth),
         ),
+
         ChangeNotifierProvider(
           create: (context) => ParametreProvider(),
         ),
-        ChangeNotifierProvider(create: (_) => Global()),
-        ChangeNotifierProvider(create: (context) => EventProvider())
+
+        ChangeNotifierProvider(
+          create: (context) => ChatProvider(),
+        ),
+
+        //ChangeNotifierProvider(create: (_) => Global()),
+        ChangeNotifierProvider(create: (context) => CalendarProvider())
       ],
       child: MyApp(theme: theme, cameras: cameras),
     ),

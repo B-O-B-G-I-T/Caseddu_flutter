@@ -1,9 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../../data/datasources/databasehelper.dart';
-import '../../../../global/global.dart';
-import '../../../../core/utils/p2p/adhoc_housekeeping.dart';
+import 'package:provider/provider.dart';
+import '../providers/chat_provider.dart';
 import 'chat_list_device_page.dart';
 import 'liste_des_chats.dart';
 
@@ -14,8 +11,7 @@ class ChatHomeScreen extends StatefulWidget {
   State<ChatHomeScreen> createState() => _ChatHomeScreenState();
 }
 
-class _ChatHomeScreenState extends State<ChatHomeScreen>
-    with SingleTickerProviderStateMixin {
+class _ChatHomeScreenState extends State<ChatHomeScreen> with SingleTickerProviderStateMixin {
   static const List<Tab> myTabs = <Tab>[
     Tab(
       text: "Devices",
@@ -32,30 +28,26 @@ class _ChatHomeScreenState extends State<ChatHomeScreen>
   Future refreshMessages() async {
     setState(() => isLoading = true);
 
-    readAllUpdateCache();
     setState(() => isLoading = false);
   }
 
-  Future<void> setNameGlobal() async {
-    final userName = FirebaseAuth.instance.currentUser!.displayName.toString();
-    Global.myName = userName;
-  }
-
+  late ChatProvider chatProvider;
   @override
   void initState() {
     super.initState();
 
-    setNameGlobal();
+    chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    chatProvider.eitherFailureOrInit();
     _tabController = TabController(vsync: this, length: myTabs.length);
     // init(context);
-    refreshMessages();
+    // refreshMessages();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    readAllUpdateConversation(context);
-    init(context);
+    // readAllUpdateConversation(context);
+    // init(context);
   }
 
   /// When the messaging is done, the services
@@ -64,10 +56,10 @@ class _ChatHomeScreenState extends State<ChatHomeScreen>
   /// Also the nearby services are stopped.
   @override
   void dispose() {
-    Global.deviceSubscription!.cancel();
-    Global.receivedDataSubscription!.cancel();
-    Global.nearbyService!.stopBrowsingForPeers();
-    Global.nearbyService!.stopAdvertisingPeer();
+    //Global.deviceSubscription!.cancel();
+    //Global.receivedDataSubscription!.cancel();
+    //Global.nearbyService!.stopBrowsingForPeers();
+    //Global.nearbyService!.stopAdvertisingPeer();
 
     _tabController.dispose();
     super.dispose();
