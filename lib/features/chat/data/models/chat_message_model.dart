@@ -2,14 +2,15 @@ import '../../domain/entities/chat_message_entity.dart';
 
 class ChatMessageModel extends ChatMessageEntity {
   ChatMessageModel(
-      {required String sender,
+    {required String id,
+      required String sender,
       required String receiver,
       required DateTime timestamp,
       required String message,
       required String images,
       required String type,
-      String? id})
-      : super(sender: sender, receiver: receiver, timestamp: timestamp, message: message, images: images, type: type, id: id);
+      })
+      : super( id: id, sender: sender, receiver: receiver, timestamp: timestamp, message: message, images: images, type: type,);
 
   // set setSender(String setSender) {
   //   sender = setSender;
@@ -54,6 +55,7 @@ class ChatMessageModel extends ChatMessageEntity {
 
   ChatMessageEntity toEntity() {
     return ChatMessageEntity(
+      id: id,
       sender: sender,
       receiver: receiver,
       timestamp: timestamp,

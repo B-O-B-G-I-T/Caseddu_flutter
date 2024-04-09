@@ -68,7 +68,7 @@ class ChatRepositoryImpl implements ChatRepository {
 
     try {
       chatMessageModel = await remoteDataSource.sentToConversations(chatMessageParams: chatMessageParams);
-      
+
       await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
 
       return Right(chatMessageModel);
@@ -76,8 +76,6 @@ class ChatRepositoryImpl implements ChatRepository {
       return Left(ServerFailure(errorMessage: 'This is a server exception'));
     }
   }
-
-  
 
   @override
   Future<Either<Failure, ChatMessageModel>> enregistreMessage({required ChatMessageParams chatMessageParams}) async {
@@ -94,5 +92,4 @@ class ChatRepositoryImpl implements ChatRepository {
     //   return Left(ServerFailure(errorMessage: "Erreur connection"));
     // }
   }
-  
 }

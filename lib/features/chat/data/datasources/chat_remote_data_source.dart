@@ -8,6 +8,7 @@ import '../models/chat_message_model.dart';
 abstract class ChatRemoteDataSource {
   Future<NearbyService> init();
   Future<ChatMessageModel> sentToConversations({required ChatMessageParams chatMessageParams});
+  
 }
 
 class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {

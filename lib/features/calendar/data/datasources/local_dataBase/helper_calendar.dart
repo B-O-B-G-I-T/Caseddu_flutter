@@ -3,11 +3,11 @@ import 'package:sqflite/sqflite.dart';
 import '../../../../../dataBase/base_donnees_general.dart';
 
 class DatabaseHelperCalendar {
-  final BaseDonneesGeneral _baseDonnesGeneral = BaseDonneesGeneral();
+
 // ------------------------ CHECK TABLES ------------------------
   
   Future<void> ajoutEvenement(EventModel eventModel) async {
-    final db = await _baseDonnesGeneral.database;
+    final db = await BaseDonneesGeneral.database;
     await db.insert('evenements', eventModel.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 }
