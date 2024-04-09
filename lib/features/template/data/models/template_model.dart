@@ -1,5 +1,5 @@
 import '../../../../../core/constants/constants.dart';
-import '../../business/entities/template_entity.dart';
+import '../../domain/entities/template_entity.dart';
 
 class TemplateModel extends TemplateEntity {
   const TemplateModel({

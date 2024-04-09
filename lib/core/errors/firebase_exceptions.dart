@@ -15,7 +15,9 @@ class FireBaseException implements Exception {
       errMessage = "L'utilisateur n'a pas été trouvé";
     }else if (errMessage == 'network-request-failed') {
       errMessage = "Vérifie la connexion";
-    } else {}
+    } else {
+      errMessage = "Nous n'avons pas identifié le problème";
+    }
   }
 }
 

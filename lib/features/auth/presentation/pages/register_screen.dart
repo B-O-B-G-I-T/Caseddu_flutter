@@ -1,21 +1,22 @@
 //TODO: controler les mot de passe entré
-//
-//
+
+// ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/errors/widgets/attente_widget.dart';
 import 'package:flutter_application_1/core/errors/widgets/firebase_error.dart';
 import 'package:flutter_application_1/features/auth/presentation/providers/authentification_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-class RegisterPage2 extends StatefulWidget {
-  const RegisterPage2({super.key});
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
 
   @override
-  State<RegisterPage2> createState() => _RegisterPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage2> {
+class _RegisterPageState extends State<RegisterPage> {
   // tous les controllers
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -31,33 +32,6 @@ class _RegisterPageState extends State<RegisterPage2> {
     _confirmPasswordController.dispose();
     super.dispose();
   }
-
-  // Future signup() async {
-  //   String email = _emailController.text.trim();
-  //   String pwd = _passwordController.text.trim();
-  //   String confirmPwd = _confirmPasswordController.text.trim();
-  //   String pseudo = _pseudoController.text.trim();
-
-  //   // TODO avoir le numéro de la personne dans FirebaseAuth.instance
-
-  //   //String phone = _cellPhone.text.trim();
-
-  //   try {
-  //     if (confirmPwd == pwd) {
-  //       UserCredential result = await FirebaseAuth.instance
-  //           .createUserWithEmailAndPassword(email: email, password: pwd);
-
-  //       User? user = result.user;
-  //       user?.updateDisplayName(pseudo);
-  //       //user?.updatePhoneNumber(phone);
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } on FirebaseAuthException catch (e) {
-  //     return e.code;
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -286,48 +260,21 @@ class _RegisterPageState extends State<RegisterPage2> {
                           String password = _passwordController.text.trim();
                           String confirmPassword = _confirmPasswordController.text.trim();
                           String pseudo = _pseudoController.text.trim();
-                          try {
-                            Provider.of<AuthentificationProvider>(context, listen: false).eitherFailureOrRegister(email, password, confirmPassword, pseudo, "0");
+
+                          AuthentificationProvider authentificationProvider = Provider.of<AuthentificationProvider>(context, listen: false);
+
+                          AttenteWidget(context);
+
+                          await authentificationProvider.eitherFailureOrRegister(email, password, confirmPassword, "0",pseudo);
+
+                          context.pop(); // Ferme la boîte de dialogue
+
+                          if (authentificationProvider.failure == null) {
                             context.push('/');
-                          } catch (e) {
-                            fireBaseError(context, 'Petit voyou', 'Rentre les bons identifiants.');
-                            print(e);
+                          } else {
+                            fireBaseError(context, 'Erreur', authentificationProvider.failure!.errorMessage);
                           }
-                          //     Future creer = signup();
-
-                          //     await creer.then((value) {
-                          //       if (value == true) {
-                          //         context.go('/login');
-                          //         ScaffoldMessenger.of(context).showSnackBar(
-                          //           const SnackBar(
-                          //             content: Text("Ravie de te rencontrer !"),
-                          //           ),
-                          //         );
-                          //       } else if (value == "email-already-in-use") {
-                          //         ScaffoldMessenger.of(context).showSnackBar(
-                          //           const SnackBar(
-                          //             content: Text("L'email est déjà utilisé"),
-                          //           ),
-                          //         );
-                          //       } else if (value == "invalid-email") {
-                          //         ScaffoldMessenger.of(context).showSnackBar(
-                          //           const SnackBar(
-                          //             content: Text(
-                          //                 "L'email est invalide réssayé avec une autre"),
-                          //           ),
-                          //         );
-                          //         _emailController.text = "";
-                          //       } else {
-                          //         ScaffoldMessenger.of(context).showSnackBar(
-                          //           const SnackBar(
-                          //             content: Text("oh oh mauvais mot de passe"),
-                          //           ),
-                          //         );
-
-                          //         _confirmPasswordController.text = "";
-                          //         _passwordController.text = "";
-                          //       }
-                          //     });
+                          context.push('/');
                         }
                       },
                     ),

@@ -5,7 +5,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/features/auth/data/datasources/authentification_remote_data_source.dart';
 import 'package:flutter_application_1/features/auth/presentation/providers/authentification_provider.dart';
-import 'package:flutter_application_1/features/authentification/data/data_source/auth_data_remote.dart';
 import 'package:flutter_application_1/global/global.dart';
 import 'package:flutter_application_1/config/routes/routes.dart';
 import 'package:flutter_application_1/provider/event_provider.dart';
@@ -55,7 +54,6 @@ void main() async {
     });
   } else {} // else {
   runApp(
-    
     MultiProvider(
       providers: [
         Provider<AuthentificationRemoteDataSourceImpl>(create: (_) => AuthentificationRemoteDataSourceImpl(firebaseAuth: firebaseAuth)),

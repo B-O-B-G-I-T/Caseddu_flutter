@@ -11,18 +11,10 @@ class PokemonParams {
 
 class AuthentificationParams {
   final String email;
-  final String password;
-
-  AuthentificationParams({required this.email, required this.password});
+  final String? pseudo;
+  final String? password;
+  final String? confirmPassword;
+  final String? numero;
+  AuthentificationParams({required this.email, this.password, this.confirmPassword, this.numero, this.pseudo });
   
-}
-
-class RegisterParams {
-  final String email;
-  final String pseudo;
-  final String password;
-  final String confirmPassword;
-  final String numero;
-
-  const RegisterParams({required this.password, required this.confirmPassword, required this.numero, required this.email, required this.pseudo});
 }
