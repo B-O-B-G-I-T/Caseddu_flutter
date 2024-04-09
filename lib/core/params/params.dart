@@ -22,3 +22,7 @@ class AuthentificationParams {
 class ParametreParams{
   
 }
+
+class MenuParams{
+  
+}
