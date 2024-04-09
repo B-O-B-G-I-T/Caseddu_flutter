@@ -62,17 +62,6 @@ class BaseDonneesGeneral {
         )
       ''');
 
-    await db.execute('''
-        CREATE TABLE evenements (
-          id INTEGER PRIMARY KEY,
-          title TEXT,
-          description TEXT,
-          deQuand TEXT,
-          aQuand TEXT,
-          backgroundColor INTEGER,
-          recurrence TEXT
-        )
-      ''');
 
     //   await db.execute('''
     //   CREATE TABLE conversations_messages (
