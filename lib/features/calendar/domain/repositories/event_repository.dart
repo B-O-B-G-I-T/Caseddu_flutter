@@ -7,4 +7,7 @@ abstract class EventRepository {
   Future<Either<Failure, EventEntity>> getEvent({
     required EventParams eventParams,
   });
+  Future<Either<Failure, EventEntity>> ajoutEvenement({
+    required EventParams eventParams,
+  });
 }

@@ -16,7 +16,7 @@ class CalendarProvider extends ChangeNotifier {
   Failure? failure;
 
   final List<EventEntity> _events = [];
-  
+
   CalendarProvider({
     this.event,
     this.failure,
@@ -63,9 +63,9 @@ class CalendarProvider extends ChangeNotifier {
       ),
     );
 
-    final failureOrEvent = await GetEvent(eventRepository: repository).call(
-      eventParams: eventParams,
 
+    final failureOrEvent = await GetEvent(eventRepository: repository).ajoutEvenement(
+      eventParams: eventParams,
     );
 
     failureOrEvent.fold(
@@ -75,11 +75,10 @@ class CalendarProvider extends ChangeNotifier {
         notifyListeners();
       },
       (EventEntity eventEntity) {
-        event = eventEntity;
+        _events.add(eventEntity);
         failure = null;
         notifyListeners();
       },
     );
   }
-
 }
