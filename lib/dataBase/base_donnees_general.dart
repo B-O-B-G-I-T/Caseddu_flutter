@@ -9,7 +9,7 @@ class BaseDonneesGeneral {
 
   BaseDonneesGeneral.internal();
 
-  Future<Database> initDb() async {
+  static Future<Database> initDb() async {
     String databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'messsageTables.db');
     print(path);
@@ -21,14 +21,14 @@ class BaseDonneesGeneral {
     return db;
   }
 
-  Future<Database> get database async {
-    //if (db != null) return db;
+  static Future<Database> get database async {
+    //if (_database != null) return _database;
     _database = await initDb();
     return _database;
   }
 
 // ------------------------ CREATE TABLES ------------------------
-  void _onCreate(Database db, int version) async {
+  static void _onCreate(Database db, int version) async {
     // Create your tables here
     await db.execute('''
       CREATE TABLE users (
@@ -52,7 +52,7 @@ class BaseDonneesGeneral {
 
     await db.execute('''
         CREATE TABLE evenements (
-          id INTEGER PRIMARY KEY,
+          id TEXT PRIMARY KEY,
           title TEXT,
           description TEXT,
           deQuand TEXT,

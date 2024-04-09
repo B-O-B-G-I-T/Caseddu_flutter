@@ -16,7 +16,6 @@ import 'features/chat/presentation/providers/chat_provider.dart';
 import 'features/parametre/presentation/providers/parametre_provider.dart';
 import 'firebase_options.dart';
 
-
 late List<CameraDescription> cameras;
 
 void main() async {
@@ -38,6 +37,8 @@ void main() async {
   final theme = ThemeDecoder.decodeThemeData(themeJson)!;
 
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
+  final chatProvider = ChatProvider(); // Initialisation manuelle
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -88,8 +89,8 @@ void main() async {
           create: (context) => ParametreProvider(),
         ),
 
-        ChangeNotifierProvider(
-          create: (context) => ChatProvider(),
+        ChangeNotifierProvider.value(
+          value: chatProvider,
         ),
 
         //ChangeNotifierProvider(create: (_) => Global()),

@@ -10,14 +10,14 @@ class DatabaseHelper {
   final BaseDonneesGeneral _baseDonnesGeneral = BaseDonneesGeneral();
 // ------------------------ CHECK TABLES ------------------------
   Future<bool> isTableEmpty(String tableName) async {
-    final db = await _baseDonnesGeneral.database;
+    final db = await BaseDonneesGeneral.database;
     final count = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM $tableName'));
     return count == 0;
   }
 
 // ------------------------ USERS ------------------------
   Future<bool> isUserExists(String userId) async {
-    final db = await _baseDonnesGeneral.database;
+    final db = await BaseDonneesGeneral.database;
     final count = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM users WHERE id = ?', [userId]));
     if (count == null) {
       return false;
@@ -27,7 +27,7 @@ class DatabaseHelper {
   }
 
   Future<UserModel?> getUserByName(String userName) async {
-    final db = await _baseDonnesGeneral.database;
+    final db = await BaseDonneesGeneral.database;
 
     final List<Map<String, dynamic>> maps = await db.query('users', where: 'name = ?', whereArgs: [userName]);
     if (maps.isNotEmpty) {
@@ -38,7 +38,7 @@ class DatabaseHelper {
   }
 
   Future<void> insertUser(UserModel user) async {
-    final db = await _baseDonnesGeneral.database;
+    final db = await BaseDonneesGeneral.database;
     await db.insert('users', user.toJson(), conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
@@ -54,7 +54,7 @@ class DatabaseHelper {
 
 // ------------------------ CHAT MESSAGES ------------------------
   Future<List<ChatMessageModel>> getAllChatMessages() async {
-    final db = await _baseDonnesGeneral.database;
+    final db = await BaseDonneesGeneral.database;
     final List<Map<String, dynamic>> maps = await db.query('chat_messages');
     return List.generate(maps.length, (index) {
       return ChatMessageModel.fromJson(json: maps[index]);
@@ -62,7 +62,7 @@ class DatabaseHelper {
   }
 
   Future<String> insertChatMessage(ChatMessageModel chatMessage, bool isSender) async {
-    final db = await _baseDonnesGeneral.database;
+    final db = await BaseDonneesGeneral.database;
 
     late ChatMessageModel newChat;
     print(chatMessage.toJson());
@@ -70,6 +70,7 @@ class DatabaseHelper {
     if (isSender) {
       UserModel user = await controlUtilisateur(chatMessage.receiver);
       newChat = ChatMessageModel(
+        id: chatMessage.id,
         sender: chatMessage.sender,
         receiver: user.id,
         timestamp: chatMessage.timestamp,
@@ -80,6 +81,7 @@ class DatabaseHelper {
     } else {
       UserModel user = await controlUtilisateur(chatMessage.sender);
       newChat = ChatMessageModel(
+        id: chatMessage.id,
         sender: user.id,
         receiver: chatMessage.receiver,
         timestamp: chatMessage.timestamp,
@@ -94,7 +96,7 @@ class DatabaseHelper {
   }
 
   Future<ChatMessageModel?> getLastMessage(String idUser) async {
-    final db = await _baseDonnesGeneral.database;
+    final db = await BaseDonneesGeneral.database;
     final maps = await db.query('chat_messages',
         where: 'receiver = ? or sender = ?',
         whereArgs: [
@@ -112,7 +114,7 @@ class DatabaseHelper {
 // ------------------------ CONVERSATIONS ------------------------
 
   Future<List<ChatMessageModel>?> getConversation(String senderName, String receiverName) async {
-    final db = await _baseDonnesGeneral.database;
+    final db = await BaseDonneesGeneral.database;
 
     UserModel? user = await controlUtilisateur(receiverName);
 
@@ -137,7 +139,7 @@ class DatabaseHelper {
   }
 
   Future<List<UserModel>?> getAllConversation() async {
-    final db = await _baseDonnesGeneral.database;
+    final db = await BaseDonneesGeneral.database;
     final List<Map<String, dynamic>> maps = await db.query('users');
     if (maps.isNotEmpty) {
       return List.generate(maps.length, (index) {
@@ -152,17 +154,17 @@ class DatabaseHelper {
 
 // ------------------------ GENERIC ------------------------
   Future<List<Map<String, dynamic>>> query(String table) async {
-    Database dbClient = await _baseDonnesGeneral.database;
+    Database dbClient = await BaseDonneesGeneral.database;
     return await dbClient.query(table);
   }
 
   Future<int> update(String table, Map<String, dynamic> values, String where, List<dynamic> whereArgs) async {
-    Database dbClient = await _baseDonnesGeneral.database;
+    Database dbClient = await BaseDonneesGeneral.database;
     return await dbClient.update(table, values, where: where, whereArgs: whereArgs);
   }
 
   Future<int> delete(String table, String where, List<dynamic> whereArgs) async {
-    Database dbClient = await _baseDonnesGeneral.database;
+    Database dbClient = await BaseDonneesGeneral.database;
     return await dbClient.delete(table, where: where, whereArgs: whereArgs);
   }
 }

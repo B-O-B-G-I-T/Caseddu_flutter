@@ -37,7 +37,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> with SingleTickerProvid
     super.initState();
 
     chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    chatProvider.eitherFailureOrInit();
+    //chatProvider.eitherFailureOrInit();
     _tabController = TabController(vsync: this, length: myTabs.length);
     // init(context);
     // refreshMessages();
