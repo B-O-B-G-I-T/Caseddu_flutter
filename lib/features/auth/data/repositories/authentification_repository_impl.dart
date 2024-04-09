@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:dartz/dartz.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_application_1/features/auth/business/entities/register_entity.dart';
 import 'package:flutter_application_1/features/auth/data/models/register_model.dart';
 import '../../../../../core/errors/exceptions.dart';

@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_application_1/features/auth/data/datasources/authentification_remote_data_source.dart';
 import 'package:flutter_application_1/features/auth/presentation/pages/login_screen.dart';
 import 'package:flutter_application_1/features/auth/presentation/pages/register_screen.dart';
 import 'package:flutter_application_1/features/authentification/presentation/pages/oubli_mot_de_passe.dart';

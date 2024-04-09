@@ -13,11 +13,11 @@ class AuthentificationProvider extends ChangeNotifier {
   AuthentificationEntity? authentification;
   RegisterEntity? register;
   Failure? failure;
+  FirebaseAuth firebaseAuth;
 
-  AuthentificationProvider({this.authentification, this.failure, this.register});
+  AuthentificationProvider({this.authentification, this.failure, this.register, required this.firebaseAuth});
 
-  void eitherFailureOrAuthentification(String email, String password) async {
-    failure = null;
+  Future eitherFailureOrAuthentification(String email, String password) async {
     AuthentificationRepositoryImpl repository = AuthentificationRepositoryImpl(
       remoteDataSource: AuthentificationRemoteDataSourceImpl(
         firebaseAuth: FirebaseAuth.instance,
@@ -46,7 +46,6 @@ class AuthentificationProvider extends ChangeNotifier {
   }
 
   void eitherFailureOrRegister(String email, String password, String confirmPassword, String numero, String pseudo) async {
-    failure = null;
     AuthentificationRepositoryImpl repository = AuthentificationRepositoryImpl(
       remoteDataSource: AuthentificationRemoteDataSourceImpl(
         firebaseAuth: FirebaseAuth.instance,
