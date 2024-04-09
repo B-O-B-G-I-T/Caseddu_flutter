@@ -4,30 +4,10 @@ class MenuPage extends StatelessWidget {
   MenuPage({super.key});
 
   final List posts = [
-    {
-      "Auteur": "bob",
-      "Titre": "cherche un os",
-      "Description": "à la recherche dans le jardin",
-      "Image": "assets/images/cerf.jpg"
-    },
-    {
-      "Auteur": "pilou",
-      "Titre": "cherche un os",
-      "Description": "à la recherche dans le jardin",
-      "Image": "assets/images/femmephoto.jpg"
-    },
-    {
-      "Auteur": "toustous",
-      "Titre": "cherche un os",
-      "Description": "à la recherche dans le jardin",
-      "Image": "assets/images/objectif.jpg"
-    },
-    {
-      "Auteur": "dim",
-      "Titre": "cherche un os",
-      "Description": "à la recherche dans le jardin",
-      "Image": "assets/images/pont.jpeg"
-    }
+    {"Auteur": "bob", "Titre": "cherche un os", "Description": "à la recherche dans le jardin", "Image": "assets/images/cerf.jpg"},
+    {"Auteur": "pilou", "Titre": "cherche un os", "Description": "à la recherche dans le jardin", "Image": "assets/images/femmephoto.jpg"},
+    {"Auteur": "toustous", "Titre": "cherche un os", "Description": "à la recherche dans le jardin", "Image": "assets/images/objectif.jpg"},
+    {"Auteur": "dim", "Titre": "cherche un os", "Description": "à la recherche dans le jardin", "Image": "assets/images/pont.jpeg"}
   ];
   @override
   Widget build(BuildContext context) {
@@ -69,16 +49,14 @@ class PostCard extends StatelessWidget {
       height: 550,
       width: double.infinity,
       margin: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(10)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade200,
-              spreadRadius: 4,
-              blurRadius: 6,
-              offset: const Offset(0, 3),
-            ),
-          ]),
+      decoration: BoxDecoration(borderRadius: const BorderRadius.all(Radius.circular(10)), boxShadow: [
+        BoxShadow(
+          color: Colors.grey.shade200,
+          spreadRadius: 4,
+          blurRadius: 6,
+          offset: const Offset(0, 3),
+        ),
+      ]),
       child: Column(children: [
         Container(
           height: 350,
@@ -109,8 +87,7 @@ class PostCard extends StatelessWidget {
         ),
         Container(
           margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-          child:
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text(
               postData['Titre'],
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),

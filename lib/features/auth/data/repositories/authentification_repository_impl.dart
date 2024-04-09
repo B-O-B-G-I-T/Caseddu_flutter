@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter_application_1/core/connection/network_info.dart';
+import '../../../../core/connection/network_info.dart';
 import '../../../../core/errors/firebase_exceptions.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';

@@ -1,5 +1,6 @@
-import 'package:flutter_application_1/core/constants/constants.dart';
-import 'package:flutter_application_1/features/parametre/domain/entities/parametre_entity.dart';
+
+import '../../../../core/constants/constants.dart';
+import '../../domain/entities/parametre_entity.dart';
 
 class ParametreModel extends ParametreEntity {
   const ParametreModel({

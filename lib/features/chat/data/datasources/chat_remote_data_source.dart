@@ -1,35 +1,76 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import '../../../../../core/params/params.dart';
+import '../models/chat_message_model.dart';
 
 abstract class ChatRemoteDataSource {
-  Future<void> sentToConversations({required ChatMessageParams chatMessageParams});
+  Future<NearbyService> init();
+  Future<ChatMessageModel> sentToConversations({required ChatMessageParams chatMessageParams});
 }
 
 class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
+  static String myName = 'bob';
+  // NearbyService? nearbyService;
 
-  static String myName = '';
-  List<Device> devices = [Device('deviceId1', 'userTest1', 0), Device('deviceId2', 'userTest2', 2)];
-  List<Device> connectedDevices = [Device('deviceId2', 'userTest2', 2)];
-  static NearbyService? nearbyService;
+  // StreamSubscription? deviceSubscription;
+  // StreamSubscription? receivedDataSubscription;
 
-  static StreamSubscription? deviceSubscription;
-  static StreamSubscription? receivedDataSubscription;
-
-  ChatRemoteDataSourceImpl();
+  ChatRemoteDataSourceImpl() {
+    // myName = FirebaseAuth.instance.currentUser!.displayName.toString();
+    // initiateNearbyService();
+    // checkDevices();
+  }
 
   @override
-  Future<void> sentToConversations({required ChatMessageParams chatMessageParams}) async {
+  Future<NearbyService> init() async {
+    myName = FirebaseAuth.instance.currentUser!.displayName.toString();
 
-    Map<String, String> data;
-    if (chatMessageParams.type == 'Image') {
-      // mise en forme des données
-      data = {"sender": myName, "receiver": chatMessageParams.sender, "message": chatMessageParams.message, "id": chatMessageParams.id, "Timestamp": chatMessageParams.timestamp, "type": "Image"};
-    } else {
-      data = {"sender": myName, "receiver": chatMessageParams.sender, "message": chatMessageParams.message, "id": chatMessageParams.id, "Timestamp": chatMessageParams.timestamp, "type": "Payload"};
-    }
-    String toSend = jsonEncode(data);
-    nearbyService!.sendMessage(chatMessageParams.sender, toSend); //make this async
+    final NearbyService nearbyService = await initiateNearbyService(myName);
+
+    return nearbyService;
+  }
+
+// Initiating NearbyService to start the connection
+  Future<NearbyService> initiateNearbyService(String myName) async {
+    NearbyService nearbyService = NearbyService();
+    await nearbyService.init(
+      serviceType: 'mpconn',
+      deviceName: myName,
+      strategy: Strategy.P2P_CLUSTER,
+      callback: (isRunning) async {
+        // if (isRunning) {
+        //   await startAdvertising(nearbyService);
+        //   await startBrowsing(nearbyService);
+        // }
+      },
+    );
+    await startAdvertising(nearbyService);
+    await startBrowsing(nearbyService);
+
+    return nearbyService;
+  }
+
+// Start discovering devices
+  Future<void> startBrowsing(NearbyService nearbyService) async {
+    await nearbyService.stopBrowsingForPeers();
+    await nearbyService.startBrowsingForPeers();
+  }
+
+  Future<void> startAdvertising(NearbyService nearbyService) async {
+    await nearbyService.stopAdvertisingPeer();
+    await nearbyService.startAdvertisingPeer();
+  }
+
+//--------------- Envoie des messages
+  @override
+  Future<ChatMessageModel> sentToConversations({required ChatMessageParams chatMessageParams}) async {
+    ChatMessageModel chatMessageModel = chatMessageParams.toModel();
+    
+    final data = jsonEncode(chatMessageModel.toJson());
+    chatMessageParams.nearbyService!.sendMessage(chatMessageParams.receiver, data);
+
+    return chatMessageModel;
   }
 }

@@ -1,10 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/core/errors/widgets/attente_widget.dart';
-import 'package:flutter_application_1/core/errors/widgets/firebase_error.dart';
-import 'package:flutter_application_1/features/auth/presentation/providers/authentification_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+
+import '../../../../core/errors/widgets/attente_widget.dart';
+import '../../../../core/errors/widgets/firebase_error.dart';
+import '../providers/authentification_provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -174,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
 
                           AuthentificationProvider authentificationProvider = Provider.of<AuthentificationProvider>(context, listen: false);
 
-                          AttenteWidget(context);
+                          attenteWidget(context);
 
                           await authentificationProvider.eitherFailureOrAuthentification(email, password);
 

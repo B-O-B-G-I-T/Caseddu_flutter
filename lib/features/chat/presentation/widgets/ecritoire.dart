@@ -2,27 +2,23 @@
 /// It is the message bar where the message is typed on and sent to
 /// connected devices.
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/core/params/params.dart';
-import 'package:flutter_application_1/core/utils/fonctions.dart';
-import 'package:flutter_application_1/features/chat/presentation/providers/chat_provider.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:provider/provider.dart';
-import '../../../../database/DatabaseHelper.dart';
-import '../../../../global/global.dart';
-import '../../../../global/payload.dart';
-import '../../../../modeles/messages_model.dart';
-import '../../../../core/utils/p2p/adhoc_housekeeping.dart';
+import '../../../../core/params/params.dart';
+import '../providers/chat_provider.dart';
+import 'scroll_h_for_pictures_widget.dart';
 
 class MessagePanel extends StatefulWidget {
-  const MessagePanel({Key? key, required this.converser, required this.device, required this.longDistance}) : super(key: key);
+  MessagePanel({Key? key, required this.converser, required this.device, required this.longDistance}) : super(key: key);
   final Device device;
   final String converser;
   final bool longDistance;
+
+  final List<File> pictures = [];
 
   @override
   State<MessagePanel> createState() => _MessagePanelState();
@@ -31,100 +27,80 @@ class MessagePanel extends StatefulWidget {
 class _MessagePanelState extends State<MessagePanel> {
   TextEditingController myController = TextEditingController();
   bool _showGallery = false;
-  String imagePath = "";
+  List<String> imagePath = [];
+  late ChatProvider chatProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    chatProvider = Provider.of<ChatProvider>(context, listen: false);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(2.0),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.person),
-              Expanded(
-                child: TextFormField(
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                  onTap: () async {
-                    _showGallery = false;
-                    if (widget.device.state == SessionState.notConnected && !widget.longDistance) {
-                      await connectToDevice(widget.device);
-                    }
-                  },
-                  controller: myController,
-                ),
-              ),
-              Row(
-                children: [
-                  sendImage(),
-                  sendMessage(),
-                ],
-              ),
-            ],
+    return Column(
+      children: [
+        if (imagePath.isNotEmpty)
+          // Vérifie si imagePath a une valeur
+          scrollHForPictures(
+            pictures: imagePath,
           ),
-          // TODO créé un widget pour faire la selection des images multiple et intgrer pas une itent comme suit
-          // _showGallery ? ImageGallery() : const Center()
-        ],
-      ),
+        Row(
+          children: [
+            const Icon(Icons.person),
+            Expanded(
+              child: TextFormField(
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                onTap: () async {
+                  _showGallery = false;
+                  if (widget.device.state == SessionState.notConnected && !widget.longDistance) {
+                    await chatProvider.connectToDevice(widget.device);
+                  }
+                },
+                controller: myController,
+              ),
+            ),
+            Row(
+              children: [
+                sendImageWidget(),
+                sendMessageWidget(),
+              ],
+            ),
+          ],
+        ),
+        // TODO créé un widget pour faire la selection des images multiple et intgrer pas une itent comme suit
+        // _showGallery ? ImageGallery() : const Center()
+      ],
     );
   }
 
   Future<String> getImage() async {
     ImagePicker picker = ImagePicker();
     var pickedImage = await picker.pickImage(source: ImageSource.gallery);
-    imagePath = pickedImage!.path;
-    setState(() {});
-    return imagePath;
+    String path = pickedImage!.path;
+    return path;
   }
 
-  Widget sendImage() {
+// TODO faire une fonction qui fait un seul envoie de message plus facile a gerer et qui envoie image et texte
+  Widget sendImageWidget() {
     return IconButton(
         // l'action ouvre une itent pour selectionner et envoyer a la paire
         onPressed: () async {
-          if (widget.longDistance) {
-            Fluttertoast.showToast(
-                msg: 'Ta paire hors de portée',
-                toastLength: Toast.LENGTH_LONG,
-                gravity: ToastGravity.TOP,
-                timeInSecForIosWeb: 10,
-                backgroundColor: Colors.grey,
-                fontSize: 16.0);
-          } else {
-            if (widget.device.state == SessionState.connected) {
-              setState(() {
-                FocusScope.of(context).unfocus();
-                _showGallery = !_showGallery;
-              });
-              String path = await getImage();
-              var msgId = nanoid(21);
+          String path = await getImage();
 
-              File file = File(path);
-              var imageTo64String = Utils.imageToBase64String(file);
-              var payload = Payload(msgId, Global.myName, widget.converser, path, DateTime.now().toUtc().toString(), "Image");
-
-              Global.cache[msgId] = payload;
-              insertIntoMessageTable(payload);
-
-              Provider.of<Global>(context, listen: false)
-                  .sentToConversations(Msg(imageTo64String, "sent", payload.timestamp, "Image", msgId), widget.converser, isImage: path);
-            } else {
-              Fluttertoast.showToast(
-                  msg: 'Connecte toi à ta paire',
-                  toastLength: Toast.LENGTH_LONG,
-                  gravity: ToastGravity.TOP,
-                  timeInSecForIosWeb: 10,
-                  backgroundColor: Colors.grey,
-                  fontSize: 16.0);
-            }
-          }
+          imagePath.add(path);
+          setState(() {
+            //FocusScope.of(context).unfocus();
+            _showGallery = !_showGallery;
+          });
         },
         icon: const Icon(Icons.image_outlined));
   }
 
-  Widget sendMessage() {
+  Widget sendMessageWidget() {
     return IconButton(
-      onPressed: () {
+      onPressed: () async {
         if (widget.longDistance && widget.device.state == SessionState.notConnected) {
           Fluttertoast.showToast(
               msg: 'hors de portée',
@@ -134,18 +110,35 @@ class _MessagePanelState extends State<MessagePanel> {
               backgroundColor: Colors.grey,
               fontSize: 16.0);
         } else {
-          if (myController.text != "") {
-            ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
+          if (myController.text != "" || imagePath.isNotEmpty) {
+            //print(imagePath);
             var msgId = nanoid(21);
             var message = myController.text.trim();
-            var timestamp = DateTime.now().toUtc().toString();
-            ChatMessageParams chatMessageParams = ChatMessageParams(msgId, 'sender', widget.converser, message, 'Payload', 'Send', timestamp);
+            var timestamp = DateTime.now();
+            var listImages = imagePath.join(',');
+
+            ChatMessageParams chatMessageParams = ChatMessageParams(
+              msgId,
+              'bob',
+              widget.converser,
+              message,
+              listImages,
+              'Payload',
+              'Send',
+              timestamp,
+            );
+            if (imagePath.isNotEmpty) {
+              chatMessageParams.type = 'Image';
+            }
+
+            if (widget.device.state == SessionState.notConnected && !widget.longDistance) {
+              await chatProvider.connectToDevice(widget.device);
+            }
             chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
-            // Utils.envoieDeMessage(destinataire: widget.converser, message: myController.text, context: context);
           }
         }
-
         // refreshMessages();
+        imagePath.clear();
         myController.clear();
       },
       icon: const Icon(
@@ -154,3 +147,4 @@ class _MessagePanelState extends State<MessagePanel> {
     );
   }
 }
+

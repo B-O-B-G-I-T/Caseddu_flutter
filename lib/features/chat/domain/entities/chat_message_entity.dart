@@ -1,8 +1,19 @@
 class ChatMessageEntity {
+  String? get id => _id;
+  final String sender;
+  final String receiver;
+  final DateTime timestamp;
   final String message;
-  final String sendOrReceived; //sent or received
-  final String timeStamp;
-  late String typeMessage = 'Payload';
-  final String id;
-  ChatMessageEntity({required this.message, required this.sendOrReceived, required this.timeStamp, required this.typeMessage, required this.id});
+  final String images;
+  final String type;
+  String? _id;
+
+  ChatMessageEntity({
+    required this.sender,
+    required this.receiver,
+    required this.timestamp,
+    required this.message,
+    required this.images,
+    required this.type, String? id, 
+  });
 }

@@ -1,14 +1,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_application_1/features/parametre/presentation/pages/parameter_page.dart';
-import 'package:flutter_application_1/features/auth/presentation/pages/login_screen.dart';
-import 'package:flutter_application_1/features/auth/presentation/pages/oubli_mot_de_passe.dart';
-import 'package:flutter_application_1/features/auth/presentation/pages/register_screen.dart';
-import 'package:flutter_application_1/presentation/chat/chat_page.dart';
-import 'package:flutter_application_1/presentation/photo_pages/envoie_de_photo.dart';
-import 'package:flutter_application_1/presentation/photo_pages/prise_photo.dart';
-import 'package:flutter_application_1/widget/bottombar.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+
+import '../../features/auth/presentation/pages/login_screen.dart';
+import '../../features/auth/presentation/pages/oubli_mot_de_passe.dart';
+import '../../features/auth/presentation/pages/register_screen.dart';
+import '../../features/chat/presentation/pages/chat_page.dart';
+import '../../features/chat/presentation/pages/photo_pages/3_envoie_de_photo.dart';
+import '../../features/chat/presentation/pages/photo_pages/2_prise_photo.dart';
+import '../../features/parametre/presentation/pages/parameter_page.dart';
+import '../../PremierePage.dart';
 
 // doc officiel : https://docs.flutter.dev/ui/navigation
 // doc du package : https://pub.dev/documentation/go_router/latest/topics/Get%20started-topic.html
@@ -55,7 +56,7 @@ class Routes {
       GoRoute(
         path: '/',
         builder: (context, state) {
-          return const BottomBar();
+          return const PremierePage();
         },
       ),
       GoRoute(
@@ -78,7 +79,8 @@ class Routes {
         name: 'EnvoieDePhotoPage',
         builder: (context, state) {
           final String filePath = state.extra.toString();
-          return EnvoieDePhotoPage(
+          return 
+          EnvoieDePhotoPage(
             cheminVersImagePrise: filePath,
           );
         },

@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/core/errors/widgets/firebase_error.dart';
-import 'package:flutter_application_1/features/parametre/presentation/providers/parametre_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+
+import '../../../../core/errors/widgets/firebase_error.dart';
+import '../providers/parametre_provider.dart';
 
 class ParametrePage extends StatefulWidget {
   const ParametrePage({super.key});
