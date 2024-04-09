@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/modeles/messages_model.dart';
-import 'package:flutter_application_1/global/utils/fonctions.dart';
+import 'package:flutter_application_1/core/utils/fonctions.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 

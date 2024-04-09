@@ -1,11 +1,10 @@
 /// This component is used in the ChatPage.
 /// It is the message bar where the message is typed on and sent to
 /// connected devices.
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/global/utils/fonctions.dart';
+import 'package:flutter_application_1/core/utils/fonctions.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,7 +14,7 @@ import '../../database/DatabaseHelper.dart';
 import '../../global/global.dart';
 import '../../global/payload.dart';
 import '../../modeles/messages_model.dart';
-import '../../global/utils/p2p/adhoc_housekeeping.dart';
+import '../../core/utils/p2p/adhoc_housekeeping.dart';
 
 class MessagePanel extends StatefulWidget {
   const MessagePanel(

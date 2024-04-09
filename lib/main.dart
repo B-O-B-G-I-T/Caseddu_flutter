@@ -1,9 +1,12 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/features/auth/presentation/providers/authentification_provider.dart';
+import 'package:flutter_application_1/features/authentification/data/data_source/auth_data_remote.dart';
 import 'package:flutter_application_1/global/global.dart';
-import 'package:flutter_application_1/global/routes.dart';
+import 'package:flutter_application_1/config/routes/routes.dart';
 import 'package:flutter_application_1/provider/event_provider.dart';
 import 'package:json_theme/json_theme.dart';
 import 'package:flutter/services.dart';
@@ -28,8 +31,7 @@ void main() async {
     print('Error in fetching the cameras: $e');
   }
 
-  final themeStr =
-      await rootBundle.loadString('assets/theme/appainter_theme.json');
+  final themeStr = await rootBundle.loadString('assets/theme/appainter_theme.json');
   final themeJson = jsonDecode(themeStr);
   final theme = ThemeDecoder.decodeThemeData(themeJson)!;
 
@@ -54,6 +56,14 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
+        Provider<AuthDataRemote>(create: (_) => AuthDataRemote(firebaseAuth: FirebaseAuth.instance)),
+        StreamProvider(
+          create: (context) => context.read<AuthDataRemote>().authStateChange,
+          initialData: null,
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AuthentificationProvider(),
+        ),
         ChangeNotifierProvider(create: (_) => Global()),
         ChangeNotifierProvider(create: (context) => EventProvider())
       ],
@@ -69,8 +79,7 @@ class MyApp extends StatelessWidget {
   //pour la camera
   final List<CameraDescription> cameras;
 
-  const MyApp({Key? key, required this.theme, required this.cameras})
-      : super(key: key);
+  const MyApp({Key? key, required this.theme, required this.cameras}) : super(key: key);
   // This widget is the root of your application.
 
   @override
