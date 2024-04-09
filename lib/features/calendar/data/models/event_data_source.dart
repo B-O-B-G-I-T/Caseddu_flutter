@@ -11,10 +11,10 @@ class EventDataSource extends CalendarDataSource {
   EventEntity getEvent(int index) => appointments![index] as EventEntity;
 
   @override
-  DateTime getStartTime(int index) => getEvent(index).from;
+  DateTime getStartTime(int index) => getEvent(index).deQuand;
 
   @override
-  DateTime getEndTime(int index) => getEvent(index).to;
+  DateTime getEndTime(int index) => getEvent(index).aQuand;
 
   @override
   String getSubject(int index) => getEvent(index).title;

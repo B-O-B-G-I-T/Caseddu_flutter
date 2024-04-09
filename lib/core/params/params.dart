@@ -1,3 +1,4 @@
+import 'package:caseddu/features/calendar/data/models/event_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 
@@ -73,17 +74,29 @@ class ChatMessageParams {
 class EventParams {
   final String title;
   final String description;
-  final DateTime from;
-  final DateTime to;
+  final DateTime deQuand;
+  final DateTime aQuand;
   final Color backgroundColor;
   final String recurrence;
 
   const EventParams({
     required this.title,
     required this.description,
-    required this.from,
-    required this.to,
+    required this.deQuand,
+    required this.aQuand,
     this.backgroundColor = Colors.lightGreen,
     this.recurrence = 'Jamais',
   });
+
+  EventModel toEventModel() {
+    return EventModel(
+      title: title,
+      description: description,
+      deQuand: deQuand,
+      aQuand: aQuand,
+      backgroundColor: backgroundColor,
+      recurrence: recurrence,
+    );
+    
+  }
 }

@@ -46,8 +46,8 @@ class EventViewingPage extends StatelessWidget {
   Widget buildDateTime(BuildContext context, EventEntity event) {
     return Column(
       children: [
-        buildDate(context, 'From', event.from),
-        buildDate(context, 'To', event.to)
+        buildDate(context, 'From', event.deQuand),
+        buildDate(context, 'To', event.aQuand)
       ],
     );
   }

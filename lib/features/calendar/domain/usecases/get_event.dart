@@ -14,4 +14,9 @@ class GetEvent {
   }) async {
     return await eventRepository.getEvent(eventParams: eventParams);
   }
+  Future<Either<Failure, EventEntity>> ajoutEvenement({
+    required EventParams eventParams,
+  }) async {
+    return await eventRepository.ajoutEvenement(eventParams: eventParams);
+  }
 }

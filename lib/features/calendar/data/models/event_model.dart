@@ -5,18 +5,18 @@ class EventModel extends EventEntity {
   const EventModel(
       {required String title,
       required String description,
-      required DateTime from,
-      required DateTime to,
+      required DateTime deQuand,
+      required DateTime aQuand,
       required Color backgroundColor,
       required String recurrence})
-      : super(title: title, description: description, from: from, to: to, backgroundColor: backgroundColor, recurrence: recurrence);
+      : super(title: title, description: description, deQuand: deQuand, aQuand: aQuand, backgroundColor: backgroundColor, recurrence: recurrence);
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
     return EventModel(
       title: json['title'],
       description: json['description'],
-      from: DateTime.parse(json['from']),
-      to: DateTime.parse(json['to']),
+      deQuand: DateTime.parse(json['deQuand']),
+      aQuand: DateTime.parse(json['aQuand']),
       backgroundColor: Color(json['backgroundColor']),
       recurrence: json['recurrence'],
     );
@@ -26,8 +26,8 @@ class EventModel extends EventEntity {
     return {
       'title': title,
       'description': description,
-      'from': from.toIso8601String(),
-      'to': to.toIso8601String(),
+      'deQuand': deQuand.toIso8601String(),
+      'aQuand': aQuand.toIso8601String(),
       'backgroundColor': backgroundColor.value,
       'recurrence': recurrence,
     };

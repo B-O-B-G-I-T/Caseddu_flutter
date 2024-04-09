@@ -1,3 +1,4 @@
+import 'package:caseddu/core/params/params.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
@@ -33,8 +34,8 @@ class _EventEditingState extends State<EventEditing> {
     } else {
       final event = widget.event!;
       titleController.text = event.title;
-      fromDate = event.from;
-      toDate = event.to;
+      fromDate = event.deQuand;
+      toDate = event.aQuand;
       recurrence = event.recurrence;
       description = event.description;
     }
@@ -227,11 +228,12 @@ class _EventEditingState extends State<EventEditing> {
     final isValid = _formKey.currentState!.validate();
 
     if (isValid) {
-      final event = EventEntity(
+      
+      final event = EventParams(
         title: titleController.text,
         description: descriptionController.text,
-        from: fromDate,
-        to: toDate,
+        deQuand: fromDate,
+        aQuand: toDate,
         recurrence: recurrence,
       );
 
@@ -239,9 +241,9 @@ class _EventEditingState extends State<EventEditing> {
       final provider = Provider.of<CalendarProvider>(context, listen: false);
 
       if (isEditing) {
-        provider.editEvent(event, widget.event!);
+        // provider.editEvent(event, widget.event!);
       } else {
-        provider.addEvent(event);
+        provider.eitherFailureOrAjoutEvenement(event);
       }
 
       Navigator.of(context).pop();
