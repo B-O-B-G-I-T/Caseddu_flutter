@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../../../../core/errors/firebase_exceptions.dart';
 import '../../../../../core/params/params.dart';
@@ -11,7 +12,6 @@ abstract class AuthentificationRemoteDataSource {
 
 class AuthentificationRemoteDataSourceImpl implements AuthentificationRemoteDataSource {
   final FirebaseAuth firebaseAuth;
-
   AuthentificationRemoteDataSourceImpl({required this.firebaseAuth});
 
   Stream<User?> get authStateChange => firebaseAuth.authStateChanges();

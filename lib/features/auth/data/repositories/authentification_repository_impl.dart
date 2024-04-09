@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:flutter_application_1/core/connection/network_info.dart';
 import '../../../../core/errors/firebase_exceptions.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
@@ -9,23 +10,31 @@ import '../models/authentification_model.dart';
 class AuthentificationRepositoryImpl implements AuthentificationRepository {
   final AuthentificationRemoteDataSource remoteDataSource;
 
-  AuthentificationRepositoryImpl({
-    required this.remoteDataSource,
+  final NetworkInfo networkInfo;
+
+  AuthentificationRepositoryImpl( {
+    required this.remoteDataSource, required this.networkInfo,
   });
 
   @override
   Future<Either<Failure, AuthentificationModel>> getAuthentification({required AuthentificationParams authentificationParams}) async {
-    try {
-      AuthentificationModel remoteAuthentification = await remoteDataSource.getAuthentification(authentificationParams: authentificationParams);
+    if (await networkInfo.isConnected!) {
+      try {
+        AuthentificationModel remoteAuthentification = await remoteDataSource.getAuthentification(authentificationParams: authentificationParams);
 
-      return Right(remoteAuthentification);
-    } on FireBaseException catch (e) {
-      return Left(ServerFailure(errorMessage: e.errMessage));
+        return Right(remoteAuthentification);
+      } on FireBaseException catch (e) {
+        return Left(ServerFailure(errorMessage: e.errMessage));
+      }
+    }
+    else{
+      return Left(ServerFailure(errorMessage: 'Connecte toi'));
     }
   }
 
   @override
   Future<Either<Failure, AuthentificationModel>> createUser({required AuthentificationParams authentificationParams}) async {
+    if (await networkInfo.isConnected!) {
     try {
       AuthentificationModel remoteAuthentification = await remoteDataSource.createUser(authentificationParams: authentificationParams);
 
@@ -33,16 +42,25 @@ class AuthentificationRepositoryImpl implements AuthentificationRepository {
     } on FireBaseException catch (e) {
       return Left(ServerFailure(errorMessage: e.errMessage));
     }
+    }
+    else{
+      return Left(ServerFailure(errorMessage: 'Connecte toi'));
+    }
   }
 
   @override
   Future<Either<Failure, void>> changeMotDePasse({required AuthentificationParams authentificationParams}) async {
+    if (await networkInfo.isConnected!) {
     try {
       await remoteDataSource.changeMotDePasse(authentificationParams: authentificationParams);
 
       return const Right(null);
     } on FireBaseException catch (e) {
       return Left(ServerFailure(errorMessage: e.errMessage));
+    }
+    }
+    else{
+      return Left(ServerFailure(errorMessage: 'Connecte toi'));
     }
   }
 }
