@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'features/calendar/presentation/pages/calendar_viewing_page.dart';
 import 'features/chat/presentation/pages/chat_home_page.dart';
 import 'features/chat/presentation/pages/photo_pages/1_camera_page.dart';
 import 'main.dart';
@@ -30,7 +31,7 @@ class _PremierePageState extends State<PremierePage> {
       cameras: cameras,
     ),
     const ChatHomeScreen(),
-
+    const CalendarViewingPage(),
   ];
 
 // fonction pour selectionner la page /////////////////////////////
@@ -40,9 +41,10 @@ class _PremierePageState extends State<PremierePage> {
         return CameraPage(
           cameras: cameras,
         );
-      default:
+      case 1:
         return const ChatHomeScreen();
-
+      default:
+        return const CalendarViewingPage();
     }
   }
 
@@ -147,7 +149,10 @@ class _PremierePageState extends State<PremierePage> {
               icon: Icon(Icons.chat),
               label: 'Chats',
             ),
-            
+            BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_month_outlined),
+              label: 'Calendrier',
+            ),
           ],
           currentIndex: _selectedIndex, //New
           onTap: _onItemTapped,

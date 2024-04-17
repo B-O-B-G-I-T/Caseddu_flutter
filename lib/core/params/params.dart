@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 
+import '../../features/calendar/data/models/event_model.dart';
 import '../../features/chat/data/models/chat_message_model.dart';
 
 class NoParams {}
@@ -69,34 +71,34 @@ class ChatMessageParams {
   }
 }
 
-// class EventParams {
-//   final String title;
-//   final String description;
-//   final DateTime deQuand;
-//   final DateTime aQuand;
-//   final Color backgroundColor;
-//   final String recurrence;
+class EventParams {
+  final String title;
+  final String description;
+  final DateTime deQuand;
+  final DateTime aQuand;
+  final Color backgroundColor;
+  final String recurrence;
 
-//   const EventParams({
-//     required this.title,
-//     required this.description,
-//     required this.deQuand,
-//     required this.aQuand,
-//     this.backgroundColor = Colors.lightGreen,
-//     this.recurrence = 'Jamais',
-//   });
+  const EventParams({
+    required this.title,
+    required this.description,
+    required this.deQuand,
+    required this.aQuand,
+    this.backgroundColor = Colors.lightGreen,
+    this.recurrence = 'Jamais',
+  });
 
-//   EventModel toEventModel() {
-//     return EventModel(
-//       title: title,
-//       description: description,
-//       deQuand: deQuand,
-//       aQuand: aQuand,
-//       backgroundColor: backgroundColor,
-//       recurrence: recurrence,
-//     );
+  EventModel toEventModel() {
+    return EventModel(
+      title: title,
+      description: description,
+      deQuand: deQuand,
+      aQuand: aQuand,
+      backgroundColor: backgroundColor,
+      recurrence: recurrence,
+    );
     
-//   }
-// }
+  }
+}
 
 
