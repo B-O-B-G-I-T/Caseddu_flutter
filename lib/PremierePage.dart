@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'features/chat/presentation/pages/chat_home_page.dart';
 import 'features/chat/presentation/pages/photo_pages/1_camera_page.dart';
-import 'features/menu/presentation/pages/menu_page.dart';
 import 'main.dart';
-import 'features/calendar/presentation/pages/calendar_viewing_page.dart';
 
 class PremierePage extends StatefulWidget {
   const PremierePage({super.key});
@@ -27,27 +25,24 @@ class _PremierePageState extends State<PremierePage> {
 
 // dictionnaire des pages /////////////////////////////
   static final List<Widget> _pages = <Widget>[
-    MenuPage(),
+
     CameraPage(
       cameras: cameras,
     ),
     const ChatHomeScreen(),
-    const CalendarViewingPage(),
+
   ];
 
 // fonction pour selectionner la page /////////////////////////////
   Widget _pageSelectionne() {
     switch (_selectedIndex) {
       case 0:
-        return MenuPage();
-      case 1:
         return CameraPage(
           cameras: cameras,
         );
-      case 2:
-        return const ChatHomeScreen();
       default:
-        return const CalendarViewingPage();
+        return const ChatHomeScreen();
+
     }
   }
 
@@ -143,10 +138,7 @@ class _PremierePageState extends State<PremierePage> {
           showSelectedLabels: false,
           showUnselectedLabels: false,
           items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.bookmark_border_sharp),
-              label: 'Calls',
-            ),
+            
             BottomNavigationBarItem(
               icon: Icon(Icons.camera),
               label: 'Camera',
@@ -155,10 +147,7 @@ class _PremierePageState extends State<PremierePage> {
               icon: Icon(Icons.chat),
               label: 'Chats',
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_month_outlined),
-              label: 'Calendrier',
-            ),
+            
           ],
           currentIndex: _selectedIndex, //New
           onTap: _onItemTapped,

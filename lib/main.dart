@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:camera/camera.dart';
-import 'package:caseddu/features/calendar/presentation/providers/calendar_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -94,7 +93,7 @@ void main() async {
         ),
 
         //ChangeNotifierProvider(create: (_) => Global()),
-        ChangeNotifierProvider(create: (context) => CalendarProvider())
+
       ],
       child: MyApp(theme: theme, cameras: cameras),
     ),
