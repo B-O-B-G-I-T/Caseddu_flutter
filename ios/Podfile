@@ -52,7 +52,7 @@ post_install do |installer|
         'PERMISSION_EVENTS=1',
         
         ## dart: [PermissionGroup.calendarFullAccess, PermissionGroup.calendar (from iOS 17)]
-       'PERMISSION_EVENTS_FULL_ACCESS=1',
+        'PERMISSION_EVENTS_FULL_ACCESS=1',
 
         ## dart: PermissionGroup.reminders
         'PERMISSION_REMINDERS=1',

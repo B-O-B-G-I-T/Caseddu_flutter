@@ -27,25 +27,62 @@
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSCameraUsageDescription</key>
-    <string>This app requires access to the camera.</string>
+    <string>L'application nécessite l'accès à la caméra pour permettre la prise de photos et l'enregistrement de vidéos.</string>
+
     <key>NSMicrophoneUsageDescription</key>
-    <string>This app does not require access to the microphone.</string>
+    <string>L'application nécessite l'accès au microphone pour enregistrer des messages vocaux et des commentaires audio.</string>
+
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>This app requires access to the photo library.</string>
-    <key>UIApplicationSupportsIndirectInputEvents</key>
-    <true/>
-    <key>UIRequiresPersistentWiFi</key>
-    <true/>
+    <string>L'application nécessite l'accès à la bibliothèque de photos pour permettre l'importation et la gestion de photos dans l'application.</string>
+
     <key>NSBluetoothAlwaysUsageDescription</key>
-    <string>Need BLE permission</string>
+    <string>L'application nécessite l'accès Bluetooth pour permettre la connexion à des périphériques audio Bluetooth.</string>
+
     <key>NSBluetoothPeripheralUsageDescription</key>
-    <string>Need BLE permission</string>
+    <string>L'application nécessite l'accès Bluetooth pour permettre la connexion à des accessoires et périphériques compatibles Bluetooth.</string>
+
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Need Location permission</string>
+    <string>L'application nécessite l'accès à votre emplacement pour fournir des recommandations personnalisées basées sur votre position.</string>
+
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>Need Location permission</string>
+    <string>L'application nécessite l'accès à votre emplacement pour suivre votre position en arrière-plan et fournir des alertes géolocalisées.</string>
+
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Need Location permission</string>
+    <string>L'application nécessite l'accès à votre emplacement pour afficher des informations locales pertinentes lorsque vous utilisez l'application.</string>
+
+    <key>NSCalendarsUsageDescription</key>
+    <string>L'application nécessite l'accès à vos calendriers pour planifier et synchroniser des événements avec votre agenda.</string>
+
+    <key>NSContactsUsageDescription</key>
+    <string>L'application nécessite l'accès à vos contacts pour faciliter le partage de contenu et l'inviter vos amis à rejoindre l'application.</string>
+
+    <key>NSAppleMusicUsageDescription</key>
+    <string>L'application nécessite l'accès à votre bibliothèque musicale Apple pour permettre la lecture de musique et la création de listes de lecture personnalisées.</string>
+
+    <key>NSSpeechRecognitionUsageDescription</key>
+    <string>L'application nécessite l'accès à la reconnaissance vocale pour permettre la dictée vocale et les commandes vocales dans l'application.</string>
+
+    <key>NSMotionUsageDescription</key>
+    <string>L'application nécessite l'accès aux données de mouvement pour détecter les gestes et les mouvements de l'utilisateur pour une expérience utilisateur améliorée.</string>
+
+    <key>aps-environment</key>
+    <string>development</string>
+
+    <key>aps-environment</key>
+    <string>production</string>
+
+    <key>NSPrivacyAccessedAPITypes</key>
+    <dict>
+      <key>NSPrivacyAccessedAPICategoryFileTimestamp</key>
+      <array>
+        <string>Utilisation des timestamps pour synchroniser les données.</string>
+      </array>
+      <key>NSPrivacyAccessedAPICategoryUserDefaults</key>
+      <array>
+        <string>Accès aux UserDefaults pour sauvegarder les préférences de l'utilisateur.</string>
+      </array>
+    </dict>
+
     <key>UILaunchStoryboardName</key>
     <string>LaunchScreen</string>
     <key>UIMainStoryboardFile</key>
@@ -76,5 +113,7 @@
       <key>NSAllowsArbitraryLoads</key>
       <true/>
     </dict>
+    <key>UIApplicationSupportsIndirectInputEvents</key>
+    <true/>
   </dict>
 </plist>
