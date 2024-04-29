@@ -35,6 +35,17 @@
     <key>NSPhotoLibraryUsageDescription</key>
     <string>L'application nécessite l'accès à la bibliothèque de photos pour permettre l'importation et la gestion de photos dans l'application.</string>
 
+    <key>NSBonjourServices</key>
+    <array>
+      <string>_mp-connection._tcp</string>
+      <string>_mp-connection._udp</string>
+    </array>
+    <key>UIRequiresPersistentWiFi</key>
+    <true/>
+    
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>Utilisation du réseau local pour la découverte de services.</string>
+
     <key>NSBluetoothAlwaysUsageDescription</key>
     <string>L'application nécessite l'accès Bluetooth pour permettre la connexion à des périphériques audio Bluetooth.</string>
 
