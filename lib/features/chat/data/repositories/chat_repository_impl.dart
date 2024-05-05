@@ -1,3 +1,4 @@
+import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import '../../../../../core/connection/network_info.dart';
@@ -11,6 +12,7 @@ import '../models/chat_message_model.dart';
 import '../models/chat_user_model.dart';
 
 class ChatRepositoryImpl implements ChatRepository {
+
   final ChatRemoteDataSource remoteDataSource;
   final ChatLocalDataSource localDataSource;
   final NetworkInfo networkInfo;
@@ -92,4 +94,15 @@ class ChatRepositoryImpl implements ChatRepository {
     //   return Left(ServerFailure(errorMessage: "Erreur connection"));
     // }
   }
-}
+
+  @override
+  Future<Either<Failure, void>> deleteConversation(UserEntity userEntity) async {
+      try {
+        await localDataSource.deleteConversation(userEntity);
+        return Right(true);
+      } catch (e) {
+        return Left(ServerFailure(errorMessage: e.toString()));
+      }
+    }
+  }
+

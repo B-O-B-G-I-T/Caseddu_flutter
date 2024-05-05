@@ -38,7 +38,7 @@ void main() async {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   final chatProvider = ChatProvider(); // Initialisation manuelle
-
+  
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
@@ -69,7 +69,9 @@ void main() async {
     // });
   } // else {
   runApp(
+    
     MultiProvider(
+      
       providers: [
         Provider<AuthentificationRemoteDataSourceImpl>(
             create: (_) => AuthentificationRemoteDataSourceImpl(
@@ -112,6 +114,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp.router(
       routerConfig: Routes().router,
       debugShowCheckedModeBanner: false,

@@ -1,4 +1,5 @@
 import 'package:caseddu/features/chat/data/models/chat_message_model.dart';
+import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -18,8 +19,8 @@ class ListeDesChatsPage extends StatefulWidget {
 
 class _ListeDesChatsPage extends State<ListeDesChatsPage> {
   bool isLoading = false;
-  List<Device> conversers = [];
-  List<Device> conversersFiltre = [];
+  List<UserEntity> conversers = [];
+  List<UserEntity> conversersFiltre = [];
   List<ChatMessageModel?> lastMessage = [];
   final TextEditingController _searchController = TextEditingController();
   late ChatProvider chatProvider;
@@ -60,7 +61,7 @@ class _ListeDesChatsPage extends State<ListeDesChatsPage> {
     return Consumer<ChatProvider>(builder: (context, chatProvider, child) {
       // chatProvider = Provider.of<ChatProvider>(context, listen: false);
       // chatProvider.eitherFailureOrAllConversations();
-      conversers = chatProvider.users.map((e) => Device(e.id, e.name, 0)).toList();
+      conversers = chatProvider.users;
       if (_searchController.text.isEmpty) {
         conversersFiltre = conversers;
       }
@@ -71,7 +72,7 @@ class _ListeDesChatsPage extends State<ListeDesChatsPage> {
           SearchWidget(
             onChanged: (value) {
               setState(() {
-                conversersFiltre = Utils.runFilter(value, conversers, (device) => device.deviceName);
+                conversersFiltre = Utils.runFilter(value, conversers, (user) => user.name);
               });
             },
             searchController: _searchController,
@@ -91,8 +92,8 @@ class _ListeDesChatsPage extends State<ListeDesChatsPage> {
                         direction: DismissDirection.endToStart,
                         // gere la suppréssion des conversations
                         onDismissed: (direction) {
-                          // TODO supprimer de la liste
-
+                          
+                          chatProvider.deleteConversation(conversersFiltre[index]);
                           Fluttertoast.showToast(
                               msg: 'conversation supprimé',
                               toastLength: Toast.LENGTH_LONG,
@@ -111,7 +112,7 @@ class _ListeDesChatsPage extends State<ListeDesChatsPage> {
                         ),
                         // widget qui sont les cases pour afficher un utilisateur
                         child: ListTilePourUtilisateurConnu(
-                          deviceName: conversersFiltre[index].deviceName,
+                          deviceName: conversersFiltre[index].name,
                           message: lastMessage[index]!.message,
                           timestamp: lastMessage[index]!.timestamp.toString(),
                           typeMessage: lastMessage[index]!.type,
@@ -120,7 +121,7 @@ class _ListeDesChatsPage extends State<ListeDesChatsPage> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => ChatPage(
-                                  converser: conversersFiltre[index].deviceName,
+                                  converser: conversersFiltre[index].name,
                                 ),
                               ),
                             );

@@ -26,6 +26,7 @@ class MessagePanel extends StatefulWidget {
 
 class _MessagePanelState extends State<MessagePanel> {
   TextEditingController myController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   bool _showGallery = false;
   List<String> imagePath = [];
   late ChatProvider chatProvider;
@@ -33,50 +34,68 @@ class _MessagePanelState extends State<MessagePanel> {
   @override
   void initState() {
     super.initState();
+    _focusNode.requestFocus();
     chatProvider = Provider.of<ChatProvider>(context, listen: false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        if (imagePath.isNotEmpty)
-          // Vérifie si imagePath a une valeur
-          scrollHForPictures(
-            pictures: imagePath,
-          ),
-        Row(
-          children: [
-            const Icon(Icons.person),
-            Expanded(
-              child: TextFormField(
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                onTap: () async {
-                  _showGallery = false;
-                  if (widget.device.state == SessionState.notConnected && !widget.longDistance) {
-                    await chatProvider.connectToDevice(widget.device);
-                  }
-                },
-                controller: myController,
+    return GestureDetector(
+      onVerticalDragUpdate: (details) {
+        if (details.delta.dy < -10) {
+          // Si le mouvement vertical est vers le haut
+          _focusNode.requestFocus();
+        }
+        if (details.delta.dy < 10) {
+          // Si le mouvement vertical est vers le bas
+          FocusScope.of(context).unfocus(); // <-- Hide virtual keyboard
+        }
+      },
+      child: Column(
+        children: [
+          if (imagePath.isNotEmpty)
+            // Vérifie si imagePath a une valeur
+            scrollHForPictures(
+              pictures: imagePath,
+            ),
+          Row(
+            children: [
+              const Icon(Icons.person),
+              Expanded(
+                child: TextFormField(
+                  keyboardType: TextInputType.multiline,
+                  decoration: const InputDecoration(
+                    hintText: 'Ecrivez votre message',
+                  ),
+                  focusNode: _focusNode,
+                  maxLines: null,
+                  onTap: () async {
+                    _showGallery = false;
+                    if (widget.device.state == SessionState.notConnected && !widget.longDistance) {
+                      await chatProvider.connectToDevice(widget.device);
+                    }
+                  },
+                  controller: myController,
+                ),
               ),
-            ),
-            Row(
-              children: [
-                sendImageWidget(),
-                sendMessageWidget(),
-              ],
-            ),
-          ],
-        ),
-        // TODO créé un widget pour faire la selection des images multiple et intgrer pas une itent comme suit
-        // _showGallery ? ImageGallery() : const Center()
-      ],
+              Row(
+                children: [
+                  sendImageWidget(),
+                  sendMessageWidget(),
+                ],
+              ),
+            ],
+          ),
+          // TODO créé un widget pour faire la selection des images multiple et intgrer pas une itent comme suit
+          // _showGallery ? ImageGallery() : const Center()
+        ],
+      ),
     );
   }
 
   Future<String> getImage() async {
     ImagePicker picker = ImagePicker();
+    FocusScope.of(context).unfocus(); // masque le clavier
     var pickedImage = await picker.pickImage(source: ImageSource.gallery);
     String path = pickedImage!.path;
     return path;
@@ -147,4 +166,3 @@ class _MessagePanelState extends State<MessagePanel> {
     );
   }
 }
-
