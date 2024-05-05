@@ -52,6 +52,10 @@ class DatabaseHelper {
     return user;
   }
 
+  Future<void> deleteUser(String userId) async {
+    final db = await BaseDonneesGeneral.database;
+    await db.delete('users', where: 'id = ?', whereArgs: [userId]);
+  }
 // ------------------------ CHAT MESSAGES ------------------------
   Future<List<ChatMessageModel>> getAllChatMessages() async {
     final db = await BaseDonneesGeneral.database;
@@ -152,6 +156,10 @@ class DatabaseHelper {
     }
   }
 
+  Future<void> deleteConversation(String userId) async {
+    final db = await BaseDonneesGeneral.database;
+    await db.delete('chat_messages', where: 'sender = ? OR receiver = ?', whereArgs: [userId, userId]);
+  }
 // ------------------------ GENERIC ------------------------
   Future<List<Map<String, dynamic>>> query(String table) async {
     Database dbClient = await BaseDonneesGeneral.database;

@@ -41,7 +41,7 @@ class ChatProvider extends ChangeNotifier {
   ];
 
   ChatProvider({
-    //this.devices,
+
     this.failure,
   }) {
     eitherFailureOrInit();
@@ -312,6 +312,38 @@ class ChatProvider extends ChangeNotifier {
       },
     );
   }
+
+    Future<void> deleteConversation (UserEntity userEntity) async {
+    //chatMessageParams.sender = Global.myName;
+    //Global.cache[chatMessageParams.id] = chatMessageParams;
+    // insertIntoMessageTable(chatMessageParams);
+
+    ChatRepositoryImpl repository = ChatRepositoryImpl(
+      remoteDataSource: ChatRemoteDataSourceImpl(),
+      localDataSource: ChatLocalDataSourceImpl(
+        sharedPreferences: await SharedPreferences.getInstance(),
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
+      ),
+    );
+
+    final failureOrChat = await GetChat(chatRepository: repository).deleteConversation(userEntity);
+
+    failureOrChat.fold(
+      (Failure newFailure) {
+        //chat = null;
+        failure = newFailure;
+        notifyListeners();
+      },
+      (void messages) {
+        users.remove(userEntity);
+        failure = null;
+        notifyListeners();
+      },
+    );
+  }
+
 
   @override
   void dispose() {

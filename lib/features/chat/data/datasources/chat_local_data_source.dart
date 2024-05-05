@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,6 +13,7 @@ abstract class ChatLocalDataSource {
   Future<List<ChatMessageModel>> getAllMessages();
   Future<List<ChatMessageModel>> getConversation(String senderName, String receiverName);
   Future<List<UserModel>> getAllConversation();
+  Future<void> deleteConversation(UserEntity userEntity);
 }
 
 const cachedChat = 'CACHED_TEMPLATE';
@@ -98,7 +102,6 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
       // }
       // Parcourir la liste et ajouter f à chaque élément
       for (var user in allChatMessages) {
-        
         ChatMessageModel? dernierMessage = await dbHelper.getLastMessage(user.id);
         user.dernierMessage = dernierMessage;
       }
@@ -107,5 +110,13 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
     } else {
       return [];
     }
+  }
+
+  @override
+  Future<void> deleteConversation(UserEntity userEntity) async {
+    final dbHelper = DatabaseHelper();
+    dbHelper.deleteConversation(userEntity.id);
+    dbHelper.deleteUser(userEntity.id);
+
   }
 }
