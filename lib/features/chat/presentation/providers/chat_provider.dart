@@ -32,16 +32,15 @@ class ChatProvider extends ChangeNotifier {
         id: 'deviceId1',
         name: 'userTest1',
         dernierMessage: ChatMessageModel(
-            id: 'id', sender: 'sender', receiver: 'receiver', message: 'message', images: 'images', type: 'type', timestamp: DateTime.now())),
+            id: 'id', sender: 'sender', receiver: 'receiver', message: 'message', images: List.empty(), type: 'type', timestamp: DateTime.now())),
     UserModel(
         id: 'deviceId2',
         name: 'userTest2',
         dernierMessage: ChatMessageModel(
-            id: 'id', sender: 'sender', receiver: 'receiver', message: 'message', images: 'images', type: 'type', timestamp: DateTime.now())),
+            id: 'id', sender: 'sender', receiver: 'receiver', message: 'message', images: List.empty(), type: 'type', timestamp: DateTime.now())),
   ];
 
   ChatProvider({
-
     this.failure,
   }) {
     eitherFailureOrInit();
@@ -112,7 +111,7 @@ class ChatProvider extends ChangeNotifier {
         String receiver = jsonData['receiver'];
         DateTime timestamp = DateTime.parse(jsonData['timestamp']);
         String message = jsonData['message'];
-        String imagesEncode = jsonData['images'];
+        List<String> imagesEncode = jsonData['images'];
 
         String type = jsonData['type'];
 
@@ -202,6 +201,7 @@ class ChatProvider extends ChangeNotifier {
       ),
     );
 //print(chatMessageParams.images);
+    
     final failureOrChat = await GetChat(chatRepository: repository).envoieMessage(
       chatMessageParams: chatMessageParams,
     );
@@ -230,6 +230,7 @@ class ChatProvider extends ChangeNotifier {
         DataConnectionChecker(),
       ),
     );
+    chatMessageParams.images = chatMessageParams.images;
 
     final failureOrChat = await GetChat(chatRepository: repository).enregistreMessage(
       chatMessageParams: chatMessageParams,
@@ -313,7 +314,7 @@ class ChatProvider extends ChangeNotifier {
     );
   }
 
-    Future<void> deleteConversation (UserEntity userEntity) async {
+  Future<void> deleteConversation(UserEntity userEntity) async {
     //chatMessageParams.sender = Global.myName;
     //Global.cache[chatMessageParams.id] = chatMessageParams;
     // insertIntoMessageTable(chatMessageParams);
@@ -343,7 +344,6 @@ class ChatProvider extends ChangeNotifier {
       },
     );
   }
-
 
   @override
   void dispose() {

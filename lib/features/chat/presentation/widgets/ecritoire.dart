@@ -134,14 +134,13 @@ class _MessagePanelState extends State<MessagePanel> {
             var msgId = nanoid(21);
             var message = myController.text.trim();
             var timestamp = DateTime.now();
-            var listImages = imagePath.join(',');
 
             ChatMessageParams chatMessageParams = ChatMessageParams(
               msgId,
               'bob',
               widget.converser,
               message,
-              listImages,
+              imagePath,
               'Payload',
               'Send',
               timestamp,

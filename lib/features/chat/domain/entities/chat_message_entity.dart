@@ -3,7 +3,7 @@ class ChatMessageEntity {
   final String receiver;
   final DateTime timestamp;
   final String message;
-  final String images;
+  final List<String> images;
   final String type;
   final String id;
 

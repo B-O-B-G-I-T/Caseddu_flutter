@@ -145,7 +145,7 @@ class _ChatPageState extends State<ChatPage> {
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: [
                                                             viewPicturesWidget(
-                                                              pictures: messageList[index].images.split(','),
+                                                              pictures: messageList[index].images,
                                                             ),
                                                             // Image.file(
                                                             //   File(messageList[index].images),

@@ -7,7 +7,7 @@ class ChatMessageModel extends ChatMessageEntity {
       required String receiver,
       required DateTime timestamp,
       required String message,
-      required String images,
+      required List<String> images,
       required String type,
       })
       : super( id: id, sender: sender, receiver: receiver, timestamp: timestamp, message: message, images: images, type: type,);
