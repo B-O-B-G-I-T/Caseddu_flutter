@@ -6,7 +6,9 @@ import 'features/chat/presentation/pages/photo_pages/1_camera_page.dart';
 import 'main.dart';
 
 class PremierePage extends StatefulWidget {
-  const PremierePage({super.key});
+  final int selectedIndex;
+
+    const PremierePage({Key? key, required this.selectedIndex}) : super(key: key);
 
   @override
   State<PremierePage> createState() => _PremierePageState();
@@ -21,16 +23,15 @@ class _PremierePageState extends State<PremierePage> {
   @override
   void initState() {
     super.initState();
+    _selectedIndex = widget.selectedIndex;
   }
 
 // dictionnaire des pages /////////////////////////////
   static final List<Widget> _pages = <Widget>[
-
     CameraPage(
       cameras: cameras,
     ),
     const ChatHomeScreen(),
-
   ];
 
 // fonction pour selectionner la page /////////////////////////////
@@ -42,7 +43,6 @@ class _PremierePageState extends State<PremierePage> {
         );
       default:
         return const ChatHomeScreen();
-
     }
   }
 
@@ -138,7 +138,6 @@ class _PremierePageState extends State<PremierePage> {
           showSelectedLabels: false,
           showUnselectedLabels: false,
           items: const <BottomNavigationBarItem>[
-            
             BottomNavigationBarItem(
               icon: Icon(Icons.camera),
               label: 'Camera',
@@ -147,7 +146,6 @@ class _PremierePageState extends State<PremierePage> {
               icon: Icon(Icons.chat),
               label: 'Chats',
             ),
-            
           ],
           currentIndex: _selectedIndex, //New
           onTap: _onItemTapped,

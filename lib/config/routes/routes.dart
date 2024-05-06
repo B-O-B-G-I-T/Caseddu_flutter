@@ -18,7 +18,7 @@ class Routes {
   // GoRouter configuration
   final _router = GoRouter(
     // l'écarn de login
-    initialLocation: '/',
+    initialLocation: '/firstPage/0',
     //redige la ou l'on veut
     redirect: (context, state) {
       final user = Provider.of<User?>(context, listen: false);
@@ -53,12 +53,6 @@ class Routes {
         },
       ),
       GoRoute(
-        path: '/',
-        builder: (context, state) {
-          return const PremierePage();
-        },
-      ),
-      GoRoute(
         path: '/parameter',
         builder: (context, state) {
           return const ParametrePage();
@@ -85,7 +79,7 @@ class Routes {
         },
       ),
       GoRoute(
-        path: '/PrisePhoto',
+        path: '/PrisePhoto/:filePath',
         name: 'PrisePhoto',
         builder: (context, state) {
           String filePath = state.extra.toString(); // -> le casting est important
@@ -93,8 +87,16 @@ class Routes {
             lastImage: filePath,
           );
         },
-      )
+      ),
+      GoRoute(
+        path: '/firstPage/:index',
+        builder: (context, state) {
+          final index = int.parse(state.pathParameters['index']!) ;
+          return PremierePage(selectedIndex: index);
+        },
+      ),
     ],
+
   );
 
   // variable public

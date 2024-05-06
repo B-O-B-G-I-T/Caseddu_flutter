@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nanoid/nanoid.dart';
 import 'package:provider/provider.dart';
+import '../../../../../core/params/params.dart';
 import '../../../../../core/utils/p2p/p2p_utils.dart';
 import '../../../../../core/utils/p2p/fonctions.dart';
 import '../../../data/models/chat_message_model.dart';
@@ -22,15 +26,19 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
   List<Device> conversersFiltre = [];
   List<ChatMessageModel?> lastMessage = [];
 
-   List<Device> deviceSelectionne = [];
+  List<Device> deviceSelectionne = [];
 
   final TextEditingController _searchController = TextEditingController();
   late ChatProvider chatProvider;
+  @override
+  void initState() {
+    chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    super.initState();
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-   
   }
 
   @override
@@ -51,13 +59,18 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
             floatHeaderSlivers: true,
             headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
               return <Widget>[
-                const SliverAppBar(
-                  leadingWidth: 0,
+                SliverAppBar(
                   floating: true,
                   snap: true,
                   title: Text("Envoie de photo"),
                   //c'est cool si pas centrer
                   centerTitle: true,
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ),
               ];
             },
@@ -73,7 +86,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                     },
                     searchController: _searchController,
                   ),
-
+                  // les paires connus
                   const Padding(
                     padding: EdgeInsets.fromLTRB(16, 4, 16, 0),
                     child: Text("Les paires connus"),
@@ -81,26 +94,14 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                   SelectionDesUser(
                     listDevice: conversersFiltre,
                     deviceSelectionne: deviceSelectionne,
-                    onDeviceSelected: (selected) {
+                    onDeviceSelected: (selected) async {
+                      await chatProvider.connectToDevice(selected);
+
                       setState(() {
                         onDeviceSelected(selected);
                       });
                     },
                   ),
-                  // ListView.builder(
-                  //     itemCount: conversers.length,
-                  //     physics: const NeverScrollableScrollPhysics(),
-                  //     shrinkWrap: true,
-                  //     itemBuilder: (context, index) {
-                  //       // widget qui sont les cases pour afficher un utilisateur
-                  //       return ListTilePourUtilisateurConnu(
-                  //           deviceName: conversersFiltre[index].deviceName,
-                  //           message: lastMessage[index]!.message,
-                  //           timestamp: lastMessage[index]!.timestamp.toString(),
-                  //           onTap: () {
-                  //             onDeviceSelected(conversersFiltre[index]);
-                  //           });
-                  //     }),
                   // liste des devices approximités
                   const Padding(
                     padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
@@ -109,8 +110,9 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                   SelectionDesUser(
                     listDevice: deviceApproximiteFilter,
                     deviceSelectionne: deviceSelectionne,
-                    onDeviceSelected: (selected) {
-                      setState(() {
+                    onDeviceSelected: (selected) async {
+                      setState(() async {
+                        await chatProvider.connectToDevice(selected);
                         onDeviceSelected(selected);
                       });
                     },
@@ -125,7 +127,34 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
       // faire l'envoie un for s'est le plus simple
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          print(deviceSelectionne);
+          for (var device in deviceSelectionne) {
+            // if (device.state == SessionState.notConnected) {
+            //   Fluttertoast.showToast(
+            //       msg: 'hors de portée',
+            //       toastLength: Toast.LENGTH_LONG,
+            //       gravity: ToastGravity.TOP,
+            //       timeInSecForIosWeb: 10,
+            //       backgroundColor: Colors.grey,
+            //       fontSize: 16.0);
+            // } else {
+              var msgId = nanoid(21);
+              var timestamp = DateTime.now();
+              var listImages = [widget.cheminVersImagePrise].join(',');
+
+              ChatMessageParams chatMessageParams = ChatMessageParams(
+                msgId,
+                'bob',
+                device.deviceId,
+                '',
+                listImages,
+                'Payload',
+                'Send',
+                timestamp,
+              );
+              chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
+            }
+          //}
+          context.push('/firstPage/1');
         },
         child: const Icon(Icons.done),
       ),
@@ -135,8 +164,10 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
   void onDeviceSelected(Device selected) {
     setState(() {
       final existed = deviceSelectionne.where((element) => element.deviceId == selected.deviceId);
+
       if (existed.isEmpty) {
         deviceSelectionne.add(selected);
+
         //print(deviceSelectionne);
       } else {
         deviceSelectionne.removeWhere((element) => element.deviceId == selected.deviceId);

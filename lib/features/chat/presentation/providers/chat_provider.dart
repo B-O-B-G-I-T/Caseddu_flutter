@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/data/models/chat_user_model.dart';
@@ -165,7 +166,7 @@ class ChatProvider extends ChangeNotifier {
   }
 
   // Function to connect to a device
-  Future<void> connectToDevice(Device device) async {
+  Future<bool> connectToDevice(Device device) async {
     // TODO: Faire une alerte lorsque l'on n'arrive pas a ce connecté
     // TODO: peut etre faire une validation pour l'invite
     switch (device.state) {
@@ -184,7 +185,7 @@ class ChatProvider extends ChangeNotifier {
     }
 
     notifyListeners();
-    return null;
+    return true;
   }
 
   Future<void> eitherFailureOrEnvoieDeMessage({required ChatMessageParams chatMessageParams}) async {

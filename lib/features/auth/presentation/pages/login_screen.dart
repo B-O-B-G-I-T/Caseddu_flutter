@@ -182,7 +182,7 @@ class _LoginPageState extends State<LoginPage> {
                           context.pop(); // Ferme la boîte de dialogue
 
                           if (authentificationProvider.authentification != null) {
-                            context.push('/');
+                            context.push('firstPage/0');
                           } else if (authentificationProvider.failure?.errorMessage != null) {
                             fireBaseError(context, "Error", authentificationProvider.failure!.errorMessage);
                             _emailController.clear();

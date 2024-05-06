@@ -105,7 +105,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                   await _prendrePhoto();
 
                   // ignore: use_build_context_synchronously
-                  context.push('/PrisePhoto', extra: _lastImage);
+                  context.push('/PrisePhoto/:filePath', extra: _lastImage);
                   _lastImage = '';
                 }),
           ),
