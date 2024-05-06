@@ -31,7 +31,7 @@ class ChatMessageParams {
   String sender = '';
   String receiver = '';
   String message = '';
-  List<String> images = List.empty();
+  String images = '';
   String type = 'Payload';
   String sendOrReceived = '';
   DateTime timestamp = DateTime.now();

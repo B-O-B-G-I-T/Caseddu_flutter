@@ -1,3 +1,4 @@
+import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
@@ -12,7 +13,6 @@ import '../models/chat_message_model.dart';
 import '../models/chat_user_model.dart';
 
 class ChatRepositoryImpl implements ChatRepository {
-
   final ChatRemoteDataSource remoteDataSource;
   final ChatLocalDataSource localDataSource;
   final NetworkInfo networkInfo;
@@ -69,7 +69,13 @@ class ChatRepositoryImpl implements ChatRepository {
     ChatMessageModel chatMessageModel;
 
     try {
+      String imagePath = chatMessageParams.images;
+
+      chatMessageParams.images = Utils.listImagesPathToBase64Strings(imagePath);
+
       chatMessageModel = await remoteDataSource.sentToConversations(chatMessageParams: chatMessageParams);
+
+      chatMessageModel.images = imagePath;
 
       await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
 
@@ -97,12 +103,11 @@ class ChatRepositoryImpl implements ChatRepository {
 
   @override
   Future<Either<Failure, void>> deleteConversation(UserEntity userEntity) async {
-      try {
-        await localDataSource.deleteConversation(userEntity);
-        return Right(true);
-      } catch (e) {
-        return Left(ServerFailure(errorMessage: e.toString()));
-      }
+    try {
+      await localDataSource.deleteConversation(userEntity);
+      return Right(true);
+    } catch (e) {
+      return Left(ServerFailure(errorMessage: e.toString()));
     }
   }
-
+}

@@ -1,11 +1,11 @@
 class ChatMessageEntity {
+  final String id;
   final String sender;
   final String receiver;
   final DateTime timestamp;
   final String message;
-  final List<String> images;
+  String images;
   final String type;
-  final String id;
 
   ChatMessageEntity({
     required this.id, 
@@ -17,4 +17,8 @@ class ChatMessageEntity {
     required this.type, 
     
   });
+
+  set setImage(String newImages) {
+    newImages = images;
+  }
 }

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/data/models/chat_user_model.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:data_connection_checker_tv/data_connection_checker.dart';
@@ -32,12 +33,12 @@ class ChatProvider extends ChangeNotifier {
         id: 'deviceId1',
         name: 'userTest1',
         dernierMessage: ChatMessageModel(
-            id: 'id', sender: 'sender', receiver: 'receiver', message: 'message', images: List.empty(), type: 'type', timestamp: DateTime.now())),
+            id: 'id', sender: 'sender', receiver: 'receiver', message: 'message', images: 'images', type: 'type', timestamp: DateTime.now())),
     UserModel(
         id: 'deviceId2',
         name: 'userTest2',
         dernierMessage: ChatMessageModel(
-            id: 'id', sender: 'sender', receiver: 'receiver', message: 'message', images: List.empty(), type: 'type', timestamp: DateTime.now())),
+            id: 'id', sender: 'sender', receiver: 'receiver', message: 'message', images: 'images', type: 'type', timestamp: DateTime.now())),
   ];
 
   ChatProvider({
@@ -111,10 +112,12 @@ class ChatProvider extends ChangeNotifier {
         String receiver = jsonData['receiver'];
         DateTime timestamp = DateTime.parse(jsonData['timestamp']);
         String message = jsonData['message'];
-        List<String> imagesEncode = jsonData['images'];
+        String imagesEncode = jsonData['images'];
 
         String type = jsonData['type'];
 
+        List<String> imageListPaths = await Utils.base64StringToListImage(imagesEncode);
+        String imagePaths = imageListPaths.join(',');
         Fluttertoast.showToast(
           msg: '''
             Sender: $sender
@@ -136,7 +139,7 @@ class ChatProvider extends ChangeNotifier {
             sender,
             receiver,
             message,
-            imagesEncode,
+            imagePaths,
             type,
             'Received',
             timestamp,
@@ -201,7 +204,7 @@ class ChatProvider extends ChangeNotifier {
       ),
     );
 //print(chatMessageParams.images);
-    
+
     final failureOrChat = await GetChat(chatRepository: repository).envoieMessage(
       chatMessageParams: chatMessageParams,
     );

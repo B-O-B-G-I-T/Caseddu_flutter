@@ -37,8 +37,7 @@ class Utils {
 
     int days = diff.inDays; // Le nombre de jours depuis la réception du message
     int hours = diff.inHours.remainder(24); // Le nombre d'heures restantes
-    int minutes =
-        diff.inMinutes.remainder(60); // Le nombre de minutes restantes
+    int minutes = diff.inMinutes.remainder(60); // Le nombre de minutes restantes
     if (days > 0) {
       return '$days jour${days > 1 ? 's' : ''}';
     } else if (hours > 0) {
@@ -50,17 +49,12 @@ class Utils {
     }
   }
 
-  static List<T> runFilter<T>(String enteredKeyword, List<T> listeAFiltre,
-      String Function(T) selector) {
+  static List<T> runFilter<T>(String enteredKeyword, List<T> listeAFiltre, String Function(T) selector) {
     List<T> results = [];
     if (enteredKeyword.isEmpty) {
       results = listeAFiltre;
     } else {
-      results = listeAFiltre
-          .where((item) => selector(item)
-              .toLowerCase()
-              .contains(enteredKeyword.toLowerCase()))
-          .toList();
+      results = listeAFiltre.where((item) => selector(item).toLowerCase().contains(enteredKeyword.toLowerCase())).toList();
     }
     return results;
   }
@@ -68,6 +62,21 @@ class Utils {
   static String imageToBase64String(File imageFile) {
     final bytes = imageFile.readAsBytesSync();
     return base64Encode(bytes);
+  }
+
+  static String listImagesPathToBase64Strings(String imagePaths) {
+    List<String> base64Strings = [];
+
+    for (String imagePath in imagePaths.split(',')) {
+      File imageFile = File(imagePath);
+      if (imageFile.existsSync()) {
+        final bytes = imageFile.readAsBytesSync();
+        base64Strings.add(base64Encode(bytes));
+      } else {
+        print('Image not found');
+      }
+    }
+    return base64Strings.join(',');
   }
 
   static Future<File> base64StringToImage(String base64String) async {
@@ -81,6 +90,31 @@ class Utils {
     imageFile.writeAsBytesSync(bytes);
     return imageFile;
   }
+
+  static Future<List<String>> base64StringToListImage(String base64String) async {
+  final List<String> base64Strings = base64String.split(',');
+  final List<String> imageFiles = [];
+
+  for (String base64Str in base64Strings) {
+    final bytes = base64Decode(base64Str);
+    final uniqueId = DateTime.now().millisecondsSinceEpoch;
+    String cheminVersImage = join(
+      (await getApplicationDocumentsDirectory()).path,
+      '$uniqueId.jpg',
+    );
+    print(cheminVersImage);
+    File imageFile = File(cheminVersImage);
+    await imageFile.writeAsBytes(bytes);
+    imageFiles.add(imageFile.path);
+  }
+
+  // Vous pouvez retourner la liste de fichiers d'images si nécessaire
+  return imageFiles;
+
+  // Si vous voulez retourner un seul fichier d'image, vous pouvez le faire comme ceci
+  // return imageFiles.isNotEmpty ? imageFiles.first : null;
+}
+
 
   // static void envoieDeMessage(
   //     {required String destinataire, required String message, context}) {
