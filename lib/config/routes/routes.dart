@@ -35,6 +35,13 @@ class Routes {
     // créé les routes
     routes: [
       GoRoute(
+        path: '/firstPage/:index',
+        builder: (context, state) {
+          final index = int.parse(state.pathParameters['index']!) ;
+          return PremierePage(selectedIndex: index);
+        },
+      ),
+      GoRoute(
         path: '/login',
         builder: (context, state) {
           return const LoginPage();
@@ -88,13 +95,7 @@ class Routes {
           );
         },
       ),
-      GoRoute(
-        path: '/firstPage/:index',
-        builder: (context, state) {
-          final index = int.parse(state.pathParameters['index']!) ;
-          return PremierePage(selectedIndex: index);
-        },
-      ),
+      
     ],
 
   );

@@ -94,12 +94,14 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                   SelectionDesUser(
                     listDevice: conversersFiltre,
                     deviceSelectionne: deviceSelectionne,
-                    onDeviceSelected: (selected) async {
-                      await chatProvider.connectToDevice(selected);
-
-                      setState(() {
-                        onDeviceSelected(selected);
-                      });
+                    onDeviceSelected: (selected) {
+                      if (selected.state != SessionState.connecting) {
+                        setState(() async {
+                          final Device device = chatProvider.devices.firstWhere((element) => element.deviceName == selected.deviceName);
+                          await chatProvider.connectToDevice(device);
+                          onDeviceSelected(selected);
+                        });
+                      }
                     },
                   ),
                   // liste des devices approximités
@@ -110,11 +112,13 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                   SelectionDesUser(
                     listDevice: deviceApproximiteFilter,
                     deviceSelectionne: deviceSelectionne,
-                    onDeviceSelected: (selected) async {
-                      setState(() async {
-                        await chatProvider.connectToDevice(selected);
-                        onDeviceSelected(selected);
-                      });
+                    onDeviceSelected: (selected) {
+                      if (selected.state != SessionState.connecting) {
+                        setState(() async {
+                          await chatProvider.connectToDevice(selected);
+                          onDeviceSelected(selected);
+                        });
+                      }
                     },
                   ),
                 ],
@@ -126,7 +130,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
 
       // faire l'envoie un for s'est le plus simple
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        onPressed: () async {
           for (var device in deviceSelectionne) {
             // if (device.state == SessionState.notConnected) {
             //   Fluttertoast.showToast(
@@ -137,24 +141,25 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
             //       backgroundColor: Colors.grey,
             //       fontSize: 16.0);
             // } else {
-              var msgId = nanoid(21);
-              var timestamp = DateTime.now();
-              var listImages = [widget.cheminVersImagePrise].join(',');
 
-              ChatMessageParams chatMessageParams = ChatMessageParams(
-                msgId,
-                'bob',
-                device.deviceId,
-                '',
-                listImages,
-                'Payload',
-                'Send',
-                timestamp,
-              );
-              chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
-            }
+            var msgId = nanoid(21);
+            var timestamp = DateTime.now();
+            var listImages = [widget.cheminVersImagePrise].join(',');
+
+            ChatMessageParams chatMessageParams = ChatMessageParams(
+              msgId,
+              'bob',
+              device.deviceId,
+              '',
+              listImages,
+              'Payload',
+              'Send',
+              timestamp,
+            );
+            chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
+          }
           //}
-          context.push('/firstPage/1');
+          context.go('/firstPage/1');
         },
         child: const Icon(Icons.done),
       ),

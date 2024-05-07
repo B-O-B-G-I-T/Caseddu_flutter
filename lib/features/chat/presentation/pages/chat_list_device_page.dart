@@ -93,7 +93,7 @@ class DevicesListWidget extends StatelessWidget {
       child: devices.isEmpty
           ? const Center(
               child: Text(
-                "Personne à proximité avec l'app,\nfait diffuser l'app aux non initié.\n Agrandi ton cercle.",
+                "Personne à proximité avec l'app,\nfait diffuser l'app aux non initiés.\n Agrandi ton cercle.",
                 textAlign: TextAlign.center,
               ),
             )
