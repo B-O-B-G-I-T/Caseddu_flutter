@@ -9,6 +9,7 @@ import '../../../../../core/utils/p2p/p2p_utils.dart';
 import '../../../../../core/utils/p2p/fonctions.dart';
 import '../../../data/models/chat_message_model.dart';
 import '../../providers/chat_provider.dart';
+import '../../widgets/P2P_widget/connection_button.dart';
 import '../../widgets/P2P_widget/search_widget.dart';
 
 class EnvoieDePhotoPage extends StatefulWidget {
@@ -62,11 +63,11 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                 SliverAppBar(
                   floating: true,
                   snap: true,
-                  title: Text("Envoie de photo"),
+                  title: const Text("Envoie de photo"),
                   //c'est cool si pas centrer
                   centerTitle: true,
                   leading: IconButton(
-                    icon: Icon(Icons.arrow_back),
+                    icon: const Icon(Icons.arrow_back),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
@@ -96,12 +97,11 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                     deviceSelectionne: deviceSelectionne,
                     onDeviceSelected: (selected) {
                       if (selected.state != SessionState.connecting) {
-                        setState(() async {
-                          final Device device = chatProvider.devices.firstWhere((element) => element.deviceName == selected.deviceName);
-                          await chatProvider.connectToDevice(device);
                           onDeviceSelected(selected);
-                        });
-                      }
+                        }
+                      setState(() {
+                        
+                      });
                     },
                   ),
                   // liste des devices approximités
@@ -114,11 +114,11 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                     deviceSelectionne: deviceSelectionne,
                     onDeviceSelected: (selected) {
                       if (selected.state != SessionState.connecting) {
-                        setState(() async {
-                          await chatProvider.connectToDevice(selected);
                           onDeviceSelected(selected);
-                        });
-                      }
+                        }
+                      setState(() {
+                        
+                      });
                     },
                   ),
                 ],
@@ -130,8 +130,13 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
 
       // faire l'envoie un for s'est le plus simple
       floatingActionButton: FloatingActionButton(
+        
         onPressed: () async {
+          
           for (var device in deviceSelectionne) {
+            if (device.state == SessionState.notConnected) {
+              await chatProvider.connectToDevice(device);
+            }
             // if (device.state == SessionState.notConnected) {
             //   Fluttertoast.showToast(
             //       msg: 'hors de portée',
@@ -152,8 +157,8 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
               device.deviceId,
               '',
               listImages,
-              'Payload',
-              'Send',
+              'Image',
+              'send',
               timestamp,
             );
             chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
@@ -161,7 +166,9 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
           //}
           context.go('/firstPage/1');
         },
-        child: const Icon(Icons.done),
+        backgroundColor: deviceSelectionne.isNotEmpty ? Colors.red : Colors.transparent,
+        elevation: 0,
+        child: deviceSelectionne.isNotEmpty ? const Icon(Icons.done) : null,
       ),
     );
   }
@@ -204,7 +211,7 @@ class SelectionDesUser extends StatelessWidget {
       itemBuilder: (context, index) {
         // Getting a device from the provider
         final device = listDevice[index];
-        final isSelected = deviceSelectionne.where((element) => element.deviceId == device.deviceId).isNotEmpty;
+        final isSelected = deviceSelectionne.where((element) => element.deviceName == device.deviceName).isNotEmpty;
         return DeviceListItem(
           device: device,
           isSelected: isSelected,
@@ -229,22 +236,40 @@ class DeviceListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    final Device deviceCo = chatProvider.devices.firstWhere((element) => element.deviceName == device.deviceName);
+
     return Column(
       children: [
         ListTile(
-          title: Text(device.deviceName),
+          title: Text(deviceCo.deviceName),
           subtitle: Text(
-            getStateName(device.state),
-            style: TextStyle(color: getStateColor(device.state)),
+            getStateName(deviceCo.state),
+            style: TextStyle(color: getStateColor(deviceCo.state)),
           ),
-          onTap: () {
-            onDeviceSelected(device);
+          onTap: () async {
+            if (deviceCo.state == SessionState.notConnected) {
+              await chatProvider.connectToDevice(deviceCo);
+            }
+            onDeviceSelected(deviceCo);
           },
-          trailing: RoundCheckbox(
-            value: isSelected,
-            onChanged: (value) {
-              onDeviceSelected(device);
-            },
+          trailing: SizedBox(
+            width: 100,
+            child: Row(
+              children: [
+                ConnectionButton(
+                  device: deviceCo,
+                  longDistance: false,
+                  
+                ),
+                RoundCheckbox(
+                  value: isSelected,
+                  onChanged: (value) {
+                    onDeviceSelected(deviceCo);
+                  },
+                ),
+              ],
+            ),
           ),
         ),
         const Divider(

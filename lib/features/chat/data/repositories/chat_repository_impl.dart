@@ -69,15 +69,20 @@ class ChatRepositoryImpl implements ChatRepository {
     ChatMessageModel chatMessageModel;
 
     try {
-      String imagePath = chatMessageParams.images;
+      if (chatMessageParams.images != '') {
+        String imagePath = chatMessageParams.images;
 
-      chatMessageParams.images = Utils.listImagesPathToBase64Strings(imagePath);
+        chatMessageParams.images = Utils.listImagesPathToBase64Strings(imagePath);
+        chatMessageModel = await remoteDataSource.sentToConversations(chatMessageParams: chatMessageParams);
 
-      chatMessageModel = await remoteDataSource.sentToConversations(chatMessageParams: chatMessageParams);
+        chatMessageModel.images = imagePath;
 
-      chatMessageModel.images = imagePath;
-
-      await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
+        await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
+      }else
+      {
+        chatMessageModel = await remoteDataSource.sentToConversations(chatMessageParams: chatMessageParams);
+        await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
+      }
 
       return Right(chatMessageModel);
     } on ServerException {

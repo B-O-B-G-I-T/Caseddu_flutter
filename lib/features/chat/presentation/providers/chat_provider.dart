@@ -27,19 +27,9 @@ class ChatProvider extends ChangeNotifier {
   List<ChatMessageEntity> chat = [];
   NearbyService? controlerDevice;
   Failure? failure;
-  List<Device> devices = [Device('deviceId1', 'userTest1', 0), Device('deviceId2', 'userTest2', 2)];
-  List<Device> connectedDevices = [Device('deviceId2', 'userTest2', 2)];
+  List<Device> devices = [];
+  List<Device> connectedDevices = [];
   List<UserEntity> users = [
-    UserModel(
-        id: 'deviceId1',
-        name: 'userTest1',
-        dernierMessage: ChatMessageModel(
-            id: 'id', sender: 'sender', receiver: 'receiver', message: 'message', images: 'images', type: 'type', timestamp: DateTime.now())),
-    UserModel(
-        id: 'deviceId2',
-        name: 'userTest2',
-        dernierMessage: ChatMessageModel(
-            id: 'id', sender: 'sender', receiver: 'receiver', message: 'message', images: 'images', type: 'type', timestamp: DateTime.now())),
   ];
 
   ChatProvider({

@@ -48,8 +48,7 @@ class _ChatPageState extends State<ChatPage> {
     super.dispose();
   }
 
-// TODO création de groupe
-// TODO soucis avec les images le scroll ne descend pas a la fin
+// TODO création de groupe de conversation
   @override
   Widget build(BuildContext context) {
     // essai de trouver le device associe et de détermine si il est a coté ou loin

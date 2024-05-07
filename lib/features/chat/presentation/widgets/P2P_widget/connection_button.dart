@@ -6,9 +6,10 @@ import '../../../../../core/utils/p2p/p2p_utils.dart';
 import '../../providers/chat_provider.dart';
 
 class ConnectionButton extends StatelessWidget {
-  ConnectionButton({super.key, required this.device, required this.longDistance});
+  const ConnectionButton({super.key, required this.device, required this.longDistance, this.aditionalFunction});
   final Device device;
   final bool longDistance;
+  final Function()? aditionalFunction;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +29,7 @@ class ConnectionButton extends StatelessWidget {
         : GestureDetector(
             // to connect/disconnect with any device
             onTap: () async {
+              if (aditionalFunction != null) aditionalFunction!();
               await chatProvider.connectToDevice(device);
             },
             child: Container(
