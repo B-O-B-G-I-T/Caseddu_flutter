@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
-import 'package:caseddu/features/chat/data/models/chat_user_model.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:data_connection_checker_tv/data_connection_checker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,7 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../core/connection/network_info.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
-import '../../data/models/chat_message_model.dart';
 import '../../domain/entities/chat_message_entity.dart';
 import '../../domain/usecases/get_chat.dart';
 import '../../data/datasources/chat_local_data_source.dart';

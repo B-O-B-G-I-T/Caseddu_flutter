@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:provider/provider.dart';

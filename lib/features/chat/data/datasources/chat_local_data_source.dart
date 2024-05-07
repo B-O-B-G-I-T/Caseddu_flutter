@@ -1,9 +1,6 @@
-import 'dart:ffi';
-
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../models/chat_message_model.dart';
 import '../models/chat_user_model.dart';
 import 'local_database/dataBaseHelper.dart';

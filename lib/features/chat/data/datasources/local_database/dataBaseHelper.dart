@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:caseddu/dataBase/base_donnees_general.dart';
 import 'package:nanoid/nanoid.dart';
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import '../../models/chat_message_model.dart';
 import '../../models/chat_user_model.dart';
