@@ -96,12 +96,10 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                     listDevice: conversersFiltre,
                     deviceSelectionne: deviceSelectionne,
                     onDeviceSelected: (selected) {
+                      setState(() {});
                       if (selected.state != SessionState.connecting) {
-                          onDeviceSelected(selected);
-                        }
-                      setState(() {
-                        
-                      });
+                        onDeviceSelected(selected);
+                      }
                     },
                   ),
                   // liste des devices approximités
@@ -113,12 +111,10 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                     listDevice: deviceApproximiteFilter,
                     deviceSelectionne: deviceSelectionne,
                     onDeviceSelected: (selected) {
+                      setState(() {});
                       if (selected.state != SessionState.connecting) {
-                          onDeviceSelected(selected);
-                        }
-                      setState(() {
-                        
-                      });
+                        onDeviceSelected(selected);
+                      }
                     },
                   ),
                 ],
@@ -130,47 +126,54 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
 
       // faire l'envoie un for s'est le plus simple
       floatingActionButton: FloatingActionButton(
-        
         onPressed: () async {
-          
-          for (var device in deviceSelectionne) {
-            if (device.state == SessionState.notConnected) {
-              await chatProvider.connectToDevice(device);
+          setState(() async {
+            await connectAll();
+            for (var device in deviceSelectionne) {
+              // if (device.state == SessionState.notConnected) {
+              //   Fluttertoast.showToast(
+              //       msg: 'hors de portée',
+              //       toastLength: Toast.LENGTH_LONG,
+              //       gravity: ToastGravity.TOP,
+              //       timeInSecForIosWeb: 10,
+              //       backgroundColor: Colors.grey,
+              //       fontSize: 16.0);
+              // } else {
+
+              var msgId = nanoid(21);
+              var timestamp = DateTime.now();
+              var listImages = [widget.cheminVersImagePrise].join(',');
+
+              ChatMessageParams chatMessageParams = ChatMessageParams(
+                msgId,
+                'bob',
+                device.deviceId,
+                '',
+                listImages,
+                'Image',
+                'send',
+                timestamp,
+              );
+              await chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
             }
-            // if (device.state == SessionState.notConnected) {
-            //   Fluttertoast.showToast(
-            //       msg: 'hors de portée',
-            //       toastLength: Toast.LENGTH_LONG,
-            //       gravity: ToastGravity.TOP,
-            //       timeInSecForIosWeb: 10,
-            //       backgroundColor: Colors.grey,
-            //       fontSize: 16.0);
-            // } else {
 
-            var msgId = nanoid(21);
-            var timestamp = DateTime.now();
-            var listImages = [widget.cheminVersImagePrise].join(',');
-
-            ChatMessageParams chatMessageParams = ChatMessageParams(
-              msgId,
-              'bob',
-              device.deviceId,
-              '',
-              listImages,
-              'Image',
-              'send',
-              timestamp,
-            );
-            chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
-          }
-          //}
-          context.go('/firstPage/1');
+            context.go('/firstPage/1');
+          });
         },
         backgroundColor: deviceSelectionne.isNotEmpty ? Colors.red : Colors.transparent,
         elevation: 0,
         child: deviceSelectionne.isNotEmpty ? const Icon(Icons.done) : null,
       ),
     );
+  }
+
+  Future<void> connectAll() async {
+    for (var device in deviceSelectionne) {
+      if (device.state == SessionState.notConnected) {
+        await chatProvider.connectToDevice(device);
+      }
+    }
+    return;
   }
 
   void onDeviceSelected(Device selected) {
@@ -187,7 +190,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
       }
     });
   }
-}
+  }
 
 class SelectionDesUser extends StatelessWidget {
   const SelectionDesUser({
@@ -260,7 +263,6 @@ class DeviceListItem extends StatelessWidget {
                 ConnectionButton(
                   device: deviceCo,
                   longDistance: false,
-                  
                 ),
                 RoundCheckbox(
                   value: isSelected,
