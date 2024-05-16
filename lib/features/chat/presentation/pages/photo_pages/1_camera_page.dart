@@ -1,8 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages, avoid_print
 import 'dart:developer';
-
 import 'package:camera/camera.dart';
-import 'package:caseddu/main.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' show join;
