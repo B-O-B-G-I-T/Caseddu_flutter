@@ -2,6 +2,7 @@
 import 'dart:developer';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
@@ -41,6 +42,10 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   double _maxAvailableZoom = 1.0;
   double _startZoom = 0;
 
+  bool _showExtraButtons = false; // Variable d'état pour afficher le conteneur supplémentaire
+  final GlobalKey _addButtonKey = GlobalKey(); // Key pour obtenir la position du bouton "add"
+  OverlayEntry? _overlayEntry;
+
   @override
   void initState() {
     //_cameraToggle();
@@ -70,6 +75,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   @override
   void dispose() {
     _cameraController.dispose();
+    _overlayEntry?.remove();
     super.dispose();
   }
 
@@ -283,27 +289,17 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     );
   }
 
-  Widget extraButton({required Function() onTap, required IconData icon, Color color = const Color.fromARGB(180, 255, 255, 255)}) {
-    return Container(
-      height: 50,
-      width: 50,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          width: 3,
+  Widget extraButton({Key? key, required Function() onTap, required IconData icon, Color color = const Color.fromARGB(180, 255, 255, 255)}) {
+    return GestureDetector(
+      key: key,
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
           color: color,
+          shape: BoxShape.circle,
         ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: onTap,
-          child: Icon(
-            icon,
-            color: color,
-          ),
-        ),
+        child: Icon(icon, color: Colors.black),
       ),
     );
   }
@@ -320,84 +316,154 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
   Widget cameraWithButtonsWidget() {
     return Container(
-      color: Colors.black,
+      color: Colors.grey,
       child: Stack(
         children: [
-          // Fond non opaque
-          Positioned.fill(
-            child: Container(
-              color: Colors.black.withOpacity(0.5), // Opacité à ajuster selon vos préférences
-            ),
-          ),
           cameraWidget(),
           flashFrontWidget(on: _flashFront),
+          // parametre
 
-          Positioned(
-            left: 10,
-            top: 40,
-            child: extraButton(
-              onTap: () {
-                // Obtenir une référence à l'instance de GoRouter
-                final router = GoRouter.of(context);
-                // Naviguer vers la page des paramètres
-                router.push('/parameter');
-              },
-              icon: Icons.account_circle_outlined,
-            ),
-          ),
+          // le fond pas opaque
           Positioned(
             left: 10,
             bottom: 10,
-            child: extraButton(
-              onTap: () {},
-              icon: Icons.photo_album_outlined,
-            ),
-          ),
-          Positioned(
-            left: 10,
-            bottom: 65,
-            child: extraButton(
-              icon: Icons.light_mode_outlined,
-              onTap: () async {
-                activationDuFlash(idCamera: _selecteCameraIndex, camController: _cameraController);
-              },
-              color: _cameraController.value.flashMode != FlashMode.torch
-                  ? const Color.fromARGB(180, 255, 255, 255)
-                  : const Color.fromARGB(180, 255, 235, 59),
-            ),
-          ),
-          Positioned(
-            left: 65,
-            bottom: 10,
-            child: extraButton(
-              icon: Icons.flash_auto_sharp,
-              onTap: () async {
-                if (_cameraController.value.flashMode != FlashMode.auto) {
-                  await _cameraController.setFlashMode(FlashMode.auto);
-                } else {
-                  await _cameraController.setFlashMode(FlashMode.off);
-                }
-              },
-              color: _cameraController.value.flashMode != FlashMode.auto
-                  ? const Color.fromARGB(180, 255, 255, 255)
-                  : const Color.fromARGB(180, 255, 235, 59),
-            ),
-          ),
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.black54, // Fond plus sombre
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // ADDITIONAL BUTTONS
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      extraButton(
+                        key: _addButtonKey,
+                        icon: Icons.add,
+                        onTap: () {
+                          if (_showExtraButtons) {
+                            hideOverlay();
+                          } else {
+                            showOverlay(context);
+                          }
+                          setState(() {
+                            _showExtraButtons = !_showExtraButtons; // Toggle l'affichage des boutons supplémentaires
+                          });
+                        },
+                        color: const Color.fromARGB(180, 255, 255, 255),
+                      ),
+                    ],
+                  ),
 
-          // Icône du menu
-          Positioned(
-            left: 65,
-            bottom: 65,
-            child: extraButton(
-                icon: Icons.add,
-                onTap: () async {
-                  if (_cameraController.value.flashMode != FlashMode.auto) {
-                    await _cameraController.setFlashMode(FlashMode.auto);
-                  } else {
-                    await _cameraController.setFlashMode(FlashMode.off);
-                  }
-                },
-                color: const Color.fromARGB(180, 255, 255, 255)),
+                  const SizedBox(height: 10),
+
+                  // fash
+                  extraButton(
+                    icon: Icons.light_mode_outlined,
+                    onTap: () async {
+                      activationDuFlash(idCamera: _selecteCameraIndex, camController: _cameraController);
+                    },
+                    color: _cameraController.value.flashMode != FlashMode.torch
+                        ? const Color.fromARGB(180, 255, 255, 255)
+                        : const Color.fromARGB(180, 255, 235, 59),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // flash auto
+                  extraButton(
+                    icon: Icons.flash_auto_sharp,
+                    onTap: () async {
+                      if (_cameraController.value.flashMode != FlashMode.auto) {
+                        await _cameraController.setFlashMode(FlashMode.auto);
+                      } else {
+                        await _cameraController.setFlashMode(FlashMode.off);
+                      }
+                    },
+                    color: _cameraController.value.flashMode != FlashMode.auto
+                        ? const Color.fromARGB(180, 255, 255, 255)
+                        : const Color.fromARGB(180, 255, 235, 59),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // album photo
+                  extraButton(
+                    onTap: () {},
+                    icon: Icons.photo_album_outlined,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void showOverlay(BuildContext context) {
+    final RenderBox renderBox = _addButtonKey.currentContext?.findRenderObject() as RenderBox;
+    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero, ancestor: overlay);
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        left: position.dx + 60, // Ajuster la position horizontale
+        top: position.dy - 20, // Ajuster la position verticale
+        child: Material(
+          color: Colors.transparent,
+          child: additionnalButtons(),
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void hideOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  Widget additionnalButtons() {
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.black54,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          extraButton(
+            icon: Icons.camera,
+            onTap: () {
+              // Action pour Option 1
+              setState(() {
+                _showExtraButtons = false; // Fermer les boutons supplémentaires
+              });
+            },
+          ),
+          const SizedBox(height: 10),
+          extraButton(
+            icon: Icons.photo,
+            onTap: () {
+              // Action pour Option 2
+              setState(() {
+                _showExtraButtons = false; // Fermer les boutons supplémentaires
+              });
+            },
+          ),
+          const SizedBox(height: 10),
+          extraButton(
+            icon: Icons.settings,
+            onTap: () {
+              // Action pour Option 3
+              setState(() {
+                _showExtraButtons = false; // Fermer les boutons supplémentaires
+              });
+            },
           ),
         ],
       ),
@@ -410,7 +476,6 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       height: 70,
       margin: const EdgeInsets.fromLTRB(10, 0, 0, 30),
       decoration: BoxDecoration(
-        
         shape: BoxShape.circle,
         border: Border.all(
           width: 3,
