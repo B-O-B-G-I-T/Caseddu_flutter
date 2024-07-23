@@ -79,8 +79,11 @@
     <key>aps-environment</key>
     <string>development</string>
 
-    <key>aps-environment</key>
-    <string>production</string>
+    <!-- <key>aps-environment</key>
+    <string>production</string> -->
+    
+    <key>NSSiriUsageDescription</key>
+    <string>Votre application utilise Siri pour effectuer des tâches vocales lorsqu'elle est en cours d'exécution en arrière-plan.</string>
 
     <key>NSPrivacyAccessedAPITypes</key>
     <dict>

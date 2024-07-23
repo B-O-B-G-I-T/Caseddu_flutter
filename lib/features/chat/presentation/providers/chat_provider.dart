@@ -26,8 +26,7 @@ class ChatProvider extends ChangeNotifier {
   Failure? failure;
   List<Device> devices = [];
   List<Device> connectedDevices = [];
-  List<UserEntity> users = [
-  ];
+  List<UserEntity> users = [];
 
   ChatProvider({
     this.failure,
@@ -103,9 +102,10 @@ class ChatProvider extends ChangeNotifier {
         String imagesEncode = jsonData['images'];
 
         String type = jsonData['type'];
-
-        List<String> imageListPaths = await Utils.base64StringToListImage(imagesEncode);
-        String imagePaths = imageListPaths.join(',');
+        if (imagesEncode != "") {
+          List<String> imageListPaths = await Utils.base64StringToListImage(imagesEncode);
+          imagesEncode = imageListPaths.join(',');
+        }
         Fluttertoast.showToast(
           msg: '''
             Sender: $sender
@@ -127,7 +127,7 @@ class ChatProvider extends ChangeNotifier {
             sender,
             receiver,
             message,
-            imagePaths,
+            imagesEncode,
             type,
             'Received',
             timestamp,
