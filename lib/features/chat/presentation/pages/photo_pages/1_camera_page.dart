@@ -262,6 +262,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
                 return GestureDetector(
+                  onTap: () => hideOverlay(),
                   onTapDown: (details) => onViewFinderTap(details, constraints),
                   onDoubleTap: () {
                     _cameraToggle();
@@ -445,7 +446,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
               });
             },
           ),
-          const SizedBox(height: 10),
+          const SizedBox(width: 10),
           extraButton(
             icon: Icons.photo,
             onTap: () {
@@ -455,7 +456,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
               });
             },
           ),
-          const SizedBox(height: 10),
+          const SizedBox(width: 10),
           extraButton(
             icon: Icons.settings,
             onTap: () {
@@ -484,16 +485,26 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       ),
       child: FittedBox(
         child: InkWell(
-          onLongPress: () => print('long'),
+          onLongPress: () {
+            hideOverlay();
+            print('long');
+          },
           child: FloatingActionButton(
               backgroundColor: Colors.transparent,
               elevation: 0,
               onPressed: () async {
+                hideOverlay();
                 await _prendrePhoto();
 
-                // ignore: use_build_context_synchronously
-                context.push('/PrisePhoto/:filePath', extra: _lastImage);
-                _lastImage = '';
+                if (widget.cameras.isEmpty) {
+                  // ignore: use_build_context_synchronously
+                  context.push('/PrisePhoto/:filePath', extra: "assets/images/pont.jpeg");
+                  _lastImage = '';
+                } else {
+                  // ignore: use_build_context_synchronously
+                  context.push('/PrisePhoto/:filePath', extra: _lastImage);
+                  _lastImage = '';
+                }
               }),
         ),
       ),
