@@ -1,8 +1,12 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:caseddu/features/chat/presentation/widgets/widgets_for_chat/loader_for_chat.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
 
 class PrisePhoto extends StatefulWidget {
   const PrisePhoto({Key? key, required this.lastImage}) : super(key: key);
@@ -58,11 +62,11 @@ class _PrisePhotoState extends State<PrisePhoto> {
         height: double.infinity,
         child: FittedBox(
           fit: BoxFit.cover,
-          child: Image(
-            image: FileImage(
-              File(widget.lastImage),
-            ),
-          ),
+          child: 
+          Image.asset( widget.lastImage )
+          // Image(
+          //   image: FileImage(File(widget.lastImage),),
+          // ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -81,4 +85,6 @@ class _PrisePhotoState extends State<PrisePhoto> {
       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
     );
   }
+
+  
 }

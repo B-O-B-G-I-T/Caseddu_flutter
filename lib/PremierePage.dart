@@ -55,7 +55,8 @@ class _PremierePageState extends State<PremierePage> {
 
   @override
   Widget build(BuildContext context) {
-    return _selectedIndex == 0 ? myAppBar() : justBottomBar();
+    // return _selectedIndex == 0 ? myAppBar() : justBottomBar();
+    return justBottomBar();
   }
 
 // bottom bar custom

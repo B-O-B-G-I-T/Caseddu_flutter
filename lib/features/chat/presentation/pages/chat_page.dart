@@ -20,7 +20,7 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
   List<ChatMessageEntity> messageList = [];
-  late Device device;
+  late Device? device;
   TextEditingController myController = TextEditingController();
   bool longDistance = false;
   late String myName = '';
@@ -54,15 +54,17 @@ class _ChatPageState extends State<ChatPage> {
     // essai de trouver le device associe et de détermine si il est a coté ou loin
     //device = Provider.of<Global>(context).devices.firstWhere((element) => element.deviceName == widget.converser);
 
-    if (device.deviceId == '') {
-      longDistance = true;
-    } else {
-      longDistance = false;
-    }
-
-    return Consumer<ChatProvider>(
-      builder: (context, chatProvider, child) {
-        device = chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser);
+    return Consumer<ChatProvider>(builder: (context, chatProvider, child) {
+      device = chatProvider.devices.firstWhere(
+        (element) => element.deviceName == widget.converser,
+        orElse: () => Device("", "", 1),
+      );
+      if (device!.deviceId != "" && device!.deviceName != "") {
+        if (device!.deviceId == '') {
+          longDistance = true;
+        } else {
+          longDistance = false;
+        }
         messageList = chatProvider.chat;
         return Scaffold(
           // resizeToAvoidBottomInset: false,
@@ -71,7 +73,7 @@ class _ChatPageState extends State<ChatPage> {
             title: Text(widget.converser),
             actions: [
               ConnectionButton(
-                device: device,
+                device: device!,
                 longDistance: longDistance,
               ),
             ],
@@ -88,7 +90,6 @@ class _ChatPageState extends State<ChatPage> {
                           onTap: () {
                             FocusScope.of(context).unfocus(); // <-- Hide virtual keyboard
                           },
-  
                           child: Align(
                             alignment: Alignment.topCenter,
                             child: SingleChildScrollView(
@@ -138,7 +139,7 @@ class _ChatPageState extends State<ChatPage> {
                                                   // texte ou image
 
                                                   messageList[index].images != ''
-                                                      // TODO faire des carte pour les images
+
                                                       // gere les images et le texte
                                                       ? Column(
                                                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,15 +182,20 @@ class _ChatPageState extends State<ChatPage> {
                 ),
                 MessagePanel(
                   converser: widget.converser,
-                  device: device,
+                  device: device!,
                   longDistance: longDistance,
                 ),
               ],
             ),
           ),
         );
-      },
-    );
+      } else {
+        return const Center(
+          // TODO: ajouter une page pour faire comprendre a l'utilisateur que le device n'est plus disponible approximiter
+          child: CircularProgressIndicator(),
+        );
+      }
+    });
   }
 }
 

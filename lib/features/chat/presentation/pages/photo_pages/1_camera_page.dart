@@ -1,8 +1,8 @@
 // ignore_for_file: depend_on_referenced_packages, avoid_print
 import 'dart:developer';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
@@ -21,8 +21,17 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
-  late CameraController _cameraController;
-  late Future<void>? initialiseControllerFuture;
+  late CameraController _cameraController = CameraController(
+    const CameraDescription(
+      // pour eviter l'erreur de null
+      name: 'null',
+      lensDirection: CameraLensDirection.front,
+      sensorOrientation: 0,
+    ),
+    ResolutionPreset.max,
+    imageFormatGroup: ImageFormatGroup.bgra8888,
+  );
+  Future<void>? initialiseControllerFuture;
   int _selecteCameraIndex = -1;
   String _lastImage = '';
   // bool _loading = true;
@@ -33,10 +42,13 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   double _maxAvailableZoom = 1.0;
   double _startZoom = 0;
 
+  bool _showExtraButtons = false; // Variable d'état pour afficher le conteneur supplémentaire
+  final GlobalKey _addButtonKey = GlobalKey(); // Key pour obtenir la position du bouton "add"
+  OverlayEntry? _overlayEntry;
+
   @override
   void initState() {
     //_cameraToggle();
-
     getPermissionStatus();
     super.initState();
   }
@@ -63,6 +75,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   @override
   void dispose() {
     _cameraController.dispose();
+    _overlayEntry?.remove();
     super.dispose();
   }
 
@@ -70,47 +83,33 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: null,
+      ),
       body: FutureBuilder(
         future: initialiseControllerFuture,
         builder: (context, snapshot) {
-          
           if (snapshot.connectionState == ConnectionState.waiting) {
             return loaderForCamera();
           } else {
             if (snapshot.hasError) {
               return Text('Erreur: ${snapshot.error}');
             } else {
-              return _isCameraPermissionGranted ? cameraWithButtonsWidget() : permissionWidget(); // Affiche le widget en fonction de la permission
+              if (snapshot.connectionState == ConnectionState.done || widget.cameras.isEmpty) {
+                if (_isCameraPermissionGranted) {
+                  return cameraWithButtonsWidget();
+                } else {
+                  return permissionWidget();
+                }
+              } // Affiche le widget en fonction de la permission
+              return loaderForCamera();
             }
           }
         },
       ),
-      //if( _isCameraPermissionGranted == "true") { cameraWithButtonsWidget()} elseif ( _isCameraPermissionGranted == "false"){ permissionWidget()},
-      floatingActionButton: Container(
-        margin: const EdgeInsets.fromLTRB(10, 0, 0, 30),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            width: 3,
-            color: Colors.white.withOpacity(0.7),
-          ),
-        ),
-        child: FittedBox(
-          child: InkWell(
-            onLongPress: () => print('long'),
-            child: FloatingActionButton(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                onPressed: () async {
-                  await _prendrePhoto();
-
-                  // ignore: use_build_context_synchronously
-                  context.push('/PrisePhoto/:filePath', extra: _lastImage);
-                  _lastImage = '';
-                }),
-          ),
-        ),
-      ),
+      floatingActionButton: _isCameraPermissionGranted ? floatingActionButton() : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
@@ -138,7 +137,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     }
   }
 
-  void getPermissionStatus() async {
+  Future<void> getPermissionStatus() async {
     var status = await Permission.camera.request();
     if (status.isGranted) {
       log('Camera Permission: GRANTED');
@@ -152,6 +151,25 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     }
   }
 
+  Future<void> _cameraToggle() async {
+    setState(() {
+      if (_lastImage != '') {
+        _lastImage = '';
+      }
+      if (_selecteCameraIndex > -1) {
+        if (_selecteCameraIndex == 0) {
+          _selecteCameraIndex = 1;
+        } else {
+          _selecteCameraIndex = 0;
+        }
+      } else {
+        _selecteCameraIndex = 0;
+      }
+    });
+
+    await initCamera(widget.cameras[_selecteCameraIndex]);
+  }
+
   Future<void> initCamera(CameraDescription camera) async {
     _cameraController = CameraController(
       camera,
@@ -163,7 +181,6 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     try {
       initialiseControllerFuture = _cameraController.initialize().then((value) {
         _cameraController.getMaxZoomLevel().then((value) => _maxAvailableZoom = value);
-
         _cameraController.getMinZoomLevel().then((value) => _minAvailableZoom = value);
         _cameraController.setFlashMode(FlashMode.off);
         _cameraController.lockCaptureOrientation();
@@ -184,25 +201,6 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         setState(() {});
       }
     });
-  }
-
-  Future<void> _cameraToggle() async {
-    setState(() {
-      if (_lastImage != '') {
-        _lastImage = '';
-      }
-      if (_selecteCameraIndex > -1) {
-        if (_selecteCameraIndex == 0) {
-          _selecteCameraIndex = 1;
-        } else {
-          _selecteCameraIndex = 0;
-        }
-      } else {
-        _selecteCameraIndex = 0;
-      }
-    });
-
-    await initCamera(widget.cameras[_selecteCameraIndex]);
   }
 
   void onViewFinderTap(TapDownDetails details, BoxConstraints constraints) {
@@ -231,23 +229,21 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 // WIDGETS
   Widget permissionWidget() {
     return Center(
-      child: Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "On n'a pas la persion de l'appareil photo",
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                openAppSettings();
-                getPermissionStatus();
-              },
-              child: const Text("Peux tu nous l'accorder"),
-            ),
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            "On n'a pas la permission de l'appareil photo",
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: () {
+              openAppSettings();
+              getPermissionStatus();
+            },
+            child: const Text("Peux tu nous l'accorder"),
+          ),
+        ],
       ),
     );
   }
@@ -266,6 +262,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
                 return GestureDetector(
+                  onTap: () => hideOverlay(),
                   onTapDown: (details) => onViewFinderTap(details, constraints),
                   onDoubleTap: () {
                     _cameraToggle();
@@ -293,27 +290,17 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     );
   }
 
-  Widget extraButton({required Function() onTap, required IconData icon, Color color = const Color.fromARGB(180, 255, 255, 255)}) {
-    return Container(
-      height: 50,
-      width: 50,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          width: 3,
+  Widget extraButton({Key? key, required Function() onTap, required IconData icon, Color color = const Color.fromARGB(180, 255, 255, 255)}) {
+    return GestureDetector(
+      key: key,
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
           color: color,
+          shape: BoxShape.circle,
         ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: onTap,
-          child: Icon(
-            icon,
-            color: color,
-          ),
-        ),
+        child: Icon(icon, color: Colors.black),
       ),
     );
   }
@@ -330,77 +317,85 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
   Widget cameraWithButtonsWidget() {
     return Container(
-      color: Colors.black,
+      color: Colors.grey,
       child: Stack(
         children: [
-          widget.cameras.isEmpty
-              ? const Center(
-                  child: Text("pas de cameras"),
-                )
-              : FutureBuilder(
-                  future: initialiseControllerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return cameraWidget();
-                    }
-                    return const Center();
-                  },
-                ),
-
-          // fand blanc pour le flash Front
+          cameraWidget(),
           flashFrontWidget(on: _flashFront),
+          // parametre
 
-          // galerie
+          // le fond pas opaque
           Positioned(
-            left: 20,
-            bottom: 120,
-            child: extraButton(
-              onTap: () {},
-              icon: Icons.photo_album_outlined,
-            ),
-          ),
+            left: 10,
+            bottom: 10,
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.black54, // Fond plus sombre
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // ADDITIONAL BUTTONS
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      extraButton(
+                        key: _addButtonKey,
+                        icon: Icons.add,
+                        onTap: () {
+                          if (_showExtraButtons) {
+                            hideOverlay();
+                          } else {
+                            showOverlay(context);
+                          }
+                          setState(() {
+                            _showExtraButtons = !_showExtraButtons; // Toggle l'affichage des boutons supplémentaires
+                          });
+                        },
+                        color: const Color.fromARGB(180, 255, 255, 255),
+                      ),
+                    ],
+                  ),
 
-          // toggle
-          Positioned(
-            left: 120,
-            bottom: 90,
-            child: extraButton(
-              icon: Icons.loop_outlined,
-              onTap: _cameraToggle,
-            ),
-          ),
+                  const SizedBox(height: 10),
 
-          // FLash
-          Positioned(
-            left: 120,
-            bottom: 30,
-            child: extraButton(
-              icon: Icons.light_mode_outlined,
-              onTap: () async {
-                activationDuFlash(idCamera: _selecteCameraIndex, camController: _cameraController);
-              },
-              color: _cameraController.value.flashMode != FlashMode.torch
-                  ? const Color.fromARGB(180, 255, 255, 255)
-                  : const Color.fromARGB(180, 255, 235, 59),
-            ),
-          ),
+                  // fash
+                  extraButton(
+                    icon: Icons.light_mode_outlined,
+                    onTap: () async {
+                      activationDuFlash(idCamera: _selecteCameraIndex, camController: _cameraController);
+                    },
+                    color: _cameraController.value.flashMode != FlashMode.torch
+                        ? const Color.fromARGB(180, 255, 255, 255)
+                        : const Color.fromARGB(180, 255, 235, 59),
+                  ),
+                  const SizedBox(height: 10),
 
-          // FLASH AUTO
-          Positioned(
-            left: 60,
-            bottom: 30,
-            child: extraButton(
-              icon: Icons.flash_auto_sharp,
-              onTap: () async {
-                if (_cameraController.value.flashMode != FlashMode.auto) {
-                  await _cameraController.setFlashMode(FlashMode.auto);
-                } else {
-                  await _cameraController.setFlashMode(FlashMode.off);
-                }
-              },
-              color: _cameraController.value.flashMode != FlashMode.auto
-                  ? const Color.fromARGB(180, 255, 255, 255)
-                  : const Color.fromARGB(180, 255, 235, 59),
+                  // flash auto
+                  extraButton(
+                    icon: Icons.flash_auto_sharp,
+                    onTap: () async {
+                      if (_cameraController.value.flashMode != FlashMode.auto) {
+                        await _cameraController.setFlashMode(FlashMode.auto);
+                      } else {
+                        await _cameraController.setFlashMode(FlashMode.off);
+                      }
+                    },
+                    color: _cameraController.value.flashMode != FlashMode.auto
+                        ? const Color.fromARGB(180, 255, 255, 255)
+                        : const Color.fromARGB(180, 255, 235, 59),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // album photo
+                  extraButton(
+                    onTap: () {},
+                    icon: Icons.photo_album_outlined,
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -408,6 +403,113 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     );
   }
 
+  void showOverlay(BuildContext context) {
+    final RenderBox renderBox = _addButtonKey.currentContext?.findRenderObject() as RenderBox;
+    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+    final position = renderBox.localToGlobal(Offset.zero, ancestor: overlay);
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => Positioned(
+        left: position.dx + 60, // Ajuster la position horizontale
+        top: position.dy - 20, // Ajuster la position verticale
+        child: Material(
+          color: Colors.transparent,
+          child: additionnalButtons(),
+        ),
+      ),
+    );
+
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void hideOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  Widget additionnalButtons() {
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.black54,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          extraButton(
+            icon: Icons.camera,
+            onTap: () {
+              // Action pour Option 1
+              setState(() {
+                _showExtraButtons = false; // Fermer les boutons supplémentaires
+              });
+            },
+          ),
+          const SizedBox(width: 10),
+          extraButton(
+            icon: Icons.photo,
+            onTap: () {
+              // Action pour Option 2
+              setState(() {
+                _showExtraButtons = false; // Fermer les boutons supplémentaires
+              });
+            },
+          ),
+          const SizedBox(width: 10),
+          extraButton(
+            icon: Icons.settings,
+            onTap: () {
+              // Action pour Option 3
+              setState(() {
+                _showExtraButtons = false; // Fermer les boutons supplémentaires
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget floatingActionButton() {
+    return Container(
+      width: 70,
+      height: 70,
+      margin: const EdgeInsets.fromLTRB(10, 0, 0, 30),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          width: 3,
+          color: Colors.white.withOpacity(0.5),
+        ),
+      ),
+      child: FittedBox(
+        child: InkWell(
+          onLongPress: () {
+            hideOverlay();
+            print('long');
+          },
+          child: FloatingActionButton(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              onPressed: () async {
+                hideOverlay();
+                await _prendrePhoto();
+
+                if (widget.cameras.isEmpty) {
+                  // ignore: use_build_context_synchronously
+                  context.push('/PrisePhoto/:filePath', extra: "assets/images/pont.jpeg");
+                  _lastImage = '';
+                } else {
+                  // ignore: use_build_context_synchronously
+                  context.push('/PrisePhoto/:filePath', extra: _lastImage);
+                  _lastImage = '';
+                }
+              }),
+        ),
+      ),
+    );
+  }
 
 // pourrais etre intéressant pour traité les images
   // Future<void> _prendrePhoto2() async {
