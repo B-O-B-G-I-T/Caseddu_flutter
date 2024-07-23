@@ -52,7 +52,11 @@ dependencies:
   json_theme: ^6.4.1+5
   # pour la camera
   camera: ^0.10.5+2
+  # pour la gestion des images
   image: ^4.0.17
+  image_cropper: ^1.4.1
+  flutter_colorpicker: ^1.0.3
+
   # pour les chemins les photi
   path_provider: ^2.0.15
   # loading
@@ -100,6 +104,7 @@ dependencies:
 
   #permission
   permission_handler: ^11.3.1
+
 
   # a supprimer
   dio: ^5.3.2
