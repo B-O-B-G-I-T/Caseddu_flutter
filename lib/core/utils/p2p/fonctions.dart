@@ -91,30 +91,33 @@ class Utils {
     return imageFile;
   }
 
-  static Future<List<String>> base64StringToListImage(String base64String) async {
-  final List<String> base64Strings = base64String.split(',');
-  final List<String> imageFiles = [];
+  static Future<List<String>> base64StringToListImage(String? base64String) async {
+    if (base64String != null && base64String.isNotEmpty) {
+      final List<String> base64Strings = base64String.split(',');
+      final List<String> imageFiles = [];
 
-  for (String base64Str in base64Strings) {
-    final bytes = base64Decode(base64Str);
-    final uniqueId = DateTime.now().millisecondsSinceEpoch;
-    String cheminVersImage = join(
-      (await getApplicationDocumentsDirectory()).path,
-      '$uniqueId.jpg',
-    );
-    print(cheminVersImage);
-    File imageFile = File(cheminVersImage);
-    await imageFile.writeAsBytes(bytes);
-    imageFiles.add(imageFile.path);
+      for (String base64Str in base64Strings) {
+        final bytes = base64Decode(base64Str);
+        final uniqueId = DateTime.now().millisecondsSinceEpoch;
+        String cheminVersImage = join(
+          (await getApplicationDocumentsDirectory()).path,
+          '$uniqueId.jpg',
+        );
+        print(cheminVersImage);
+        File imageFile = File(cheminVersImage);
+        await imageFile.writeAsBytes(bytes);
+        imageFiles.add(imageFile.path);
+      }
+
+      // Vous pouvez retourner la liste de fichiers d'images si nécessaire
+      return imageFiles;
+    }else{
+      return [];
+    }
+
+    // Si vous voulez retourner un seul fichier d'image, vous pouvez le faire comme ceci
+    // return imageFiles.isNotEmpty ? imageFiles.first : null;
   }
-
-  // Vous pouvez retourner la liste de fichiers d'images si nécessaire
-  return imageFiles;
-
-  // Si vous voulez retourner un seul fichier d'image, vous pouvez le faire comme ceci
-  // return imageFiles.isNotEmpty ? imageFiles.first : null;
-}
-
 
   // static void envoieDeMessage(
   //     {required String destinataire, required String message, context}) {
