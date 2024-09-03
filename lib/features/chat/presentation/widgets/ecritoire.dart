@@ -1,12 +1,11 @@
-/// This component is used in the ChatPage.
-/// It is the message bar where the message is typed on and sent to
-/// connected devices.
 import 'dart:io';
+import 'package:caseddu/features/chat/presentation/pages/photo_pages/image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:nanoid/nanoid.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/params/params.dart';
 import '../providers/chat_provider.dart';
@@ -31,11 +30,14 @@ class _MessagePanelState extends State<MessagePanel> {
   List<String> imagePath = [];
   late ChatProvider chatProvider;
 
+  List<AssetEntity> images = [];
+
   @override
   void initState() {
     super.initState();
     _focusNode.requestFocus();
     chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    fetchImages();
   }
 
   @override
@@ -99,6 +101,29 @@ class _MessagePanelState extends State<MessagePanel> {
     var pickedImage = await picker.pickImage(source: ImageSource.gallery);
     String path = pickedImage!.path;
     return path;
+  }
+
+  Future<void> fetchImages() async {
+    // Demander la permission d'accéder aux photos
+    var result = await PhotoManager.requestPermissionExtend();
+    if (result.isAuth) {
+      // Récupérer toutes les images
+      List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
+        onlyAll: true,
+        type: RequestType.image,
+      );
+      List<AssetEntity> allImages = await albums[0].getAssetListPaged(
+        page: 0,
+        size: 100, // Tu peux ajuster la taille selon tes besoins
+      );
+
+      setState(() {
+        images = allImages;
+      });
+    } else {
+      // Gérer le cas où l'utilisateur refuse les permissions
+      PhotoManager.openSetting();
+    }
   }
 
 // TODO faire une fonction qui fait un seul envoie de message plus facile a gerer et qui envoie image et texte
