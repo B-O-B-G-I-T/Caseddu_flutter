@@ -49,7 +49,7 @@ dependencies:
   # Pour les polices
   google_fonts: ^6.2.1
   # Pour le theme
-  json_theme: ^6.4.1+5
+  json_theme: ^6.5.0+1
   # pour la camera
   camera: ^0.10.5+2
   # pour la gestion des images
@@ -74,8 +74,9 @@ dependencies:
   # pour parcourir la galery 
   image_picker: ^1.1.1 
   oktoast: ^3.3.1
-  photo_manager: ^2.7.1
-  album_image: ^0.0.2+1
+  photo_manager: ^3.3.0
+  # photo_manager: ^3.3.0
+  # album_image: ^0.0.2+1
   
   # pour le peer to peer
   #impossible de faire marche instance deprecier 

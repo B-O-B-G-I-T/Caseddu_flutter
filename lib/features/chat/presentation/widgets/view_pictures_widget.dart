@@ -1,46 +1,37 @@
 import 'package:flutter/material.dart';
 
-Widget viewPicturesWidget({required List<String> pictures}) {
-  return SizedBox(
-    height: 120, // Hauteur de la liste d'images
-    child: ListView.builder(
-      scrollDirection: Axis.horizontal, // Pour afficher les images horizontalement
-      itemCount: pictures.length,
-      itemBuilder: (BuildContext context, int index) {
-        return GestureDetector(
-          onTap: () {
-            // Afficher l'image en grand
-            _showFullScreenImage(context, pictures[index]);
-          },
-          child: Container(
-              margin: const EdgeInsets.fromLTRB(0, 0, 8, 8), // Espacement entre chaque image
-              height: 150,
-              width: 120, // Utilise chaque chemin d'image dans la liste
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(10)),
-              ),
-              child: Image.asset(
-                pictures[index],
-                fit: BoxFit.cover,
-              )),
-        );
-      },
-    ),
+Widget viewPicturesWidget({required BuildContext context, required List<String> pictures}) {
+  return Wrap(
+    spacing: 4.0, // Espacement horizontal entre les images
+    runSpacing: 4.0, // Espacement vertical entre les images
+    children: pictures.map((picture) {
+      return GestureDetector(
+        onTap: () {
+          // Afficher l'image en grand
+          _showFullScreenImage(context, picture);
+        },
+        child: Container(
+          width: 150, // Largeur maximale pour chaque image
+          height: 200, // Hauteur maximale pour chaque image
+          child: FittedBox(
+            fit: BoxFit.contain, // Ajuste l'image pour remplir le conteneur tout en conservant les proportions
+            child: Image.asset(picture),
+          ),
+        ),
+      );
+    }).toList(),
   );
 }
-// TODO: faire une preview plus propre ici fonctionnelle 
+
+// Fonction pour afficher une image en plein écran
 void _showFullScreenImage(BuildContext context, String imageUrl) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return Dialog(
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          child: Image.asset(
-            imageUrl,
-            fit: BoxFit.contain,
-          ),
+        child: Image.asset(
+          imageUrl,
+          fit: BoxFit.contain, // Ajuste l'image pour remplir le conteneur tout en conservant les proportions
         ),
       );
     },

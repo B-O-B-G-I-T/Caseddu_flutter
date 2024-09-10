@@ -34,7 +34,7 @@
 
     <key>NSPhotoLibraryUsageDescription</key>
     <string>L'application nécessite l'accès à la bibliothèque de photos pour permettre l'importation et la gestion de photos dans l'application.</string>
-
+    
     <key>NSBonjourServices</key>
     <array>
       <string>_mp-connection._tcp</string>
