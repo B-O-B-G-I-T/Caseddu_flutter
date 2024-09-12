@@ -34,7 +34,7 @@
 
     <key>NSPhotoLibraryUsageDescription</key>
     <string>L'application nécessite l'accès à la bibliothèque de photos pour permettre l'importation et la gestion de photos dans l'application.</string>
-    
+
     <key>NSBonjourServices</key>
     <array>
       <string>_mp-connection._tcp</string>
@@ -42,7 +42,7 @@
     </array>
     <key>UIRequiresPersistentWiFi</key>
     <true/>
-    
+
     <key>NSLocalNetworkUsageDescription</key>
     <string>Utilisation du réseau local pour la découverte de services.</string>
 
@@ -81,7 +81,7 @@
 
     <!-- <key>aps-environment</key>
     <string>production</string> -->
-    
+
     <key>NSSiriUsageDescription</key>
     <string>Votre application utilise Siri pour effectuer des tâches vocales lorsqu'elle est en cours d'exécution en arrière-plan.</string>
 
@@ -124,4 +124,11 @@
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
   </dict>
+
+  <key>UIBackgroundModes</key>
+  <array>
+    <string>fetch</string>
+    <string>processing</string>
+  </array>
+  
 </plist>

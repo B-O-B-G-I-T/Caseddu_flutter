@@ -83,6 +83,9 @@ dependencies:
   # flutter_nearby_connections: ^1.1.1
   flutter_nearby_connections: ^1.1.2
   
+  # pour les taches de fond
+  workmanager: ^0.5.2
+  
   # pour le chat 
   # bubble: ^1.2.1
   # pour les toasts messages informatif
