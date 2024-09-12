@@ -1,9 +1,11 @@
 import 'dart:io';
-import 'package:caseddu/features/chat/presentation/pages/photo_pages/image_picker.dart';
+import 'package:caseddu/core/utils/p2p/fonctions.dart';
+import 'package:caseddu/features/chat/presentation/widgets/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nanoid/nanoid.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/params/params.dart';
 import '../providers/chat_provider.dart';
@@ -25,6 +27,7 @@ class _MessagePanelState extends State<MessagePanel> {
   final FocusNode _focusNode = FocusNode();
   bool _showGallery = false;
   late ChatProvider chatProvider;
+  late PermissionState permissionStatus = PermissionState.notDetermined;
 
   @override
   void initState() {
@@ -88,17 +91,27 @@ class _MessagePanelState extends State<MessagePanel> {
   }
 
 
-// TODO faire une fonction qui fait un seul envoie de message plus facile a gerer et qui envoie image et texte
   Widget sendImageWidget() {
     return IconButton(
         // l'action ouvre une itent pour selectionner et envoyer a la paire
         onPressed: () async {
           // String path = await getImage();
 
-          setState(() {
+          setState(() async {
             //FocusScope.of(context).unfocus();
-            _showGallery = !_showGallery;
-            FocusScope.of(context).unfocus();
+
+            permissionStatus = await PhotoManager.requestPermissionExtend();
+            if (permissionStatus == PermissionState.authorized && widget.device.state == SessionState.notConnected && !widget.longDistance && context.mounted) {
+              chatProvider.connectToDevice(widget.device);
+
+              _showGallery = !_showGallery;
+              
+            }else if (permissionStatus.hasAccess) {
+              Utils.showLimitedAccessDialog(context: context);
+            }
+            else  {
+              Utils.showPermissionDeniedDialog(context: context);
+            }
           });
         },
         icon: const Icon(Icons.image_outlined));

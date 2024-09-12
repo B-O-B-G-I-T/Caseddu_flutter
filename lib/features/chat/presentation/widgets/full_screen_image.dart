@@ -1,3 +1,4 @@
+import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -49,7 +50,7 @@ class FullScreenImagePage extends StatelessWidget {
                         icon: Icons.download,
                         onPressed: () async {
                           // Télécharger l'image
-                          await _saveImageToGallery(imageUrl, context);
+                          await Utils.saveImageToGallery(imageUrl, context);
                         }),
                   ],
                 ),
@@ -62,59 +63,6 @@ class FullScreenImagePage extends StatelessWidget {
   }
 }
 
-// Fonction pour télécharger l'image et l'enregistrer dans la galerie
-Future<void> _saveImageToGallery(String imageUrl, BuildContext context) async {
-  // Demande des permissions pour accéder à la galerie
-  final permissionStatus = await PhotoManager.requestPermissionExtend();
-
-  if (permissionStatus.isAuth) {
-    try {
-      // Chargement de l'image depuis les assets
-      final ByteData imageData = await rootBundle.load(imageUrl);
-      final Uint8List bytes = imageData.buffer.asUint8List();
-
-      // Enregistrement de l'image dans la galerie
-      final assetEntity = await PhotoManager.editor.saveImage(bytes, filename: imageUrl);
-
-      if (assetEntity != null) {
-        // Affichage d'un message de succès avec Fluttertoast
-        Fluttertoast.showToast(
-          msg: 'Image enregistrée avec succès dans la galerie',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.black,
-          textColor: Colors.white,
-        );
-      } else {
-        Fluttertoast.showToast(
-          msg: 'Erreur lors de l\'enregistrement de l\'image',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-        );
-      }
-    } catch (e) {
-      // Gestion des erreurs
-      Fluttertoast.showToast(
-        msg: 'Erreur : $e',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-      );
-    }
-  } else {
-    // Permission refusée
-    Fluttertoast.showToast(
-      msg: 'Permission refusée',
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.red,
-      textColor: Colors.white,
-    );
-  }
-}
 
 class CircularIconButton extends StatelessWidget {
   final IconData icon;

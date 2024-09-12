@@ -1,8 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart' show join;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class Utils {
   static String toDateTime(DateTime dateTime) {
@@ -111,7 +116,7 @@ class Utils {
 
       // Vous pouvez retourner la liste de fichiers d'images si nécessaire
       return imageFiles;
-    }else{
+    } else {
       return [];
     }
 
@@ -119,6 +124,120 @@ class Utils {
     // return imageFiles.isNotEmpty ? imageFiles.first : null;
   }
 
+  static void showLimitedAccessDialog({required BuildContext context}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Accès limité'),
+          content: const Text(
+            'Vous avez accordé un accès limité aux photos. Cela peut restreindre certaines fonctionnalités de l\'application. Pour une expérience complète, veuillez accorder un accès complet dans les paramètres de l\'application.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Annuler'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Ouvrir les paramètres'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                PhotoManager.openSetting();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  static void showPermissionDeniedDialog({required BuildContext context}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Permission requise'),
+          content: const Text(
+            'Cette application a besoin d\'accès à vos photos pour fonctionner correctement. Veuillez activer les autorisations dans les paramètres de l\'application.',
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Ouvrir les paramètres'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Ouvrir les paramètres de l'application
+                PhotoManager.openSetting();
+              },
+            ),
+            TextButton(
+              child: const Text('Annuler'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+
+// Fonction pour télécharger l'image et l'enregistrer dans la galerie
+  static Future<void> saveImageToGallery(String imageUrl, BuildContext context) async {
+    // Demande des permissions pour accéder à la galerie
+    final permissionStatus = await PhotoManager.requestPermissionExtend();
+
+    if (permissionStatus.isAuth || permissionStatus.hasAccess) {
+      try {
+        // Chargement de l'image depuis les assets
+        final ByteData imageData = await rootBundle.load(imageUrl);
+        final Uint8List bytes = imageData.buffer.asUint8List();
+
+        // Enregistrement de l'image dans la galerie
+        final assetEntity = await PhotoManager.editor.saveImage(bytes, filename: imageUrl);
+
+        if (assetEntity != null) {
+          // Affichage d'un message de succès avec Fluttertoast
+          Fluttertoast.showToast(
+            msg: 'Image enregistrée avec succès dans la galerie ✅',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.black,
+            textColor: Colors.white,
+          );
+        } else {
+          Fluttertoast.showToast(
+            msg: 'Erreur lors de l\'enregistrement de l\'image',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+          );
+        }
+      } catch (e) {
+        // Gestion des erreurs
+        Fluttertoast.showToast(
+          msg: 'Erreur : $e',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+        );
+      }
+    } else {
+      // Permission refusée
+      Fluttertoast.showToast(
+        msg: 'Permission refusée',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+      );
+    }
+  }
   // static void envoieDeMessage(
   //     {required String destinataire, required String message, context}) {
   //   var msgId = nanoid(21);

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:caseddu/core/params/params.dart';
+import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/presentation/providers/chat_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
@@ -47,10 +48,10 @@ class _ImagePickerState extends State<MyImagePicker> {
     } else if (result.hasAccess) {
       // Accès limité accordé
       await _loadAndDisplayLimitedImages();
-      _showLimitedAccessDialog();
+      Utils.showLimitedAccessDialog(context: context);
     } else {
       // Permission refusée ou non demandée
-      _showPermissionDeniedDialog();
+      Utils.showPermissionDeniedDialog(context: context);
     }
   }
 
@@ -92,65 +93,6 @@ class _ImagePickerState extends State<MyImagePicker> {
     setState(() {
       images = limitedImages;
     });
-  }
-
-  void _showPermissionDeniedDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Permission requise'),
-          content: const Text(
-            'Cette application a besoin d\'accès à vos photos pour fonctionner correctement. Veuillez activer les autorisations dans les paramètres de l\'application.',
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Ouvrir les paramètres'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                // Ouvrir les paramètres de l'application
-                PhotoManager.openSetting();
-              },
-            ),
-            TextButton(
-              child: const Text('Annuler'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showLimitedAccessDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Accès limité'),
-          content: const Text(
-            'Vous avez accordé un accès limité aux photos. Cela peut restreindre certaines fonctionnalités de l\'application. Pour une expérience complète, veuillez accorder un accès complet dans les paramètres de l\'application.',
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Annuler'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Ouvrir les paramètres'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                PhotoManager.openSetting();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
