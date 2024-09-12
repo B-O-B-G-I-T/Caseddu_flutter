@@ -1,3 +1,4 @@
+import 'package:caseddu/features/chat/presentation/widgets/full_screen_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -37,7 +38,7 @@ class Routes {
       GoRoute(
         path: '/firstPage/:index',
         builder: (context, state) {
-          final index = int.parse(state.pathParameters['index']!) ;
+          final index = int.parse(state.pathParameters['index']!);
           return PremierePage(selectedIndex: index);
         },
       ),
@@ -75,12 +76,21 @@ class Routes {
         },
       ),
       GoRoute(
+        path: '/fullScreenImage/:filePath',
+        name: 'fullScreenImage',
+        builder: (context, state) {
+          String filePath = state.extra.toString(); // -> le casting est important
+          return FullScreenImagePage(
+            imageUrl: filePath,
+          );
+        },
+      ),
+      GoRoute(
         path: '/EnvoieDePhotoPage',
         name: 'EnvoieDePhotoPage',
         builder: (context, state) {
           final String filePath = state.extra.toString();
-          return 
-          EnvoieDePhotoPage(
+          return EnvoieDePhotoPage(
             cheminVersImagePrise: filePath,
           );
         },
@@ -95,9 +105,7 @@ class Routes {
           );
         },
       ),
-      
     ],
-
   );
 
   // variable public

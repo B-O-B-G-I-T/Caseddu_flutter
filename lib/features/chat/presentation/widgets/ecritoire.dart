@@ -3,7 +3,6 @@ import 'package:caseddu/features/chat/presentation/pages/photo_pages/image_picke
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/params/params.dart';
@@ -88,13 +87,6 @@ class _MessagePanelState extends State<MessagePanel> {
     );
   }
 
-  Future<String> getImage() async {
-    ImagePicker picker = ImagePicker();
-    FocusScope.of(context).unfocus(); // masque le clavier
-    var pickedImage = await picker.pickImage(source: ImageSource.gallery);
-    String path = pickedImage!.path;
-    return path;
-  }
 
 // TODO faire une fonction qui fait un seul envoie de message plus facile a gerer et qui envoie image et texte
   Widget sendImageWidget() {

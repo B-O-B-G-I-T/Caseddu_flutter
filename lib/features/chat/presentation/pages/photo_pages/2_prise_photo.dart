@@ -1,12 +1,7 @@
 import 'dart:async';
 import 'package:caseddu/features/chat/presentation/widgets/widgets_for_chat/loader_for_chat.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:io';
-import 'dart:typed_data';
-import 'package:image/image.dart' as img;
-import 'package:path_provider/path_provider.dart';
 
 class PrisePhoto extends StatefulWidget {
   const PrisePhoto({Key? key, required this.lastImage}) : super(key: key);
