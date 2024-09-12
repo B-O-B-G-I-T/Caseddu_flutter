@@ -42,7 +42,7 @@
     </array>
     <key>UIRequiresPersistentWiFi</key>
     <true/>
-    
+
     <key>NSLocalNetworkUsageDescription</key>
     <string>Utilisation du réseau local pour la découverte de services.</string>
 
@@ -81,7 +81,7 @@
 
     <!-- <key>aps-environment</key>
     <string>production</string> -->
-    
+
     <key>NSSiriUsageDescription</key>
     <string>Votre application utilise Siri pour effectuer des tâches vocales lorsqu'elle est en cours d'exécution en arrière-plan.</string>
 
@@ -116,12 +116,6 @@
     </array>
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>Nous souhaitons avoir accès à ta bibliothèque de photos</string>
-    <key>NSMotionUsageDescription</key>
-    <string>Motion usage description</string>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>We need Photos access to allow you to update Profile Picture.</string>
     <key>NSAppTransportSecurity</key>
     <dict>
       <key>NSAllowsArbitraryLoads</key>
@@ -130,4 +124,11 @@
     <key>UIApplicationSupportsIndirectInputEvents</key>
     <true/>
   </dict>
+
+  <key>UIBackgroundModes</key>
+  <array>
+    <string>fetch</string>
+    <string>processing</string>
+  </array>
+  
 </plist>
