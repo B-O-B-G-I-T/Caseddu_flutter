@@ -18,6 +18,7 @@ import '../../PremierePage.dart';
 class Routes {
   // GoRouter configuration
   final _router = GoRouter(
+    observers: [],
     // l'écarn de login
     initialLocation: '/firstPage/0',
     //redige la ou l'on veut
@@ -30,8 +31,6 @@ class Routes {
       } else {
         return null;
       }
-
-      // && state.matchedLocation == '/login'
     },
     // créé les routes
     routes: [

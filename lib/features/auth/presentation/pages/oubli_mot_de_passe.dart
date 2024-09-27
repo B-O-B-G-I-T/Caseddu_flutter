@@ -96,8 +96,9 @@ class _OubliMotDePasseScreenState extends State<OubliMotDePassePage> {
                       context.pop(); // Ferme la boîte de dialogue
 
                       if (authentificationProvider.failure == null) {
-                        fireBaseSucces(context, "Succès", 'Le mot de passe est rénitialisé, un lien est envoyé pour le changer regarde dans tes mails.');
-                        context.push('/');
+                        fireBaseSucces(
+                            context, "Succès", 'Le mot de passe est rénitialisé, un lien est envoyé pour le changer regarde dans tes mails.');
+                        context.push('/login');
                       } else {
                         fireBaseError(context, 'Erreur', authentificationProvider.failure!.errorMessage);
                       }

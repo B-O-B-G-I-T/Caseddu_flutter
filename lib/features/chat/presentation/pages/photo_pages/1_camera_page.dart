@@ -76,6 +76,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   void dispose() {
     _cameraController.dispose();
     _overlayEntry?.remove();
+
     super.dispose();
   }
 
@@ -345,11 +346,11 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                         key: _addButtonKey,
                         icon: Icons.add,
                         onTap: () {
-                          if (_showExtraButtons) {
-                            hideOverlay();
-                          } else {
-                            showOverlay(context);
-                          }
+                          // if (_showExtraButtons) {
+                          //   hideOverlay();
+                          // } else {
+                          //   showOverlay(context);
+                          // }
                           setState(() {
                             _showExtraButtons = !_showExtraButtons; // Toggle l'affichage des boutons supplémentaires
                           });
@@ -359,6 +360,13 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                     ],
                   ),
 
+                  // Animation des boutons supplémentaires
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    height: _showExtraButtons ? 162 : 0, // Contrôle la hauteur de l'espace animé
+                    child: additionnalButtons(),
+                  ),
                   const SizedBox(height: 10),
 
                   // fash
@@ -428,47 +436,42 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   }
 
   Widget additionnalButtons() {
-    return Container(
-      margin: const EdgeInsets.only(top: 10),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.black54,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          extraButton(
-            icon: Icons.camera,
-            onTap: () {
-              // Action pour Option 1
-              setState(() {
-                _showExtraButtons = false; // Fermer les boutons supplémentaires
-              });
-            },
-          ),
-          const SizedBox(width: 10),
-          extraButton(
-            icon: Icons.photo,
-            onTap: () {
-              // Action pour Option 2
-              setState(() {
-                _showExtraButtons = false; // Fermer les boutons supplémentaires
-              });
-            },
-          ),
-          const SizedBox(width: 10),
-          extraButton(
-            icon: Icons.settings,
-            onTap: () {
-              // Action pour Option 3
-              setState(() {
-                _showExtraButtons = false; // Fermer les boutons supplémentaires
-              });
-            },
-          ),
-        ],
-      ),
-    );
+    return _showExtraButtons
+        ? Column(
+            children: [
+              const SizedBox(height: 10),
+              extraButton(
+                icon: Icons.camera,
+                onTap: () {
+                  // Action pour Option 1
+                  setState(() {
+                    _showExtraButtons = false; // Fermer les boutons supplémentaires
+                  });
+                },
+              ),
+              const SizedBox(height: 10),
+              extraButton(
+                icon: Icons.photo,
+                onTap: () {
+                  // Action pour Option 2
+                  setState(() {
+                    _showExtraButtons = false; // Fermer les boutons supplémentaires
+                  });
+                },
+              ),
+              const SizedBox(height: 10),
+              extraButton(
+                icon: Icons.settings,
+                onTap: () {
+                  // Action pour Option 3
+                  setState(() {
+                    _showExtraButtons = false; // Fermer les boutons supplémentaires
+                  });
+                },
+              ),
+            ],
+          )
+        : const SizedBox();
   }
 
   Widget floatingActionButton() {

@@ -55,14 +55,11 @@ class _PrisePhotoState extends State<PrisePhoto> {
       body: SizedBox(
         width: double.infinity,
         height: double.infinity,
-        child: FittedBox(
-          fit: BoxFit.cover,
-          child: 
-          Image.asset( widget.lastImage )
-          // Image(
-          //   image: FileImage(File(widget.lastImage),),
-          // ),
-        ),
+        child: FittedBox(fit: BoxFit.cover, child: Image.asset(widget.lastImage)
+            // Image(
+            //   image: FileImage(File(widget.lastImage),),
+            // ),
+            ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -80,6 +77,4 @@ class _PrisePhotoState extends State<PrisePhoto> {
       floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
     );
   }
-
-  
 }
