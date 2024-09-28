@@ -34,11 +34,12 @@ void main() async {
   final themeStr = await rootBundle.loadString('assets/theme/appainter_theme.json');
   final themeJson = jsonDecode(themeStr);
   final theme = ThemeDecoder.decodeThemeData(themeJson)!;
+  final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   final chatProvider = ChatProvider(); // Initialisation manuelle
-  
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
@@ -69,9 +70,7 @@ void main() async {
     // });
   } // else {
   runApp(
-    
     MultiProvider(
-      
       providers: [
         Provider<AuthentificationRemoteDataSourceImpl>(
             create: (_) => AuthentificationRemoteDataSourceImpl(
@@ -95,7 +94,6 @@ void main() async {
         ),
 
         //ChangeNotifierProvider(create: (_) => Global()),
-
       ],
       child: MyApp(theme: theme, cameras: cameras),
     ),
@@ -114,7 +112,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp.router(
       routerConfig: Routes().router,
       debugShowCheckedModeBanner: false,

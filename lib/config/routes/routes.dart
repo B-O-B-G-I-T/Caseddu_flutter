@@ -18,6 +18,7 @@ import '../../PremierePage.dart';
 class Routes {
   // GoRouter configuration
   final _router = GoRouter(
+    observers: [],
     // l'écarn de login
     initialLocation: '/firstPage/0',
     //redige la ou l'on veut
@@ -30,8 +31,6 @@ class Routes {
       } else {
         return null;
       }
-
-      // && state.matchedLocation == '/login'
     },
     // créé les routes
     routes: [
@@ -98,10 +97,16 @@ class Routes {
       GoRoute(
         path: '/PrisePhoto/:filePath',
         name: 'PrisePhoto',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           String filePath = state.extra.toString(); // -> le casting est important
-          return PrisePhoto(
-            lastImage: filePath,
+        
+          return CustomTransitionPage(
+            child: PrisePhoto(lastImage: filePath),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              // Aucune transition, on retourne directement l'enfant
+              return child;
+            },
+            transitionDuration: Duration.zero, // Pas de délai de transition
           );
         },
       ),

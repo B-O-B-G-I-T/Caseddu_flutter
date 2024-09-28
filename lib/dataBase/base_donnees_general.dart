@@ -22,7 +22,7 @@ class BaseDonneesGeneral {
   }
 
   static Future<Database> get database async {
-    //if (_database != null) return _database;
+    //if (_database.isOpen) return _database;
     _database = await initDb();
     return _database;
   }

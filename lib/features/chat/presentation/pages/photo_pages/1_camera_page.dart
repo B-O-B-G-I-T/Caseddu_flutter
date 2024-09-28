@@ -2,15 +2,12 @@
 import 'dart:developer';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 import '../../widgets/widgets_for_chat/loader_for_chat.dart';
 
-// TODO peut etre une bonne idée faire deux pages au lieu d'utilisé le wg visible
 class CameraPage extends StatefulWidget {
   //pour la camera
   final List<CameraDescription> cameras;
@@ -29,7 +26,8 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       sensorOrientation: 0,
     ),
     ResolutionPreset.max,
-    imageFormatGroup: ImageFormatGroup.bgra8888,
+    imageFormatGroup: ImageFormatGroup.yuv420,
+    //fps: 30,
   );
   Future<void>? initialiseControllerFuture;
   int _selecteCameraIndex = -1;
@@ -44,7 +42,6 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
   bool _showExtraButtons = false; // Variable d'état pour afficher le conteneur supplémentaire
   final GlobalKey _addButtonKey = GlobalKey(); // Key pour obtenir la position du bouton "add"
-  OverlayEntry? _overlayEntry;
 
   @override
   void initState() {
@@ -57,25 +54,20 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final CameraController cameraController = _cameraController;
 
-    // App state changed before we got the chance to initialize.
-    if (!cameraController.value.isInitialized) {
-      return;
-    }
-
-    if (state == AppLifecycleState.inactive) {
-      // Free up memory when camera not active
+    if (state == AppLifecycleState.inactive || state == AppLifecycleState.paused) {
       cameraController.dispose();
     } else if (state == AppLifecycleState.resumed) {
-      // Reinitialize the camera with same properties
-
-      _cameraToggle();
+      if (!cameraController.value.isInitialized) {
+        _cameraToggle(); // Réinitialiser seulement si la caméra n'est pas initialisée
+      }
     }
   }
 
   @override
   void dispose() {
     _cameraController.dispose();
-    _overlayEntry?.remove();
+    hideAdditionnalButtons();
+
     super.dispose();
   }
 
@@ -115,6 +107,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   }
 
 // FONCTIONS
+
   Future<void> _prendrePhoto() async {
     // pour le faire en background
     //initialiseControllerFuture.then((value) => null);
@@ -133,21 +126,21 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         _lastImage = cheminVersImage;
       });
     } catch (e) {
-      print(e);
+      print('Erreur lors de la capture de la photo : $e');
     }
   }
 
   Future<void> getPermissionStatus() async {
     var status = await Permission.camera.request();
+    //log('Camera Permission: $status');
     if (status.isGranted) {
-      log('Camera Permission: GRANTED');
-      setState(() {
-        _isCameraPermissionGranted = true;
-      });
+      //log('Camera Permission: GRANTED');
+      _isCameraPermissionGranted = true;
       // Set and initialize the new camera
       _cameraToggle();
     } else {
-      log('Camera Permission: DENIED');
+      await Permission.camera.request();
+      //log('Camera Permission: DENIED');
     }
   }
 
@@ -174,7 +167,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     _cameraController = CameraController(
       camera,
       ResolutionPreset.max,
-      imageFormatGroup: ImageFormatGroup.bgra8888,
+      imageFormatGroup: ImageFormatGroup.bgra8888, //ImageFormatGroup.bgra8888
     );
 
     // Initialize controller
@@ -262,7 +255,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
                 return GestureDetector(
-                  onTap: () => hideOverlay(),
+                  onTap: () => hideAdditionnalButtons(),
                   onTapDown: (details) => onViewFinderTap(details, constraints),
                   onDoubleTap: () {
                     _cameraToggle();
@@ -271,15 +264,9 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                     _startZoom = details.globalPosition.dy;
                   },
                   onVerticalDragUpdate: (details) async {
-                    double zoooooooom;
-                    zoooooooom = (_startZoom - details.globalPosition.dy) / 20; // adjust zoom level based on vertical drag
-                    if (zoooooooom < _minAvailableZoom) {
-                      zoooooooom = _minAvailableZoom; // prevent zoom level from going below 0
-                    }
-                    if (zoooooooom > _maxAvailableZoom) {
-                      zoooooooom = _maxAvailableZoom; // prevent zoom level from going above 10
-                    }
-                    _cameraController.setZoomLevel(zoooooooom); // set camera zoom level
+                    double zoomLevel = (_startZoom - details.globalPosition.dy) / 20;
+                    zoomLevel = zoomLevel.clamp(_minAvailableZoom, _maxAvailableZoom); // Limiter le zoom dans les bornes
+                    await _cameraController.setZoomLevel(zoomLevel); // Mettre à jour le niveau de zoom
                   },
                 );
               },
@@ -309,9 +296,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   Widget flashFrontWidget({required bool on}) {
     return Visibility(
       visible: on,
-      child: Container(
-        color: const Color.fromARGB(150, 255, 255, 255),
-      ),
+      child: Container(color: const Color.fromARGB(150, 255, 255, 255)),
     );
   }
 
@@ -345,11 +330,11 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                         key: _addButtonKey,
                         icon: Icons.add,
                         onTap: () {
-                          if (_showExtraButtons) {
-                            hideOverlay();
-                          } else {
-                            showOverlay(context);
-                          }
+                          // if (_showExtraButtons) {
+                          //   hideAdditionnalButtons();
+                          // } else {
+                          //   showOverlay(context);
+                          // }
                           setState(() {
                             _showExtraButtons = !_showExtraButtons; // Toggle l'affichage des boutons supplémentaires
                           });
@@ -359,6 +344,8 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                     ],
                   ),
 
+                  // Animation des boutons supplémentaires
+                  additionnalButtons(),
                   const SizedBox(height: 10),
 
                   // fash
@@ -403,71 +390,53 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     );
   }
 
-  void showOverlay(BuildContext context) {
-    final RenderBox renderBox = _addButtonKey.currentContext?.findRenderObject() as RenderBox;
-    final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
-    final position = renderBox.localToGlobal(Offset.zero, ancestor: overlay);
-
-    _overlayEntry = OverlayEntry(
-      builder: (context) => Positioned(
-        left: position.dx + 60, // Ajuster la position horizontale
-        top: position.dy - 20, // Ajuster la position verticale
-        child: Material(
-          color: Colors.transparent,
-          child: additionnalButtons(),
-        ),
-      ),
-    );
-
-    Overlay.of(context).insert(_overlayEntry!);
-  }
-
-  void hideOverlay() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
+  void hideAdditionnalButtons() {
+    setState(() {
+      _showExtraButtons = false;
+    });
   }
 
   Widget additionnalButtons() {
-    return Container(
-      margin: const EdgeInsets.only(top: 10),
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.black54,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          extraButton(
-            icon: Icons.camera,
-            onTap: () {
-              // Action pour Option 1
-              setState(() {
-                _showExtraButtons = false; // Fermer les boutons supplémentaires
-              });
-            },
-          ),
-          const SizedBox(width: 10),
-          extraButton(
-            icon: Icons.photo,
-            onTap: () {
-              // Action pour Option 2
-              setState(() {
-                _showExtraButtons = false; // Fermer les boutons supplémentaires
-              });
-            },
-          ),
-          const SizedBox(width: 10),
-          extraButton(
-            icon: Icons.settings,
-            onTap: () {
-              // Action pour Option 3
-              setState(() {
-                _showExtraButtons = false; // Fermer les boutons supplémentaires
-              });
-            },
-          ),
-        ],
-      ),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+      height: _showExtraButtons ? 162 : 0, // Contrôle la hauteur de l'espace animé
+      child: _showExtraButtons
+          ? Column(
+              children: [
+                const SizedBox(height: 10),
+                extraButton(
+                  icon: Icons.camera,
+                  onTap: () {
+                    // Action pour Option 1
+                    setState(() {
+                      _showExtraButtons = false; // Fermer les boutons supplémentaires
+                    });
+                  },
+                ),
+                const SizedBox(height: 10),
+                extraButton(
+                  icon: Icons.photo,
+                  onTap: () {
+                    // Action pour Option 2
+                    setState(() {
+                      _showExtraButtons = false; // Fermer les boutons supplémentaires
+                    });
+                  },
+                ),
+                const SizedBox(height: 10),
+                extraButton(
+                  icon: Icons.settings,
+                  onTap: () {
+                    // Action pour Option 3
+                    setState(() {
+                      _showExtraButtons = false; // Fermer les boutons supplémentaires
+                    });
+                  },
+                ),
+              ],
+            )
+          : const SizedBox(),
     );
   }
 
@@ -486,14 +455,14 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       child: FittedBox(
         child: InkWell(
           onLongPress: () {
-            hideOverlay();
+            hideAdditionnalButtons();
             print('long');
           },
           child: FloatingActionButton(
               backgroundColor: Colors.transparent,
               elevation: 0,
               onPressed: () async {
-                hideOverlay();
+                hideAdditionnalButtons();
                 await _prendrePhoto();
 
                 if (widget.cameras.isEmpty) {

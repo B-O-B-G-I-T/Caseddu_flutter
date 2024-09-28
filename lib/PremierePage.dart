@@ -8,7 +8,7 @@ import 'main.dart';
 class PremierePage extends StatefulWidget {
   final int selectedIndex;
 
-    const PremierePage({Key? key, required this.selectedIndex}) : super(key: key);
+  const PremierePage({Key? key, required this.selectedIndex}) : super(key: key);
 
   @override
   State<PremierePage> createState() => _PremierePageState();
@@ -16,8 +16,6 @@ class PremierePage extends StatefulWidget {
 
 class _PremierePageState extends State<PremierePage> {
   int _selectedIndex = 0;
-  // TODO voir la camera si on la passe en provider
-  //late CameraController _controller;
 
   final User _utilisateur = FirebaseAuth.instance.currentUser!;
   @override
@@ -56,7 +54,21 @@ class _PremierePageState extends State<PremierePage> {
   @override
   Widget build(BuildContext context) {
     // return _selectedIndex == 0 ? myAppBar() : justBottomBar();
-    return justBottomBar();
+    return Scaffold(
+      // AppBar personnalisé transparent
+      body: Stack(
+        children: [
+          // IndexedStack est la première couche (en dessous de l'AppBar)
+          IndexedStack(
+            index: _selectedIndex,
+            children: _pages,
+          ),
+          // AppBar transparent en haut
+          myAppBar(),
+        ],
+      ),
+      bottomNavigationBar: buildBottomBar(context), // Barre de navigation en bas
+    );
   }
 
 // bottom bar custom
@@ -72,60 +84,58 @@ class _PremierePageState extends State<PremierePage> {
 
 // appbar custom
   Widget myAppBar() {
-    return Scaffold(
-      body: NestedScrollView(
-          floatHeaderSlivers: true,
-          headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-            return <Widget>[
-              SliverAppBar(
-                floating: true,
-                snap: true,
-                leadingWidth: 100,
-                leading: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundColor: Colors.black,
-                        child: IconButton(
-                            color: Colors.white,
-                            icon: const Icon(Icons.account_circle_outlined),
-                            onPressed: () {
-                              // Obtenir une référence à l'instance de GoRouter
-                              final router = GoRouter.of(context);
-                              // Naviguer vers la page des paramètres
-                              router.push('/parameter');
-                            }),
-                      ),
-                      Text(
-                        _utilisateur.displayName ?? "",
-                        style: const TextStyle(color: Colors.black),
-                      )
-                    ],
-                  ),
+    return Positioned(
+      top: 0,
+      left: 0,
+      right: 0,
+      child: PreferredSize(
+        preferredSize: const Size.fromHeight(20.0), // hauteur personnalisée de l'AppBar
+        child: AppBar(
+          backgroundColor: Colors.transparent,
+          leadingWidth: 100,
+          leading: Padding(
+            padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor: Colors.black,
+                  child: IconButton(
+                      color: Colors.white,
+                      icon: const Icon(Icons.account_circle_outlined),
+                      onPressed: () {
+                        // Obtenir une référence à l'instance de GoRouter
+                        final router = GoRouter.of(context);
+                        // Naviguer vers la page des paramètres
+                        router.push('/parameter');
+                      }),
                 ),
+                Text(
+                  _utilisateur.displayName ?? "",
+                  style: const TextStyle(color: Colors.black),
+                )
+              ],
+            ),
+          ),
 
-                actions: const [
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.black,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.zoom_in_map_rounded,
-                        ),
-                        onPressed: null,
-                      ),
-                    ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CircleAvatar(
+                backgroundColor: Colors.black,
+                child: IconButton(
+                  color: Colors.white,
+                  icon: const Icon(
+                    Icons.zoom_in_map_rounded,
                   ),
-                ],
-                //c'est cool si pas centrer
-                centerTitle: true,
+                  onPressed: () {},
+                ),
               ),
-            ];
-          },
-          body: _pageSelectionne()),
-      bottomNavigationBar: buildBottomBar(context),
+            ),
+          ],
+          //c'est cool si pas centrer
+          centerTitle: true,
+        ),
+      ),
     );
   }
 
