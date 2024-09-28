@@ -97,10 +97,16 @@ class Routes {
       GoRoute(
         path: '/PrisePhoto/:filePath',
         name: 'PrisePhoto',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           String filePath = state.extra.toString(); // -> le casting est important
-          return PrisePhoto(
-            lastImage: filePath,
+        
+          return CustomTransitionPage(
+            child: PrisePhoto(lastImage: filePath),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              // Aucune transition, on retourne directement l'enfant
+              return child;
+            },
+            transitionDuration: Duration.zero, // Pas de délai de transition
           );
         },
       ),

@@ -1,5 +1,4 @@
-import 'dart:async';
-import 'package:caseddu/features/chat/presentation/widgets/widgets_for_chat/loader_for_chat.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -12,34 +11,14 @@ class PrisePhoto extends StatefulWidget {
 }
 
 class _PrisePhotoState extends State<PrisePhoto> {
-  late Future<void> _viewFuture;
+  double _dragExtent = 0.0; // Variable pour suivre l'étendue du glissement
+  double _dragText = 0.0; // Variable pour suivre l'étendue du glissement
+  int _animationValue = 300;
 
-  @override
-  void initState() {
-    super.initState();
-    _viewFuture = _delayView();
-  }
-
-  Future<void> _delayView() async {
-    // Simulate loading delay
-    await Future.delayed(const Duration(seconds: 1));
-  }
+  bool _isDragging = false;
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
-      future: _viewFuture,
-      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return loaderForCamera();
-        } else {
-          return _buildView();
-        }
-      },
-    );
-  }
-
-  Widget _buildView() {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -52,29 +31,90 @@ class _PrisePhotoState extends State<PrisePhoto> {
           icon: const Icon(Icons.close_rounded),
         ),
       ),
-      body: SizedBox(
-        width: double.infinity,
-        height: double.infinity,
-        child: FittedBox(fit: BoxFit.cover, child: Image.asset(widget.lastImage)
-            // Image(
-            //   image: FileImage(File(widget.lastImage),),
-            // ),
+      body: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.black,
+          ),
+          GestureDetector(
+            onVerticalDragUpdate: (details) {
+              setState(() {
+                // Limiter l'étendue du glissement à 120 pixels
+                _dragExtent = (_dragExtent + details.delta.dy).clamp(0.0, 120.0);
+                print('_dragExtent ${_dragExtent}');
+                print('_dragText ${_dragText}');
+
+                if (_dragExtent < 105) {
+                  _dragText = _dragExtent - 50;
+                } else if (_dragExtent >= 105) {
+                  _dragText = 55;
+                }
+
+                _isDragging = _dragExtent > 0;
+              });
+            },
+            onVerticalDragEnd: (details) {
+              if (_dragExtent >= 110.0) {
+                context.pop();
+                _dragExtent = MediaQuery.of(context).size.height;
+                _animationValue = 300;
+              } else {
+                // Réinitialise l'étendue avec une animation fluide
+                setState(() {
+                  _dragExtent = 0.0;
+                  _dragText = 0.0;
+                  _isDragging = false;
+                });
+              }
+            },
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: _animationValue), // Animation fluide
+              transform: Matrix4.translationValues(0, _dragExtent, 0),
+              child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: Colors.black,
+                child: Image.file(File(widget.lastImage), fit: BoxFit.cover),
+              ),
             ),
+          ),
+          // Afficher "Annuler" seulement pendant le glissement
+          if (_isDragging)
+            Positioned(
+              top: 0, // Positionnement animé du texte
+              left: 0,
+              right: 0,
+              child: Center(
+                child: AnimatedContainer(
+                  duration: Duration(milliseconds: _animationValue),
+                  transform: Matrix4.translationValues(0, _dragText, 0),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 39, 39, 39),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Text(
+                      'Annuler',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           context.push('/EnvoieDePhotoPage', extra: widget.lastImage);
         },
-        label: Text(
-          'Publier',
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
-        icon: const Icon(
-          Icons.send,
-          color: Colors.white,
-        ),
+        label: const Text('Publier', style: TextStyle(color: Colors.white)),
+        icon: const Icon(Icons.send, color: Colors.white),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }

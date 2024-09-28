@@ -18,7 +18,6 @@ import 'firebase_options.dart';
 late List<CameraDescription> cameras;
 
 void main() async {
-
   //pour la camera
   try {
     WidgetsFlutterBinding.ensureInitialized();
@@ -96,7 +95,6 @@ void main() async {
 
         //ChangeNotifierProvider(create: (_) => Global()),
       ],
-      
       child: MyApp(theme: theme, cameras: cameras),
     ),
   );
@@ -115,7 +113,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      
       routerConfig: Routes().router,
       debugShowCheckedModeBanner: false,
       title: 'Caseddu ',
