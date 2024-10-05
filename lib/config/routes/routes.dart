@@ -2,6 +2,7 @@ import 'package:caseddu/features/chat/presentation/widgets/full_screen_image.dar
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../features/auth/presentation/pages/connection_with.dart';
 import '../../features/auth/presentation/pages/login_screen.dart';
 import '../../features/auth/presentation/pages/oubli_mot_de_passe.dart';
 import '../../features/auth/presentation/pages/register_screen.dart';
@@ -15,6 +16,12 @@ import '../../PremierePage.dart';
 // doc du package : https://pub.dev/documentation/go_router/latest/topics/Get%20started-topic.html
 // code d'exemple : https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart
 
+List<String> routesName = <String>[
+  "/enroler",
+  "/connectionWith",
+  "/oubliMotDePasse",
+];
+
 class Routes {
   // GoRouter configuration
   final _router = GoRouter(
@@ -26,7 +33,7 @@ class Routes {
       final user = Provider.of<User?>(context, listen: false);
 
       // ignore: unnecessary_null_comparison
-      if (user == null && state.matchedLocation != '/enroler' && state.matchedLocation != '/oubliMotDePasse') {
+      if (user == null && !routesName.contains(state.matchedLocation)) {
         return '/login';
       } else {
         return null;
@@ -53,6 +60,12 @@ class Routes {
           return const RegisterPage();
         },
       ),
+      GoRoute(
+          path: '/connectionWith',
+          builder: (context, state) {
+            final String typeOfConnection = state.extra.toString();
+            return ConnectionWithPage(typeOfConnection: typeOfConnection);
+          }),
       GoRoute(
         path: '/oubliMotDePasse',
         builder: (context, state) {
@@ -99,7 +112,7 @@ class Routes {
         name: 'PrisePhoto',
         pageBuilder: (context, state) {
           String filePath = state.extra.toString(); // -> le casting est important
-        
+
           return CustomTransitionPage(
             child: PrisePhoto(lastImage: filePath),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {

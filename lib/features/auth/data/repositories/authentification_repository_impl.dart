@@ -1,3 +1,4 @@
+import 'package:caseddu/features/auth/domain/entities/authentification_entity.dart';
 import 'package:dartz/dartz.dart';
 import '../../../../core/connection/network_info.dart';
 import '../../../../core/errors/firebase_exceptions.dart';
@@ -12,8 +13,9 @@ class AuthentificationRepositoryImpl implements AuthentificationRepository {
 
   final NetworkInfo networkInfo;
 
-  AuthentificationRepositoryImpl( {
-    required this.remoteDataSource, required this.networkInfo,
+  AuthentificationRepositoryImpl({
+    required this.remoteDataSource,
+    required this.networkInfo,
   });
 
   @override
@@ -26,8 +28,7 @@ class AuthentificationRepositoryImpl implements AuthentificationRepository {
       } on FireBaseException catch (e) {
         return Left(ServerFailure(errorMessage: e.errMessage));
       }
-    }
-    else{
+    } else {
       return Left(ServerFailure(errorMessage: 'Connecte toi'));
     }
   }
@@ -35,15 +36,14 @@ class AuthentificationRepositoryImpl implements AuthentificationRepository {
   @override
   Future<Either<Failure, AuthentificationModel>> createUser({required AuthentificationParams authentificationParams}) async {
     if (await networkInfo.isConnected!) {
-    try {
-      AuthentificationModel remoteAuthentification = await remoteDataSource.createUser(authentificationParams: authentificationParams);
+      try {
+        AuthentificationModel remoteAuthentification = await remoteDataSource.createUser(authentificationParams: authentificationParams);
 
-      return Right(remoteAuthentification);
-    } on FireBaseException catch (e) {
-      return Left(ServerFailure(errorMessage: e.errMessage));
-    }
-    }
-    else{
+        return Right(remoteAuthentification);
+      } on FireBaseException catch (e) {
+        return Left(ServerFailure(errorMessage: e.errMessage));
+      }
+    } else {
       return Left(ServerFailure(errorMessage: 'Connecte toi'));
     }
   }
@@ -51,16 +51,46 @@ class AuthentificationRepositoryImpl implements AuthentificationRepository {
   @override
   Future<Either<Failure, void>> changeMotDePasse({required AuthentificationParams authentificationParams}) async {
     if (await networkInfo.isConnected!) {
-    try {
-      await remoteDataSource.changeMotDePasse(authentificationParams: authentificationParams);
+      try {
+        await remoteDataSource.changeMotDePasse(authentificationParams: authentificationParams);
 
-      return const Right(null);
-    } on FireBaseException catch (e) {
-      return Left(ServerFailure(errorMessage: e.errMessage));
-    }
-    }
-    else{
+        return const Right(null);
+      } on FireBaseException catch (e) {
+        return Left(ServerFailure(errorMessage: e.errMessage));
+      }
+    } else {
       return Left(ServerFailure(errorMessage: 'Connecte toi'));
     }
   }
+
+  @override
+  Future<Either<Failure, AuthentificationEntity>> getAuthentificationWithGoogle({required AuthentificationParams authentificationParams}) async {
+      if (await networkInfo.isConnected!) {
+      try {
+        AuthentificationModel remoteAuthentification = await remoteDataSource.createUserWithGoogle(authentificationParams: authentificationParams);
+
+        return Right(remoteAuthentification);
+      } on FireBaseException catch (e) {
+        return Left(ServerFailure(errorMessage: e.errMessage));
+      }
+    } else {
+      return Left(ServerFailure(errorMessage: 'Connecte toi'));
+    }
+  }
+
+    @override
+  Future<Either<Failure, AuthentificationEntity>> getAuthentificationWithApple({required AuthentificationParams authentificationParams}) async {
+      if (await networkInfo.isConnected!) {
+      try {
+        AuthentificationModel remoteAuthentification = await remoteDataSource.createUserWithApple(authentificationParams: authentificationParams);
+
+        return Right(remoteAuthentification);
+      } on FireBaseException catch (e) {
+        return Left(ServerFailure(errorMessage: e.errMessage));
+      }
+    } else {
+      return Left(ServerFailure(errorMessage: 'Connecte toi'));
+    }
+  }
+
 }

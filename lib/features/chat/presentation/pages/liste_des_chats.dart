@@ -116,6 +116,7 @@ class _ListeDesChatsPage extends State<ListeDesChatsPage> {
                           timestamp: lastMessage[index]!.timestamp.toString(),
                           typeMessage: lastMessage[index]!.type,
                           onTap: () {
+                            // TODO : faire avec goRouter
                             Navigator.push(
                               context,
                               MaterialPageRoute(
