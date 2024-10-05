@@ -15,6 +15,19 @@ class GetAuthentification {
     return await authentificationRepository.getAuthentification(authentificationParams: authentificationParams);
   }
 
+  Future<Either<Failure, AuthentificationEntity>> authentificationWithGoogle({
+    required AuthentificationParams authentificationParams,
+  }) async {
+    return await authentificationRepository.getAuthentificationWithGoogle(authentificationParams: authentificationParams);
+  }
+
+  Future<Either<Failure, AuthentificationEntity>> authentificationWithApple({
+    required AuthentificationParams authentificationParams,
+  }) async {
+    return await authentificationRepository.getAuthentificationWithApple(authentificationParams: authentificationParams);
+  }
+
+
   Future<Either<Failure, AuthentificationEntity>> create({
     required AuthentificationParams authentificationParams,
   }) async {

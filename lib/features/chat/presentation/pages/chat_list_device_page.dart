@@ -56,6 +56,7 @@ class _DevicesListPage extends State<DevicesListPage> {
             // user de test d'affichage
             MaterialButton(
               onPressed: () {
+                // TODO : faire avec goRouter
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const ChatPage(converser: "testChatPage"),

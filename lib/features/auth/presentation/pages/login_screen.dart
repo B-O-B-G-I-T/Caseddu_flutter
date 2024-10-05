@@ -1,11 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 import '../../../../core/errors/widgets/attente_widget.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
 import '../providers/authentification_provider.dart';
+import '../widgets/widgets.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -55,12 +59,6 @@ class _LoginPageState extends State<LoginPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Text(
-                    "Tu change encore le menu",
-                    style: TextStyle(
-                      fontSize: 14,
-                    ),
-                  ),
                   const SizedBox(
                     height: 50,
                   ),
@@ -72,28 +70,25 @@ class _LoginPageState extends State<LoginPage> {
                       decoration: BoxDecoration(
                           // color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(10)),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
-                        child: TextFormField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Entre ton email';
-                            }
-                            bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value);
-                            if (!emailValid) {
-                              return 'Entre ton email valide';
-                            }
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Entre ton email';
+                          }
+                          bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value);
+                          if (!emailValid) {
+                            return 'Entre ton email valide';
+                          }
 
-                            return null;
-                          },
-                          controller: _emailController,
-                          autofocus: true,
-                          keyboardType: TextInputType.emailAddress,
-                          enableIMEPersonalizedLearning: true,
-                          decoration: const InputDecoration(
-                            hintText: "Entre ton email",
-                            border: InputBorder.none,
-                          ),
+                          return null;
+                        },
+                        controller: _emailController,
+                        autofocus: true,
+                        keyboardType: TextInputType.emailAddress,
+                        enableIMEPersonalizedLearning: true,
+                        decoration: const InputDecoration(
+                          hintText: "Entre ton email",
+                          //border: InputBorder.none,
                         ),
                       ),
                     ),
@@ -109,22 +104,19 @@ class _LoginPageState extends State<LoginPage> {
                       decoration: BoxDecoration(
                           // color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(10)),
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
-                        child: TextFormField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "J'espère que tu l'as pas oublié";
-                            } else {
-                              return null;
-                            }
-                          },
-                          controller: _passwordController,
-                          obscureText: true,
-                          decoration: const InputDecoration(
-                            hintText: "Écris ton mot de passe",
-                            //border: InputBorder.none,
-                          ),
+                      child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "J'espère que tu l'as pas oublié";
+                          } else {
+                            return null;
+                          }
+                        },
+                        controller: _passwordController,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          hintText: "Écris ton mot de passe",
+                          //border: InputBorder.none,
                         ),
                       ),
                     ),
@@ -192,8 +184,29 @@ class _LoginPageState extends State<LoginPage> {
                       },
                     ),
                   ),
+                  Visibility(
+                    visible: Platform.isIOS || Platform.isMacOS,
+                    child: SignInButton(
+                      imagePath: 'assets/icons/apple_icon.png',
+                      onTap: () {
+                        context.push('/connectionWith/', extra: 'apple');
+                      },
+                      text: "Connexion avec Apple",
+                    ),
+                  ),
                   const SizedBox(
                     height: 10,
+                  ),
+                  
+                  SignInButton(
+                    imagePath: 'assets/icons/google_icon.png',
+                    onTap: () {
+                      context.push('/connectionWith/', extra: 'google');
+                    },
+                    text: "Connexion avec Google",
+                  ),
+                  const SizedBox(
+                    height: 20,
                   ),
 
                   // création de compte
