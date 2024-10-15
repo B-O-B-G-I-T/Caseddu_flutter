@@ -41,14 +41,14 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       deviceName: myName,
       strategy: Strategy.P2P_CLUSTER,
       callback: (isRunning) async {
-        // if (isRunning) {
-        //   await startAdvertising(nearbyService);
-        //   await startBrowsing(nearbyService);
-        // }
+        if (isRunning) {
+          await startAdvertising(nearbyService);
+          await startBrowsing(nearbyService);
+        }
       },
     );
-    await startAdvertising(nearbyService);
-    await startBrowsing(nearbyService);
+    // await startAdvertising(nearbyService);
+    // await startBrowsing(nearbyService);
 
     return nearbyService;
   }

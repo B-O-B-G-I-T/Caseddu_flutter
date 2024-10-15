@@ -4,10 +4,8 @@ import '../../domain/entities/authentification_entity.dart';
 
 class AuthentificationModel extends AuthentificationEntity {
   const AuthentificationModel({
-    required String email, String? pseudo, String? numero,
-  }) : super(
-          email: email, pseudo: pseudo, numero:numero
-        );
+    required super.email, super.pseudo, super.numero,
+  });
 
   factory AuthentificationModel.fromJson({required User user}) {
     return AuthentificationModel(

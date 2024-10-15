@@ -1,6 +1,8 @@
 // ignore_for_file: depend_on_referenced_packages, avoid_print
-import 'dart:developer';
+import 'dart:async';
+import 'dart:io';
 import 'package:camera/camera.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' show join;
@@ -45,8 +47,9 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
   @override
   void initState() {
-    //_cameraToggle();
-    getPermissionStatus();
+    // _cameraToggle();
+    getAllPermission();
+    // getPermissionStatus();
     super.initState();
   }
 
@@ -66,8 +69,9 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   @override
   void dispose() {
     _cameraController.dispose();
-    hideAdditionnalButtons();
-
+    if( _showExtraButtons == true) {
+      hideAdditionnalButtons();
+    }
     super.dispose();
   }
 
@@ -128,6 +132,36 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     } catch (e) {
       print('Erreur lors de la capture de la photo : $e');
     }
+  }
+
+  Future<void> getAllPermission() async {
+    if (Platform.isAndroid) {
+      await [
+        Permission.camera,
+        Permission.microphone,
+        Permission.storage,
+        Permission.location,
+        Permission.bluetooth,
+        Permission.bluetoothConnect,
+        Permission.bluetoothScan,
+        Permission.nearbyWifiDevices,
+      ].request().then((status) {
+        // runApp(MyApp(theme: theme, cameras: cameras));
+      });
+    } else {
+      // [
+      //   Permission.camera,
+      //   Permission.microphone,
+      //   Permission.storage,
+      //   Permission.location,
+      //   Permission.bluetooth,
+      //   Permission.bluetoothConnect,
+      //   Permission.bluetoothScan,
+      // ].request().then((status) {
+      //   // runApp(MyApp(theme: theme, cameras: cameras));
+      // });
+    }
+    await getPermissionStatus();
   }
 
   Future<void> getPermissionStatus() async {
@@ -407,11 +441,9 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                 const SizedBox(height: 10),
                 extraButton(
                   icon: Icons.camera,
-                  onTap: () {
+                  onTap: () async {
                     // Action pour Option 1
-                    setState(() {
-                      _showExtraButtons = false; // Fermer les boutons supplémentaires
-                    });
+                    print(await compute(testFunction, ""));
                   },
                 ),
                 const SizedBox(height: 10),
@@ -478,6 +510,14 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         ),
       ),
     );
+  }
+
+  Future<String> testFunction(String s) async {
+    Timer timer = Timer(const Duration(seconds: 15), () {
+      print("Finished");
+    }); // Timer
+    await Future.delayed(const Duration(seconds: 15));
+    return "Anything";
   }
 
 // pourrais etre intéressant pour traité les images

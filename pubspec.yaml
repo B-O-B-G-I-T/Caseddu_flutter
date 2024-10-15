@@ -52,14 +52,14 @@ dependencies:
   json_theme: ^6.5.0+1
   # pour la camera
   camera: ^0.10.5+2
-  # pour la gestion des images
-
+  # pour la gestion des images 
+  pro_image_editor: ^5.4.2
   # pour les chemins les photos
   path_provider: ^2.0.15
   # loading
   flutter_spinkit: ^5.2.0
   # pour la gestion des préférences utilisateurs
-  shared_preferences: ^2.2.0
+  shared_preferences: ^2.3.2
   # pour firebase gestion de l'identification
   firebase_auth: ^5.3.0
   firebase_core: ^3.5.0
@@ -79,7 +79,7 @@ dependencies:
   #flutter_blue: ^0.8.0
   
   # peer-to-peer
-  flutter_nearby_connections: ^1.1.1
+  flutter_nearby_connections: ^1.1.2
   # flutter_nearby_connections: ^1.1.2
   
   # pour les taches de fond

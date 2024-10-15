@@ -3,7 +3,7 @@ import 'package:nanoid/nanoid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/chat_message_model.dart';
 import '../models/chat_user_model.dart';
-import 'local_database/dataBaseHelper.dart';
+import 'local_database/data_base_helper.dart';
 
 abstract class ChatLocalDataSource {
   Future<void> insertMessage({required ChatMessageModel chatMessageModel, required bool isSender});

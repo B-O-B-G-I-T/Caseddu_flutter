@@ -54,17 +54,17 @@ class _DevicesListPage extends State<DevicesListPage> {
               searchController: _searchController,
             ),
             // user de test d'affichage
-            MaterialButton(
-              onPressed: () {
-                // TODO : faire avec goRouter
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const ChatPage(converser: "testChatPage"),
-                  ),
-                );
-              },
-              child: const Text("test chatPage"),
-            ),
+            // MaterialButton(
+            //   onPressed: () {
+            //     // TODO : faire avec goRouter
+            //     Navigator.of(context).push(
+            //       MaterialPageRoute(
+            //         builder: (context) => const ChatPage(converser: "testChatPage"),
+            //       ),
+            //     );
+            //   },
+            //   child: const Text("test chatPage"),
+            // ),
             DevicesListWidget(
               devices: deviceApproximiteFilter,
               onDeviceTap: (device) {

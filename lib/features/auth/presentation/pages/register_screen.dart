@@ -266,7 +266,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                           attenteWidget(context);
 
-                          await authentificationProvider.eitherFailureOrRegister(email, password, confirmPassword, "0",pseudo);
+                          await authentificationProvider.eitherFailureOrRegister(email, password, confirmPassword, "0", pseudo);
 
                           context.pop(); // Ferme la boîte de dialogue
 
@@ -275,7 +275,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           } else {
                             fireBaseError(context, 'Erreur', authentificationProvider.failure!.errorMessage);
                           }
-                          context.push('/');
+                          context.push('/firstPage/0');
                         }
                       },
                     ),
