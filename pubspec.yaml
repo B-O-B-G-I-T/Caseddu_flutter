@@ -54,6 +54,8 @@ dependencies:
   camera: ^0.10.5+2
   # pour la gestion des images 
   pro_image_editor: ^5.4.2
+  mime: ^1.0.6
+
   # pour les chemins les photos
   path_provider: ^2.0.15
   # loading

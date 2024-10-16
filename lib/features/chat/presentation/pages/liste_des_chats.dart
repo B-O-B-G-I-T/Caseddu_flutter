@@ -5,8 +5,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
 import '../providers/chat_provider.dart';
-import '../widgets/P2P_widget/list_tile_pour_utilisateur_connu.dart';
-import '../widgets/P2P_widget/search_widget.dart';
+import '../widgets/P2P_widgets/list_tile_pour_utilisateur_connu.dart';
+import '../widgets/P2P_widgets/search_widget.dart';
 import 'chat_page.dart';
 
 class ListeDesChatsPage extends StatefulWidget {

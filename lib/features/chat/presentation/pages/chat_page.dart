@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
 import '../../domain/entities/chat_message_entity.dart';
 import '../providers/chat_provider.dart';
-import '../widgets/P2P_widget/connection_button.dart';
-import '../widgets/ecritoire.dart';
-import '../widgets/view_pictures_widget.dart';
+import '../widgets/P2P_widgets/connection_button.dart';
+import '../widgets/chat_widgets/ecritoire.dart';
+import '../widgets/chat_widgets/view_pictures_widget.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key, required this.converser});

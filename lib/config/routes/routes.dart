@@ -1,4 +1,4 @@
-import 'package:caseddu/features/chat/presentation/widgets/full_screen_image.dart';
+import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/full_screen_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/utils/p2p/fonctions.dart';
-import '../widgets_for_chat/circle_avatar.dart';
+import '../chat_widgets/circle_avatar.dart';
 
 class ListTilePourUtilisateurConnu extends StatelessWidget {
   final String deviceName;

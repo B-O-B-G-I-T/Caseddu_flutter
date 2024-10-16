@@ -8,8 +8,8 @@ import '../../../../../core/utils/p2p/p2p_utils.dart';
 import '../../../../../core/utils/p2p/fonctions.dart';
 import '../../../data/models/chat_message_model.dart';
 import '../../providers/chat_provider.dart';
-import '../../widgets/P2P_widget/connection_button.dart';
-import '../../widgets/P2P_widget/search_widget.dart';
+import '../../widgets/P2P_widgets/connection_button.dart';
+import '../../widgets/P2P_widgets/search_widget.dart';
 
 class EnvoieDePhotoPage extends StatefulWidget {
   const EnvoieDePhotoPage({super.key, required this.cheminVersImagePrise});

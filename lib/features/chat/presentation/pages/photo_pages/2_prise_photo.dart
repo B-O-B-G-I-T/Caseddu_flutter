@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../widgets/camera_widgets/modifier_picture_widget.dart';
+
 class PrisePhoto extends StatefulWidget {
   const PrisePhoto({Key? key, required this.lastImage}) : super(key: key);
   final String lastImage;
@@ -21,16 +23,7 @@ class _PrisePhotoState extends State<PrisePhoto> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () {
-            context.pop();
-          },
-          icon: const Icon(Icons.close_rounded),
-        ),
-      ),
+      
       body: Stack(
         children: [
           Container(
@@ -76,7 +69,9 @@ class _PrisePhotoState extends State<PrisePhoto> {
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.black,
-                child: Image.file(File(widget.lastImage), fit: BoxFit.cover),
+                child: ModifierPictureWidget(
+                  pathImage: widget.lastImage,
+                ),
               ),
             ),
           ),

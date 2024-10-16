@@ -1,14 +1,14 @@
 import 'dart:io';
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
-import 'package:caseddu/features/chat/presentation/widgets/image_picker.dart';
+import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/params/params.dart';
-import '../providers/chat_provider.dart';
+import '../../../../../core/params/params.dart';
+import '../../providers/chat_provider.dart';
 
 class MessagePanel extends StatefulWidget {
   MessagePanel({super.key, required this.converser, required this.device, required this.longDistance});
@@ -90,30 +90,31 @@ class _MessagePanelState extends State<MessagePanel> {
     );
   }
 
-
   Widget sendImageWidget() {
     return IconButton(
         // l'action ouvre une itent pour selectionner et envoyer a la paire
-        onPressed: () async {
-          // String path = await getImage();
+        onPressed: !_showGallery
+            ? () async {
+                // String path = await getImage();
 
-          setState(() async {
-            //FocusScope.of(context).unfocus();
+                setState(() async {
+                  //FocusScope.of(context).unfocus();
 
-            permissionStatus = await PhotoManager.requestPermissionExtend();
-            if (permissionStatus == PermissionState.authorized && widget.device.state == SessionState.notConnected && !widget.longDistance && context.mounted) {
-              chatProvider.connectToDevice(widget.device);
+                  permissionStatus = await PhotoManager.requestPermissionExtend();
+                  if (permissionStatus == PermissionState.authorized && !widget.longDistance && context.mounted) {
+                    if (widget.device.state == SessionState.notConnected) {
+                      await chatProvider.connectToDevice(widget.device);
+                    }
 
-              _showGallery = !_showGallery;
-              
-            }else if (permissionStatus.hasAccess) {
-              Utils.showLimitedAccessDialog(context: context);
-            }
-            else  {
-              Utils.showPermissionDeniedDialog(context: context);
-            }
-          });
-        },
+                    _showGallery = !_showGallery;
+                    // } else if (permissionStatus.hasAccess && !_showGallery) {
+                    //   Utils.showLimitedAccessDialog(context: context);
+                  } else {
+                    Utils.showPermissionDeniedDialog(context: context);
+                  }
+                });
+              }
+            : null,
         icon: const Icon(Icons.image_outlined));
   }
 

@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/errors/widgets/attente_widget.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
 import '../providers/authentification_provider.dart';
-import '../widgets/widgets.dart';
+import '../widgets/sign_in_button_widget.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

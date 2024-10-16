@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../widgets/widgets_for_chat/loader_for_chat.dart';
+import '../../widgets/chat_widgets/loader_for_chat.dart';
 
 class CameraPage extends StatefulWidget {
   //pour la camera
@@ -69,7 +69,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   @override
   void dispose() {
     _cameraController.dispose();
-    if( _showExtraButtons == true) {
+    if (_showExtraButtons == true) {
       hideAdditionnalButtons();
     }
     super.dispose();
@@ -339,7 +339,14 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       color: Colors.grey,
       child: Stack(
         children: [
-          cameraWidget(),
+          widget.cameras.isEmpty
+              ? SizedBox.expand(
+                  child: Image.file(
+                    File('/Users/bobsmac/Desktop/Caseddu_flutter/assets/images/femmephoto.jpg'),
+                    fit: BoxFit.cover, // L'image couvrira tout l'écran
+                  ),
+                )
+              : cameraWidget(),
           flashFrontWidget(on: _flashFront),
           // parametre
 
@@ -499,7 +506,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
                 if (widget.cameras.isEmpty) {
                   // ignore: use_build_context_synchronously
-                  context.push('/PrisePhoto/:filePath', extra: "assets/images/pont.jpeg");
+                  context.push('/PrisePhoto/:filePath', extra: "/Users/bobsmac/Desktop/Caseddu_flutter/assets/images/femmephoto.jpg");
                   _lastImage = '';
                 } else {
                   // ignore: use_build_context_synchronously

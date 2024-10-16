@@ -61,6 +61,7 @@ class _ImagePickerState extends State<MyImagePicker> {
         selectedImages.remove(image);
       } else {
         selectedImages.add(image);
+
       }
     });
   }
@@ -173,9 +174,7 @@ class _ImagePickerState extends State<MyImagePicker> {
   }
 
   Future<void> sendMessage() async {
-    
     if (widget.device.state == SessionState.notConnected) {
-
       Fluttertoast.showToast(
           msg: 'hors de portée',
           toastLength: Toast.LENGTH_LONG,
