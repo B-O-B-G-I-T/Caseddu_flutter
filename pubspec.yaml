@@ -55,7 +55,8 @@ dependencies:
   # pour la gestion des images 
   pro_image_editor: ^5.4.2
   mime: ^1.0.6
-
+  image: ^4.3.0
+  image_cropper: ^8.0.2
   # pour les chemins les photos
   path_provider: ^2.0.15
   # loading

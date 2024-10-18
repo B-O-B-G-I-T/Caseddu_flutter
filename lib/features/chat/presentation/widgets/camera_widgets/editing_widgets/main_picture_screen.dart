@@ -75,33 +75,33 @@ class _mainPictureScreenState extends State<mainPictureScreen> {
                       ),
                     ),
                   ),
-                  Hero(
-                    tag: 'frosted-glass-top-center-bar',
-                    child: BackgroundButtonWidget(
-                      padding: const EdgeInsets.symmetric(horizontal: 7),
-                      child: Row(
-                        children: [
-                          IconButton(
-                            tooltip: widget.editor.configs.i18n.undo,
-                            onPressed: widget.editor.undoAction,
-                            icon: Icon(
-                              Icons.undo,
-                              color: widget.editor.canUndo ? _foregroundColor : _foregroundColor.withAlpha(80),
-                            ),
-                          ),
-                          const SizedBox(width: 3),
-                          IconButton(
-                            tooltip: widget.editor.configs.i18n.redo,
-                            onPressed: widget.editor.redoAction,
-                            icon: Icon(
-                              Icons.redo,
-                              color: widget.editor.canRedo ? _foregroundColor : _foregroundColor.withAlpha(80),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                  // Hero(
+                  //   tag: 'frosted-glass-top-center-bar',
+                  //   child: BackgroundButtonWidget(
+                  //     padding: const EdgeInsets.symmetric(horizontal: 7),
+                  //     child: Row(
+                  //       children: [
+                  //         IconButton(
+                  //           tooltip: widget.editor.configs.i18n.undo,
+                  //           onPressed: widget.editor.undoAction,
+                  //           icon: Icon(
+                  //             Icons.undo,
+                  //             color: widget.editor.canUndo ? _foregroundColor : _foregroundColor.withAlpha(80),
+                  //           ),
+                  //         ),
+                  //         const SizedBox(width: 3),
+                  //         IconButton(
+                  //           tooltip: widget.editor.configs.i18n.redo,
+                  //           onPressed: widget.editor.redoAction,
+                  //           icon: Icon(
+                  //             Icons.redo,
+                  //             color: widget.editor.canRedo ? _foregroundColor : _foregroundColor.withAlpha(80),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                   Hero(
                     tag: 'frosted-glass-done-btn',
                     child: BackgroundButtonWidget(
@@ -129,92 +129,133 @@ class _mainPictureScreenState extends State<mainPictureScreen> {
                   vertical: 24,
                 ),
                 scrollDirection: Axis.vertical,
-                child: BackgroundButtonWidget(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 7,
-                    vertical: 3,
-                  ),
-                  child: Wrap(
-                    spacing: 12,
-                    alignment: WrapAlignment.start,
-                    direction: Axis.vertical,
-                    children: [
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 150),
-                        transitionBuilder: (child, animation) => ScaleTransition(
-                          scale: animation,
-                          child: FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          ),
+                child: Column(
+                  children: [
+                    BackgroundButtonWidget(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 3,
+                          vertical: 3,
                         ),
-                        child: widget.editor.canRedo
-                            ? IconButton(
-                                tooltip: widget.editor.configs.i18n.undo,
-                                onPressed: widget.editor.redoAction,
-                                icon: const Icon(Icons.redo),
-                              )
-                            : const SizedBox.shrink(),
+                        child: Wrap(
+                          alignment: WrapAlignment.start,
+                          direction: Axis.vertical,
+                          children: [
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 150),
+                              transitionBuilder: (child, animation) {
+                                // Utilisation d'une courbe d'animation plus douce
+                                final curvedAnimation = CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeInOut, // Courbe d'animation plus naturelle
+                                );
+                                return SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0, 0.2),
+                                    end: Offset.zero,
+                                  ).animate(curvedAnimation),
+                                  //scale: animation,
+                                  child: FadeTransition(
+                                    opacity: curvedAnimation,
+                                    child: child,
+                                  ),
+                                );
+                              },
+                              child: widget.editor.canRedo
+                                  ? IconButton(
+                                      tooltip: widget.editor.configs.i18n.undo,
+                                      onPressed: widget.editor.redoAction,
+                                      icon: const Icon(Icons.redo),
+                                    )
+                                  : null,
+                            ),
+                            AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 150),
+                              transitionBuilder: (child, animation) {
+                                // Utilisation d'une courbe d'animation plus douce
+                                final curvedAnimation = CurvedAnimation(
+                                  parent: animation,
+                                  curve: Curves.easeInOut, // Courbe d'animation plus naturelle
+                                );
+                                return SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0, 0.2),
+                                    end: Offset.zero,
+                                  ).animate(curvedAnimation),
+                                  //scale: animation,
+                                  child: FadeTransition(
+                                    opacity: curvedAnimation,
+                                    child: child,
+                                  ),
+                                );
+                              },
+                              child: widget.editor.canUndo
+                                  ? IconButton(
+                                      tooltip: widget.editor.configs.i18n.undo,
+                                      onPressed: widget.editor.undoAction,
+                                      icon: const Icon(Icons.undo),
+                                    )
+                                  : null,
+                            ),
+                          ],
+                        ),
                       ),
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 150),
-                        transitionBuilder: (child, animation) => ScaleTransition(
-                          scale: animation,
-                          child: FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          ),
-                        ),
-                        child: widget.editor.canUndo
-                            ? IconButton(
-                                tooltip: widget.editor.configs.i18n.undo,
-                                onPressed: widget.editor.undoAction,
-                                icon: const Icon(Icons.undo),
-                              )
-                            : const SizedBox.shrink(),
+                    ),
+                    const SizedBox(height: 12),
+                    BackgroundButtonWidget(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 3,
+                        vertical: 3,
                       ),
-                      if (widget.editor.configs.paintEditorConfigs.enabled)
-                        IconButton(
-                          tooltip: widget.editor.configs.i18n.paintEditor.bottomNavigationBarText,
-                          onPressed: widget.editor.openPaintingEditor,
-                          // ignore: prefer_const_constructors
-                          icon: Icon(Icons.edit),
-                        ),
-                      if (widget.editor.configs.textEditorConfigs.enabled)
-                        IconButton(
-                          tooltip: widget.editor.configs.i18n.textEditor.bottomNavigationBarText,
-                          onPressed: () => widget.editor.openTextEditor(
-                            duration: const Duration(milliseconds: 150),
-                          ),
-                          icon: const Icon(Icons.title),
-                        ),
-                      if (widget.editor.configs.cropRotateEditorConfigs.enabled)
-                        IconButton(
-                          tooltip: widget.editor.configs.i18n.cropRotateEditor.bottomNavigationBarText,
-                          onPressed: widget.editor.openCropRotateEditor,
-                          icon: const Icon(Icons.crop_rotate),
-                        ),
-                      if (widget.editor.configs.filterEditorConfigs.enabled)
-                        IconButton(
-                          tooltip: widget.editor.configs.i18n.filterEditor.bottomNavigationBarText,
-                          onPressed: widget.editor.openFilterEditor,
-                          icon: const Icon(Icons.filter),
-                        ),
-                      if (widget.editor.configs.blurEditorConfigs.enabled)
-                        IconButton(
-                          tooltip: widget.editor.configs.i18n.blurEditor.bottomNavigationBarText,
-                          onPressed: widget.editor.openBlurEditor,
-                          icon: const Icon(Icons.blur_on),
-                        ),
-                      if (widget.editor.configs.stickerEditorConfigs?.enabled == true || widget.editor.configs.emojiEditorConfigs.enabled)
-                        IconButton(
-                          key: const ValueKey('whatsapp-open-sticker-editor-btn'),
-                          tooltip: widget.editor.configs.i18n.stickerEditor.bottomNavigationBarText,
-                          onPressed: widget.openStickerEditor,
-                          icon: const Icon(Icons.sticky_note_2_rounded),
-                        ),
-                    ],
-                  ),
+                      child: Wrap(
+
+                        alignment: WrapAlignment.start,
+                        direction: Axis.vertical,
+                        children: [
+                          if (widget.editor.configs.paintEditorConfigs.enabled)
+                            IconButton(
+                              tooltip: widget.editor.configs.i18n.paintEditor.bottomNavigationBarText,
+                              onPressed: widget.editor.openPaintingEditor,
+                              // ignore: prefer_const_constructors
+                              icon: Icon(Icons.edit),
+                            ),
+                          if (widget.editor.configs.textEditorConfigs.enabled)
+                            IconButton(
+                              tooltip: widget.editor.configs.i18n.textEditor.bottomNavigationBarText,
+                              onPressed: () => widget.editor.openTextEditor(
+                                duration: const Duration(milliseconds: 150),
+                              ),
+                              icon: const Icon(Icons.title),
+                            ),
+                          if (widget.editor.configs.cropRotateEditorConfigs.enabled)
+                            IconButton(
+                              tooltip: widget.editor.configs.i18n.cropRotateEditor.bottomNavigationBarText,
+                              onPressed: widget.editor.openCropRotateEditor,
+                              icon: const Icon(Icons.crop_rotate),
+                            ),
+                          if (widget.editor.configs.filterEditorConfigs.enabled)
+                            IconButton(
+                              tooltip: widget.editor.configs.i18n.filterEditor.bottomNavigationBarText,
+                              onPressed: widget.editor.openFilterEditor,
+                              icon: const Icon(Icons.filter),
+                            ),
+                          if (widget.editor.configs.blurEditorConfigs.enabled)
+                            IconButton(
+                              tooltip: widget.editor.configs.i18n.blurEditor.bottomNavigationBarText,
+                              onPressed: widget.editor.openBlurEditor,
+                              icon: const Icon(Icons.blur_on),
+                            ),
+                          if (widget.editor.configs.stickerEditorConfigs?.enabled == true || widget.editor.configs.emojiEditorConfigs.enabled)
+                            IconButton(
+                              key: const ValueKey('whatsapp-open-sticker-editor-btn'),
+                              tooltip: widget.editor.configs.i18n.stickerEditor.bottomNavigationBarText,
+                              onPressed: widget.openStickerEditor,
+                              icon: const Icon(Icons.sticky_note_2_rounded),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

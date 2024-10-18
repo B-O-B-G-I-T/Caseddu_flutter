@@ -36,8 +36,8 @@ class _PrisePhotoState extends State<PrisePhoto> {
               setState(() {
                 // Limiter l'étendue du glissement à 120 pixels
                 _dragExtent = (_dragExtent + details.delta.dy).clamp(0.0, 120.0);
-                print('_dragExtent ${_dragExtent}');
-                print('_dragText ${_dragText}');
+                //print('_dragExtent ${_dragExtent}');
+                //print('_dragText ${_dragText}');
 
                 if (_dragExtent < 105) {
                   _dragText = _dragExtent - 50;
@@ -104,6 +104,8 @@ class _PrisePhotoState extends State<PrisePhoto> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
+          //TODO Faire un truc pour que l'image ai la meme taille que l'ecran a l'autre ecran
+          
           context.push('/EnvoieDePhotoPage', extra: widget.lastImage);
         },
         label: const Text('Publier', style: TextStyle(color: Colors.white)),
