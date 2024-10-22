@@ -91,7 +91,6 @@ class _ListeDesChatsPage extends State<ListeDesChatsPage> {
                         direction: DismissDirection.endToStart,
                         // gere la suppréssion des conversations
                         onDismissed: (direction) {
-                          
                           chatProvider.deleteConversation(conversersFiltre[index]);
                           Fluttertoast.showToast(
                               msg: 'conversation supprimé',

@@ -102,16 +102,6 @@ class _PrisePhotoState extends State<PrisePhoto> {
             ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          //TODO Faire un truc pour que l'image ai la meme taille que l'ecran a l'autre ecran
-          
-          context.push('/EnvoieDePhotoPage', extra: widget.lastImage);
-        },
-        label: const Text('Publier', style: TextStyle(color: Colors.white)),
-        icon: const Icon(Icons.send, color: Colors.white),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }

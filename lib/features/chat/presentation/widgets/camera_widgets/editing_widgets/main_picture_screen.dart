@@ -58,64 +58,38 @@ class _mainPictureScreenState extends State<mainPictureScreen> {
       child: Stack(
         children: [
           Align(
-            alignment: Alignment.topCenter,
+            alignment: Alignment.topLeft,
             child: Padding(
               padding: const EdgeInsets.all(12.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Hero(
-                    tag: 'frosted-glass-close-btn',
-                    child: BackgroundButtonWidget(
-                      child: IconButton(
-                        tooltip: widget.editor.configs.i18n.cancel,
-                        onPressed: widget.editor.closeEditor,
-                        icon: const Icon(Icons.close),
-                        color: _foregroundColor,
-                      ),
+              child: Hero(
+                tag: 'frosted-glass-close-btn',
+                child: BackgroundButtonWidget(
+                  child: IconButton(
+                    tooltip: widget.editor.configs.i18n.cancel,
+                    onPressed: widget.editor.closeEditor,
+                    icon: const Icon(Icons.close),
+                    color: _foregroundColor,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Hero(
+                tag: 'frosted-glass-done-btn',
+                child: BackgroundButtonWidget(
+                  child: IconButton(
+                    tooltip: widget.editor.configs.i18n.done,
+                    onPressed: widget.editor.doneEditing,
+                    icon: Icon(
+                      Icons.check,
+                      color: _foregroundColor,
                     ),
                   ),
-                  // Hero(
-                  //   tag: 'frosted-glass-top-center-bar',
-                  //   child: BackgroundButtonWidget(
-                  //     padding: const EdgeInsets.symmetric(horizontal: 7),
-                  //     child: Row(
-                  //       children: [
-                  //         IconButton(
-                  //           tooltip: widget.editor.configs.i18n.undo,
-                  //           onPressed: widget.editor.undoAction,
-                  //           icon: Icon(
-                  //             Icons.undo,
-                  //             color: widget.editor.canUndo ? _foregroundColor : _foregroundColor.withAlpha(80),
-                  //           ),
-                  //         ),
-                  //         const SizedBox(width: 3),
-                  //         IconButton(
-                  //           tooltip: widget.editor.configs.i18n.redo,
-                  //           onPressed: widget.editor.redoAction,
-                  //           icon: Icon(
-                  //             Icons.redo,
-                  //             color: widget.editor.canRedo ? _foregroundColor : _foregroundColor.withAlpha(80),
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                  Hero(
-                    tag: 'frosted-glass-done-btn',
-                    child: BackgroundButtonWidget(
-                      child: IconButton(
-                        tooltip: widget.editor.configs.i18n.done,
-                        onPressed: widget.editor.doneEditing,
-                        icon: Icon(
-                          Icons.check,
-                          color: _foregroundColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -126,7 +100,7 @@ class _mainPictureScreenState extends State<mainPictureScreen> {
                 key: const PageStorageKey('frosted_glass_main_bottombar'),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
-                  vertical: 24,
+                  vertical: 12,
                 ),
                 scrollDirection: Axis.vertical,
                 child: Column(
@@ -208,7 +182,6 @@ class _mainPictureScreenState extends State<mainPictureScreen> {
                         vertical: 3,
                       ),
                       child: Wrap(
-
                         alignment: WrapAlignment.start,
                         direction: Axis.vertical,
                         children: [

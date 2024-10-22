@@ -149,7 +149,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                 device.deviceId,
                 '',
                 listImages,
-                'Image',
+                'Pitcure_taken',
                 'send',
                 timestamp,
               );

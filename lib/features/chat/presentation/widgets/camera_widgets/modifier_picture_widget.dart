@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 
 // Package imports:
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pro_image_editor/models/editor_configs/main_editor_configs.dart';
 import 'package:pro_image_editor/pro_image_editor.dart';
 import 'package:pro_image_editor/designs/frosted_glass/frosted_glass.dart';
 
@@ -57,7 +56,7 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
     return LayoutBuilder(builder: (context, constraints) {
 
       return ProImageEditor.file(
- 
+
         File(widget.pathImage),
 
         key: editorKey,

@@ -6,7 +6,6 @@ import '../../../../core/utils/p2p/fonctions.dart';
 import '../../../../core/utils/p2p/p2p_utils.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/P2P_widgets/search_widget.dart';
-import 'chat_page.dart';
 
 enum DeviceType { advertiser, browser }
 
