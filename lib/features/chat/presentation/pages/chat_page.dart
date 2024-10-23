@@ -10,7 +10,6 @@ import '../widgets/chat_widgets/page_chat/message_panel.dart';
 import '../widgets/chat_widgets/page_chat/lost_connexion_widget.dart';
 import '../widgets/chat_widgets/page_chat/utils_widgets.dart';
 
-
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key, required this.converser});
 
@@ -161,10 +160,12 @@ class _ChatPageState extends State<ChatPage> {
                               ),
                             ),
                     ),
-                    MessagePanel(
-                      converser: widget.converser,
-                      device: device!,
-                      longDistance: longDistance,
+                    SafeArea(
+                      child: MessagePanel(
+                        converser: widget.converser,
+                        device: device!,
+                        longDistance: longDistance,
+                      ),
                     ),
                   ],
                 ),
