@@ -1,5 +1,7 @@
+import 'package:caseddu/config/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
 import '../../domain/entities/chat_message_entity.dart';
@@ -59,138 +61,154 @@ class _ChatPageState extends State<ChatPage> {
         (element) => element.deviceName == widget.converser,
         orElse: () => Device("", "", 1),
       );
-      if (device!.deviceId != "" && device!.deviceName != "") {
-        if (device!.deviceId == '') {
-          longDistance = true;
-        } else {
-          longDistance = false;
-        }
-        messageList = chatProvider.chat;
-        return Scaffold(
-          // resizeToAvoidBottomInset: false,
-          resizeToAvoidBottomInset: true,
-          appBar: AppBar(
-            title: Text(widget.converser),
-            actions: [
-              ConnectionButton(
-                device: device!,
-                longDistance: longDistance,
-              ),
-            ],
-          ),
-          body: SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: messageList.isEmpty
-                      ? const Center(
-                          child: Text('Lancé la conversation'),
-                        )
-                      : Align(
-                          alignment: Alignment.topCenter,
-                          child: SingleChildScrollView(
-                            reverse: true,
-                            controller: _scrollController,
-                            child: Column(
-                              children: [
-                                Text(
-                                  Utils.depuisQuandCeMessageEstRecu(timeStamp: messageList.first.timestamp.toString()),
-                                  style: const TextStyle(color: Colors.grey),
-                                ),
-                                ListView.builder(
-                                  // Builder to view messages chronologically
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  padding: const EdgeInsets.all(0),
-                                  itemCount: messageList.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    // début de la structure des messages
-                                    final bool isMe = messageList[index].sender != myName;
 
-                                    return IntrinsicHeight(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(4.0),
-                                        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                          // barre coloré
-                                          laBarre(isMe),
-                                          // titre et text
-                                          Expanded(
-                                            flex: 6,
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                // titre et date de reception
-                                                // titre
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      if (device!.deviceId == '') {
+        longDistance = true;
+      } else {
+        longDistance = false;
+      }
+      messageList = chatProvider.chat;
+      return Scaffold(
+        // resizeToAvoidBottomInset: false,
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          title: Text(widget.converser),
+          actions: [
+            ConnectionButton(
+              device: device!,
+              longDistance: longDistance,
+            ),
+          ],
+        ),
+        body: device!.deviceId != "" && device!.deviceName != ""
+            ? SafeArea(
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: messageList.isEmpty
+                          ? const Center(
+                              child: Text('Lancé la conversation'),
+                            )
+                          : Align(
+                              alignment: Alignment.topCenter,
+                              child: SingleChildScrollView(
+                                reverse: true,
+                                controller: _scrollController,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      Utils.depuisQuandCeMessageEstRecu(timeStamp: messageList.first.timestamp.toString()),
+                                      style: const TextStyle(color: Colors.grey),
+                                    ),
+                                    ListView.builder(
+                                      // Builder to view messages chronologically
+                                      shrinkWrap: true,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      padding: const EdgeInsets.all(0),
+                                      itemCount: messageList.length,
+                                      itemBuilder: (BuildContext context, int index) {
+                                        // début de la structure des messages
+                                        final bool isMe = messageList[index].sender != myName;
+
+                                        return IntrinsicHeight(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                              // barre coloré
+                                              laBarre(isMe),
+                                              // titre et text
+                                              Expanded(
+                                                flex: 6,
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
-                                                    receptionOuEnvoi(widget.converser, isMe),
-                                                    // date de reception
-                                                    dateDuMessage(messageList[index].timestamp.toString()),
+                                                    // titre et date de reception
+                                                    // titre
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        receptionOuEnvoi(widget.converser, isMe),
+                                                        // date de reception
+                                                        dateDuMessage(messageList[index].timestamp.toString()),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(
+                                                      height: 5,
+                                                    ),
+                                                    // texte ou image
+                                                    messageList[index].images != ''
+                                                        // gere les images et le texte
+                                                        ? Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              viewPicturesWidget(
+                                                                context: context,
+                                                                pictures: messageList[index].images.split(','),
+                                                              ),
+                                                              // Image.file(
+                                                              //   File(messageList[index].images),
+                                                              // ),
+                                                              messageList[index].message != ''
+                                                                  ? Text(
+                                                                      messageList[index].message,
+                                                                      textAlign: TextAlign.left,
+                                                                      style: const TextStyle(color: Colors.black, fontSize: 14),
+                                                                    )
+                                                                  : const SizedBox(),
+                                                            ],
+                                                          )
+                                                        // gere le texte simple
+                                                        : Text(
+                                                            messageList[index].message,
+                                                            textAlign: TextAlign.left,
+                                                            style: const TextStyle(color: Colors.black, fontSize: 14),
+                                                          ),
                                                   ],
                                                 ),
-                                                const SizedBox(
-                                                  height: 5,
-                                                ),
-                                                // texte ou image
-
-                                                messageList[index].images != ''
-
-                                                    // gere les images et le texte
-                                                    ? Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          viewPicturesWidget(
-                                                            context: context,
-                                                            pictures: messageList[index].images.split(','),
-                                                          ),
-                                                          // Image.file(
-                                                          //   File(messageList[index].images),
-                                                          // ),
-                                                          messageList[index].message != ''
-                                                              ? Text(
-                                                                  messageList[index].message,
-                                                                  textAlign: TextAlign.left,
-                                                                  style: const TextStyle(color: Colors.black, fontSize: 14),
-                                                                )
-                                                              : const SizedBox(),
-                                                        ],
-                                                      )
-
-                                                    // gere le texte simple
-                                                    : Text(
-                                                        messageList[index].message,
-                                                        textAlign: TextAlign.left,
-                                                        style: const TextStyle(color: Colors.black, fontSize: 14),
-                                                      ),
-                                              ],
-                                            ),
+                                              ),
+                                            ]),
                                           ),
-                                        ]),
-                                      ),
-                                    );
-                                  },
+                                        );
+                                      },
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
+                    ),
+                    MessagePanel(
+                      converser: widget.converser,
+                      device: device!,
+                      longDistance: longDistance,
+                    ),
+                  ],
                 ),
-                MessagePanel(
-                  converser: widget.converser,
-                  device: device!,
-                  longDistance: longDistance,
+              )
+            : Center(
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.white,
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Le device n\'est plus disponible à proximité.',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          // Navigate to a new page or show a dialog
+                          context.pop();
+                        },
+                        child: const Text('Rechercher à nouveau'),
+                      ),
+                    ],
+                  ),
                 ),
-              ],
-            ),
-          ),
-        );
-      } else {
-        return const Center(
-          // TODO: ajouter une page pour faire comprendre a l'utilisateur que le device n'est plus disponible approximiter
-          child: CircularProgressIndicator(),
-        );
-      }
+              ),
+      );
     });
   }
 }
