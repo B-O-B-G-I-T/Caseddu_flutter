@@ -1,13 +1,13 @@
-import 'package:caseddu/config/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
 import '../../domain/entities/chat_message_entity.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/P2P_widgets/connection_button.dart';
 import '../widgets/chat_widgets/ecritoire.dart';
+import '../widgets/chat_widgets/lost_connexion_widget.dart';
+import '../widgets/chat_widgets/utils_widgets.dart';
 import '../widgets/chat_widgets/view_pictures_widget.dart';
 
 class ChatPage extends StatefulWidget {
@@ -184,70 +184,8 @@ class _ChatPageState extends State<ChatPage> {
                   ],
                 ),
               )
-            : Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  color: Colors.white,
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Le device n\'est plus disponible à proximité.',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Navigate to a new page or show a dialog
-                          context.pop();
-                        },
-                        child: const Text('Rechercher à nouveau'),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            : const LostConnectionWidget(),
       );
     });
   }
-}
-
-@override
-Widget laBarre(bool messageDeReceptionOuEnvoi) {
-  return Row(
-    children: [
-      Container(
-        width: 2,
-        height: double.infinity,
-        color: messageDeReceptionOuEnvoi == true ? Colors.red : Colors.blue,
-      ),
-      const SizedBox(
-        width: 5,
-      )
-    ],
-  );
-}
-
-@override
-Widget receptionOuEnvoi(
-  String messageDeReceptionOuEnvoi,
-  bool isMe,
-) {
-  return Text(
-    isMe == true ? messageDeReceptionOuEnvoi : "Moi",
-    style: TextStyle(
-      color: isMe == true ? Colors.red : Colors.blue,
-    ),
-  );
-}
-
-@override
-Widget dateDuMessage(String dateDeLaReception) {
-  return Text(
-    Utils.dateFormatter(
-      timeStamp: dateDeLaReception,
-    ),
-    style: const TextStyle(fontSize: 10),
-  );
 }
