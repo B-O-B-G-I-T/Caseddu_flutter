@@ -61,7 +61,6 @@ class _ImagePickerState extends State<MyImagePicker> {
         selectedImages.remove(image);
       } else {
         selectedImages.add(image);
-
       }
     });
   }
@@ -116,7 +115,7 @@ class _ImagePickerState extends State<MyImagePicker> {
                       future: images[index].thumbnailData,
                       builder: (context, snapshot) {
                         final bytes = snapshot.data;
-                        if (bytes == null) return const CircularProgressIndicator();
+                        if (bytes == null) return const Center(child: FittedBox(fit: BoxFit.contain, child: CircularProgressIndicator()));
 
                         final isSelected = selectedImages.contains(images[index]);
 
@@ -205,7 +204,7 @@ class _ImagePickerState extends State<MyImagePicker> {
           widget.converser,
           '',
           listImages,
-          'Image',
+          'image',
           'Send',
           timestamp,
         );

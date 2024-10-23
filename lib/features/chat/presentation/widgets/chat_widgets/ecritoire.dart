@@ -97,22 +97,21 @@ class _MessagePanelState extends State<MessagePanel> {
             ? () async {
                 // String path = await getImage();
 
-                setState(() async {
-                  //FocusScope.of(context).unfocus();
+                //FocusScope.of(context).unfocus();
 
-                  permissionStatus = await PhotoManager.requestPermissionExtend();
-                  if (permissionStatus == PermissionState.authorized && !widget.longDistance && context.mounted) {
-                    if (widget.device.state == SessionState.notConnected) {
-                      await chatProvider.connectToDevice(widget.device);
-                    }
-
-                    _showGallery = !_showGallery;
-                    // } else if (permissionStatus.hasAccess && !_showGallery) {
-                    //   Utils.showLimitedAccessDialog(context: context);
-                  } else {
-                    Utils.showPermissionDeniedDialog(context: context);
+                permissionStatus = await PhotoManager.requestPermissionExtend();
+                if (permissionStatus == PermissionState.authorized && !widget.longDistance && context.mounted) {
+                  if (widget.device.state == SessionState.notConnected) {
+                    await chatProvider.connectToDevice(widget.device);
                   }
-                });
+                  setState(() {
+                    _showGallery = !_showGallery;
+                  });
+                  // } else if (permissionStatus.hasAccess && !_showGallery) {
+                  //   Utils.showLimitedAccessDialog(context: context);
+                } else {
+                  Utils.showPermissionDeniedDialog(context: context);
+                }
               }
             : null,
         icon: const Icon(Icons.image_outlined));
@@ -150,7 +149,7 @@ class _MessagePanelState extends State<MessagePanel> {
           widget.converser,
           message,
           '',
-          'Payload',
+          'payload',
           'Send',
           timestamp,
         );

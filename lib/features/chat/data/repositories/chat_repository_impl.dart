@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:dartz/dartz.dart';
@@ -66,10 +68,18 @@ class ChatRepositoryImpl implements ChatRepository {
 
   @override
   Future<Either<Failure, ChatMessageModel>> envoieMessage({required ChatMessageParams chatMessageParams}) async {
-    ChatMessageModel chatMessageModel;
-
     try {
-      if (chatMessageParams.images != '') {
+      ChatMessageModel chatMessageModel;
+      // image envoyer avec la camera
+      if (chatMessageParams.type == 'pictureTaken') {
+        String imagebites = chatMessageParams.images;
+        chatMessageModel = await remoteDataSource.sentToConversations(chatMessageParams: chatMessageParams);
+        final File image = await Utils.base64StringToImage(imagebites);
+        chatMessageModel.images = image.path;
+        //chatMessageModel.images = Utils.base64StringToImage(imagePath);
+        await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
+        // image envoyer avec la galerie
+      } else if (chatMessageParams.type == 'image') {
         String imagePath = chatMessageParams.images;
 
         chatMessageParams.images = Utils.listImagesPathToBase64Strings(imagePath);
@@ -78,8 +88,9 @@ class ChatRepositoryImpl implements ChatRepository {
         chatMessageModel.images = imagePath;
 
         await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
-      }else
-      {
+      }
+      // message envoyer avec du text
+      else {
         chatMessageModel = await remoteDataSource.sentToConversations(chatMessageParams: chatMessageParams);
         await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
       }

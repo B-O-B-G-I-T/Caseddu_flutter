@@ -103,7 +103,7 @@ class Routes {
         builder: (context, state) {
           final String filePath = state.extra.toString();
           return EnvoieDePhotoPage(
-            cheminVersImagePrise: filePath,
+            pictureTaken: filePath,
           );
         },
       ),

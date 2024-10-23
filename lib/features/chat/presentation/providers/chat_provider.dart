@@ -47,7 +47,7 @@ class ChatProvider extends ChangeNotifier {
     );
     chat = [];
     final failureOrChat = await GetChat(chatRepository: repository).init();
-    if (myName != '') {
+    if (myName == '') {
       myName = FirebaseAuth.instance.currentUser!.displayName.toString();
     }
     failureOrChat.fold(

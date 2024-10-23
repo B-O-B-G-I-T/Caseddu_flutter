@@ -12,8 +12,8 @@ import '../../widgets/P2P_widgets/connection_button.dart';
 import '../../widgets/P2P_widgets/search_widget.dart';
 
 class EnvoieDePhotoPage extends StatefulWidget {
-  const EnvoieDePhotoPage({super.key, required this.cheminVersImagePrise});
-  final String cheminVersImagePrise;
+  const EnvoieDePhotoPage({super.key, required this.pictureTaken});
+  final String pictureTaken;
   @override
   State<EnvoieDePhotoPage> createState() => _EnvoieDePhotoPageState();
 }
@@ -139,9 +139,9 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
               //       fontSize: 16.0);
               // } else {
 
-              var msgId = nanoid(21);
-              var timestamp = DateTime.now();
-              var listImages = [widget.cheminVersImagePrise].join(',');
+              final String msgId = nanoid(21);
+              final DateTime timestamp = DateTime.now();
+              final String listImages = [widget.pictureTaken].join(',');
 
               ChatMessageParams chatMessageParams = ChatMessageParams(
                 msgId,
@@ -149,7 +149,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                 device.deviceId,
                 '',
                 listImages,
-                'Pitcure_taken',
+                'pictureTaken',
                 'send',
                 timestamp,
               );
@@ -189,7 +189,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
       }
     });
   }
-  }
+}
 
 class SelectionDesUser extends StatelessWidget {
   const SelectionDesUser({
