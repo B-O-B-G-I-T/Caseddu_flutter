@@ -1,5 +1,7 @@
 // Flutter imports:
+import 'package:caseddu/config/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 // Project imports:
 import 'package:pro_image_editor/designs/frosted_glass/frosted_glass.dart';
@@ -66,28 +68,12 @@ class _mainPictureScreenState extends State<mainPictureScreen> {
                 child: BackgroundButtonWidget(
                   child: IconButton(
                     tooltip: widget.editor.configs.i18n.cancel,
-                    onPressed: widget.editor.closeEditor,
+                    onPressed: () {
+                      widget.editor.closeEditor;
+                      context.pop();
+                    },
                     icon: const Icon(Icons.close),
                     color: _foregroundColor,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Hero(
-                tag: 'frosted-glass-done-btn',
-                child: BackgroundButtonWidget(
-                  child: IconButton(
-                    tooltip: widget.editor.configs.i18n.done,
-                    onPressed: widget.editor.doneEditing,
-                    icon: Icon(
-                      Icons.check,
-                      color: _foregroundColor,
-                    ),
                   ),
                 ),
               ),
@@ -99,8 +85,8 @@ class _mainPictureScreenState extends State<mainPictureScreen> {
               child: SingleChildScrollView(
                 key: const PageStorageKey('frosted_glass_main_bottombar'),
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 12,
+                  horizontal: 10,
+                  vertical: 60,
                 ),
                 scrollDirection: Axis.vertical,
                 child: Column(
@@ -232,6 +218,31 @@ class _mainPictureScreenState extends State<mainPictureScreen> {
                 ),
               ),
             ),
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Hero(
+                tag: 'frosted-glass-done-btn',
+                child: BackgroundButtonWidget(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 3,
+                      vertical: 3,
+                    ),
+                    child: IconButton(
+                      tooltip: widget.editor.configs.i18n.done,
+                      onPressed: widget.editor.doneEditing,
+                      icon: Icon(
+                        Icons.check,
+                        color: _foregroundColor,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

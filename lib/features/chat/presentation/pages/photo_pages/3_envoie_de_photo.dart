@@ -63,7 +63,6 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                   floating: true,
                   snap: true,
                   title: const Text("Envoie de photo"),
-                  //c'est cool si pas centrer
                   centerTitle: true,
                   leading: IconButton(
                     icon: const Icon(Icons.arrow_back),
@@ -87,9 +86,12 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                     searchController: _searchController,
                   ),
                   // les paires connus
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(16, 4, 16, 0),
-                    child: Text("Les paires connus"),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      "Les paires connus",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
                   ),
                   SelectionDesUser(
                     listDevice: conversersFiltre,
@@ -102,9 +104,12 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                     },
                   ),
                   // liste des devices approximités
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                    child: Text("Les paires approximités"),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Text(
+                      "Les paires approximités",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
                   ),
                   SelectionDesUser(
                     listDevice: deviceApproximiteFilter,
@@ -124,6 +129,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
       ),
 
       // faire l'envoie un for s'est le plus simple
+      floatingActionButtonLocation: FloatingActionButtonLocation.startDocked,
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           setState(() async {
@@ -193,11 +199,11 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
 
 class SelectionDesUser extends StatelessWidget {
   const SelectionDesUser({
-    Key? key,
+    super.key,
     required this.listDevice,
     required this.deviceSelectionne,
     required this.onDeviceSelected,
-  }) : super(key: key);
+  });
 
   final List<Device> listDevice;
   final List<Device> deviceSelectionne;
@@ -205,7 +211,12 @@ class SelectionDesUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (listDevice.isEmpty) {
+      // Retourner un Container vide ou un message si la liste est vide
+      return const NoDevice();
+    }
     return ListView.builder(
+      padding: const EdgeInsets.all(0),
       // Builds a screen with list of devices in the proximity
       itemCount: listDevice.length,
       physics: const NeverScrollableScrollPhysics(),
@@ -226,11 +237,11 @@ class SelectionDesUser extends StatelessWidget {
 
 class DeviceListItem extends StatelessWidget {
   const DeviceListItem({
-    Key? key,
+    super.key,
     required this.device,
     required this.isSelected,
     required this.onDeviceSelected,
-  }) : super(key: key);
+  });
 
   final Device device;
   final bool isSelected;
@@ -239,34 +250,33 @@ class DeviceListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    final Device deviceCo = chatProvider.devices.firstWhere((element) => element.deviceName == device.deviceName);
 
     return Column(
       children: [
         ListTile(
-          title: Text(deviceCo.deviceName),
+          title: Text(device.deviceName),
           subtitle: Text(
-            getStateName(deviceCo.state),
-            style: TextStyle(color: getStateColor(deviceCo.state)),
+            getStateName(device.state),
+            style: TextStyle(color: getStateColor(device.state)),
           ),
           onTap: () async {
-            if (deviceCo.state == SessionState.notConnected) {
-              await chatProvider.connectToDevice(deviceCo);
+            if (device.state == SessionState.notConnected) {
+              await chatProvider.connectToDevice(device);
             }
-            onDeviceSelected(deviceCo);
+            onDeviceSelected(device);
           },
           trailing: SizedBox(
             width: 100,
             child: Row(
               children: [
                 ConnectionButton(
-                  device: deviceCo,
+                  device: device,
                   longDistance: false,
                 ),
                 RoundCheckbox(
                   value: isSelected,
                   onChanged: (value) {
-                    onDeviceSelected(deviceCo);
+                    onDeviceSelected(device);
                   },
                 ),
               ],
@@ -314,6 +324,22 @@ class RoundCheckbox extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class NoDevice extends StatelessWidget {
+  const NoDevice({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Text(
+        'Aucun appareil disponible',
       ),
     );
   }
