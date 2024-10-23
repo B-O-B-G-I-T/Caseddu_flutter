@@ -12,7 +12,7 @@ import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../widgets/camera_widgets/background_buttons_widget.dart';
-import '../../widgets/chat_widgets/loader_for_chat.dart';
+import '../../widgets/chat_widgets/page_chat/loader_for_chat.dart';
 
 class CameraPage extends StatefulWidget {
   //pour la camera

@@ -5,10 +5,11 @@ import '../../../../core/utils/p2p/fonctions.dart';
 import '../../domain/entities/chat_message_entity.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/P2P_widgets/connection_button.dart';
-import '../widgets/chat_widgets/ecritoire.dart';
-import '../widgets/chat_widgets/lost_connexion_widget.dart';
-import '../widgets/chat_widgets/utils_widgets.dart';
-import '../widgets/chat_widgets/view_pictures_widget.dart';
+import '../widgets/chat_widgets/preview_picture/all_preview_picture_widget.dart';
+import '../widgets/chat_widgets/page_chat/message_panel.dart';
+import '../widgets/chat_widgets/page_chat/lost_connexion_widget.dart';
+import '../widgets/chat_widgets/page_chat/utils_widgets.dart';
+
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key, required this.converser});
@@ -113,60 +114,44 @@ class _ChatPageState extends State<ChatPage> {
                                         return IntrinsicHeight(
                                           child: Padding(
                                             padding: const EdgeInsets.all(4.0),
-                                            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                              // barre coloré
-                                              laBarre(isMe),
-                                              // titre et text
-                                              Expanded(
-                                                flex: 6,
-                                                child: Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  children: [
-                                                    // titre et date de reception
-                                                    // titre
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                      children: [
-                                                        receptionOuEnvoi(widget.converser, isMe),
-                                                        // date de reception
-                                                        dateDuMessage(messageList[index].timestamp.toString()),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    // texte ou image
-                                                    messageList[index].images != ''
-                                                        // gere les images et le texte
-                                                        ? Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: [
-                                                              viewPicturesWidget(
-                                                                context: context,
-                                                                pictures: messageList[index].images.split(','),
-                                                              ),
-                                                              // Image.file(
-                                                              //   File(messageList[index].images),
-                                                              // ),
-                                                              messageList[index].message != ''
-                                                                  ? Text(
-                                                                      messageList[index].message,
-                                                                      textAlign: TextAlign.left,
-                                                                      style: const TextStyle(color: Colors.black, fontSize: 14),
-                                                                    )
-                                                                  : const SizedBox(),
-                                                            ],
-                                                          )
-                                                        // gere le texte simple
-                                                        : Text(
-                                                            messageList[index].message,
-                                                            textAlign: TextAlign.left,
-                                                            style: const TextStyle(color: Colors.black, fontSize: 14),
-                                                          ),
-                                                  ],
+                                            child: Row(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                // barre coloré
+                                                laBarre(isMe),
+                                                // titre et text
+                                                Expanded(
+                                                  flex: 6,
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      // titre et date de reception
+                                                      // titre
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          receptionOuEnvoi(widget.converser, isMe),
+                                                          // date de reception
+                                                          dateDuMessage(messageList[index].timestamp.toString()),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      // texte ou image
+                                                      if (messageList[index].images != '')
+                                                        AllPreviewPictureChatWidget(messageList: messageList[index])
+                                                      else
+                                                        Text(
+                                                          messageList[index].message,
+                                                          textAlign: TextAlign.left,
+                                                          style: const TextStyle(color: Colors.black, fontSize: 14),
+                                                        ),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                            ]),
+                                              ],
+                                            ),
                                           ),
                                         );
                                       },

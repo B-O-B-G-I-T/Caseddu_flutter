@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../../../core/utils/p2p/fonctions.dart';
+import '../../../../../../core/utils/p2p/fonctions.dart';
 
 @override
 Widget laBarre(bool messageDeReceptionOuEnvoi) {

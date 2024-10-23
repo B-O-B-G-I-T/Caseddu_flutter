@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../../core/utils/p2p/p2p_utils.dart';
 import '../../providers/chat_provider.dart';
 
@@ -18,6 +17,7 @@ class ConnectionButton extends StatelessWidget {
         ? Container(
             margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
             decoration: BoxDecoration(
+              border: Border.all(color: Colors.white),
               borderRadius: BorderRadius.circular(5),
               color: Colors.grey,
             ),
@@ -35,6 +35,7 @@ class ConnectionButton extends StatelessWidget {
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
               decoration: BoxDecoration(
+                border: Border.all(color: Colors.white),
                 borderRadius: BorderRadius.circular(5),
                 color: getButtonColor(device.state),
               ),
