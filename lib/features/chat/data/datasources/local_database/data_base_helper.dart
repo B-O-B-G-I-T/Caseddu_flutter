@@ -68,7 +68,7 @@ class DatabaseHelper {
     final db = await BaseDonneesGeneral.database;
 
     late ChatMessageModel newChat;
-    print(chatMessage.toJson());
+    //print(chatMessage.toJson());
 
     if (isSender) {
       UserModel user = await controlUtilisateur(chatMessage.receiver);

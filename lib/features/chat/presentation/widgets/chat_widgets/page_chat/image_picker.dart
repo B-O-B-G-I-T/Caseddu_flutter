@@ -112,38 +112,20 @@ class _ImagePickerState extends State<MyImagePicker> {
                 itemCount: images.length,
                 itemBuilder: (context, index) {
                   return FutureBuilder<Uint8List?>(
-                      future: images[index].thumbnailData,
-                      builder: (context, snapshot) {
-                        final bytes = snapshot.data;
-                        if (bytes == null) return const CircularProgressIndicator();
+                    future: images[index].thumbnailDataWithSize(const ThumbnailSize(500, 700)), // Taille des miniatures
+                    builder: (context, snapshot) {
+                      final bytes = snapshot.data;
+                      if (bytes == null) return const Center(child: FittedBox(fit: BoxFit.contain, child: CircularProgressIndicator()));
 
-                        final isSelected = selectedImages.contains(images[index]);
-
-                        return GestureDetector(
-                          onTap: () {
-                            toggleSelection(images[index]);
-                          },
-                          child: Stack(
-                            children: [
-                              Positioned.fill(
-                                child: Image.memory(
-                                  bytes,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              if (isSelected)
-                                const Positioned(
-                                  right: 8,
-                                  top: 8,
-                                  child: Icon(
-                                    Icons.check_circle,
-                                    color: Colors.blue,
-                                  ),
-                                ),
-                            ],
-                          ),
-                        );
-                      });
+                      return ImageItem(
+                        image: images[index],
+                        isSelected: selectedImages.contains(images[index]),
+                        onSelect: () {
+                          toggleSelection(images[index]);
+                        },
+                      );
+                    },
+                  );
                 }),
           ),
           if (selectedImages.isNotEmpty)
@@ -173,9 +155,7 @@ class _ImagePickerState extends State<MyImagePicker> {
   }
 
   Future<void> sendMessage() async {
-    
     if (widget.device.state == SessionState.notConnected) {
-
       Fluttertoast.showToast(
           msg: 'hors de portée',
           toastLength: Toast.LENGTH_LONG,
@@ -206,7 +186,7 @@ class _ImagePickerState extends State<MyImagePicker> {
           widget.converser,
           '',
           listImages,
-          'Image',
+          'image',
           'Send',
           timestamp,
         );
@@ -217,5 +197,63 @@ class _ImagePickerState extends State<MyImagePicker> {
       }
     }
     selectedImages.clear();
+  }
+}
+
+class ImageItem extends StatefulWidget {
+  final AssetEntity image;
+  final bool isSelected;
+  final VoidCallback onSelect;
+
+  const ImageItem({
+    super.key,
+    required this.image,
+    required this.isSelected,
+    required this.onSelect,
+  });
+
+  @override
+  _ImageItemState createState() => _ImageItemState();
+}
+
+class _ImageItemState extends State<ImageItem> {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<Uint8List?>(
+      future: widget.image.thumbnailDataWithSize(const ThumbnailSize(500, 700)),
+      builder: (context, snapshot) {
+        final bytes = snapshot.data;
+        if (bytes == null) {
+          return const Center(child: FittedBox(fit: BoxFit.contain, child: CircularProgressIndicator()));
+        }
+
+        return GestureDetector(
+          onTap: widget.onSelect,
+          child: Stack(
+            children: [
+              SizedBox.expand(
+                child: Image.memory(
+                  bytes,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              if (widget.isSelected)
+                Container(
+                  color: Colors.black.withOpacity(0.3),
+                ),
+              if (widget.isSelected)
+                const Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Icon(
+                    Icons.check_circle,
+                    color: Colors.blue,
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

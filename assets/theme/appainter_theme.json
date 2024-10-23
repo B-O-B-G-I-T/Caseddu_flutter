@@ -147,8 +147,8 @@
     },
     "textTheme": "normal"
   },
-  "canvasColor": "#fffef7ff",
-  "cardColor": "#fffef7ff",
+  "canvasColor": "#ffffffff",
+  "cardColor": "#ffffffff",
   "colorScheme": {
     "background": "#fff77b72",
     "brightness": "light",
@@ -182,7 +182,7 @@
     "tertiary": "#ff03dac6",
     "tertiaryContainer": "#ff03dac6"
   },
-  "dialogBackgroundColor": "#fffef7ff",
+  "dialogBackgroundColor": "#ffffffff",
   "disabledColor": "#61000000",
   "dividerColor": "#ff79747e",
   "elevatedButtonTheme": {
@@ -410,7 +410,7 @@
       "inherit": true
     }
   },
-  "scaffoldBackgroundColor": "#fffef7ff",
+  "scaffoldBackgroundColor": "#ffffffff",
   "secondaryHeaderColor": "#fff99890",
   "shadowColor": "#ff000000",
   "splashColor": "#66c8c8c8",

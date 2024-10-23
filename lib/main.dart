@@ -1,11 +1,9 @@
-import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:json_theme/json_theme.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'config/routes/routes.dart';
@@ -34,7 +32,6 @@ void main() async {
   final themeStr = await rootBundle.loadString('assets/theme/appainter_theme.json');
   final themeJson = jsonDecode(themeStr);
   final theme = ThemeDecoder.decodeThemeData(themeJson)!;
-  final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
@@ -44,31 +41,6 @@ void main() async {
     DeviceOrientation.portraitUp,
   ]);
 
-  if (Platform.isAndroid) {
-    [
-      Permission.camera,
-      Permission.microphone,
-      Permission.storage,
-      Permission.location,
-      Permission.bluetooth,
-      Permission.bluetoothConnect,
-      Permission.bluetoothScan,
-    ].request().then((status) {
-      // runApp(MyApp(theme: theme, cameras: cameras));
-    });
-  } else {
-    // [
-    //   Permission.camera,
-    //   Permission.microphone,
-    //   Permission.storage,
-    //   Permission.location,
-    //   Permission.bluetooth,
-    //   Permission.bluetoothConnect,
-    //   Permission.bluetoothScan,
-    // ].request().then((status) {
-    //   // runApp(MyApp(theme: theme, cameras: cameras));
-    // });
-  } // else {
   runApp(
     MultiProvider(
       providers: [

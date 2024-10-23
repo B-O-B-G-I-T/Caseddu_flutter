@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/utils/p2p/fonctions.dart';
-import '../widgets_for_chat/circle_avatar.dart';
+import '../chat_widgets/circle_avatar.dart';
 
 class ListTilePourUtilisateurConnu extends StatelessWidget {
   final String deviceName;
@@ -23,16 +23,16 @@ class ListTilePourUtilisateurConnu extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: CircleAvatarWithTextOrImage(
-        text: deviceName[0].toUpperCase(), // Utilisez le premier caractère du nom comme texte
+        text: deviceName.isNotEmpty ? deviceName[0].toUpperCase() : "?", // Utilisez le premier caractère du nom comme texte
         radius: 24.0, // Rayon du cercle
       ),
       title: Text(
-        deviceName,
+        deviceName.isNotEmpty ? deviceName : "?",
         style: Theme.of(context).textTheme.headlineSmall,
       ),
       subtitle: Row(
         children: [
-          typeMessage == "Payload" ? Text(message) : const Icon(Icons.image),
+          typeMessage == "Payload" ? Text(message.isNotEmpty ? message : "Pas d'ancien message") : const Icon(Icons.image),
           const Text(" - "),
           Text(Utils.depuisQuandCeMessageEstRecu(timeStamp: timestamp)),
         ],

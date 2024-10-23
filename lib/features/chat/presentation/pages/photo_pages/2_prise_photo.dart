@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../widgets/camera_widgets/modifier_picture_widget.dart';
+
 class PrisePhoto extends StatefulWidget {
   const PrisePhoto({Key? key, required this.lastImage}) : super(key: key);
   final String lastImage;
@@ -21,16 +23,7 @@ class _PrisePhotoState extends State<PrisePhoto> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () {
-            context.pop();
-          },
-          icon: const Icon(Icons.close_rounded),
-        ),
-      ),
+      
       body: Stack(
         children: [
           Container(
@@ -43,8 +36,8 @@ class _PrisePhotoState extends State<PrisePhoto> {
               setState(() {
                 // Limiter l'étendue du glissement à 120 pixels
                 _dragExtent = (_dragExtent + details.delta.dy).clamp(0.0, 120.0);
-                print('_dragExtent ${_dragExtent}');
-                print('_dragText ${_dragText}');
+                //print('_dragExtent ${_dragExtent}');
+                //print('_dragText ${_dragText}');
 
                 if (_dragExtent < 105) {
                   _dragText = _dragExtent - 50;
@@ -76,7 +69,9 @@ class _PrisePhotoState extends State<PrisePhoto> {
                 width: double.infinity,
                 height: double.infinity,
                 color: Colors.black,
-                child: Image.file(File(widget.lastImage), fit: BoxFit.cover),
+                child: ModifierPictureWidget(
+                  pathImage: widget.lastImage,
+                ),
               ),
             ),
           ),
@@ -107,14 +102,6 @@ class _PrisePhotoState extends State<PrisePhoto> {
             ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          context.push('/EnvoieDePhotoPage', extra: widget.lastImage);
-        },
-        label: const Text('Publier', style: TextStyle(color: Colors.white)),
-        icon: const Icon(Icons.send, color: Colors.white),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
     );
   }
 }

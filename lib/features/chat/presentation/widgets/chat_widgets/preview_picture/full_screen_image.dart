@@ -1,14 +1,11 @@
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:photo_manager/photo_manager.dart';
 
 class FullScreenImagePage extends StatelessWidget {
   final String imageUrl;
 
-  FullScreenImagePage({super.key, required this.imageUrl});
+  const FullScreenImagePage({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
