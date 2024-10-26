@@ -13,37 +13,24 @@ class ConnectionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    return longDistance
-        ? Container(
-            margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.white),
-              borderRadius: BorderRadius.circular(5),
-              color: Colors.grey,
-            ),
-            width: 50,
-            child: const Center(
-              child: Icon(Icons.phonelink_erase_rounded),
-            ),
-          )
-        : GestureDetector(
-            // to connect/disconnect with any device
-            onTap: () async {
-              if (aditionalFunction != null) aditionalFunction!();
-              await chatProvider.connectToDevice(device);
-            },
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.white),
-                borderRadius: BorderRadius.circular(5),
-                color: getButtonColor(device.state),
-              ),
-              width: 50,
-              child: Center(
-                child: getButtonStateIcon(device.state),
-              ),
-            ),
-          );
+    return GestureDetector(
+      // to connect/disconnect with any device
+      onTap: () async {
+        if (aditionalFunction != null) aditionalFunction!();
+        await chatProvider.connectToDevice(device);
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.white),
+          borderRadius: BorderRadius.circular(5),
+          color: getButtonColor(device.state),
+        ),
+        width: 50,
+        child: Center(
+          child: getButtonStateIcon(device.state),
+        ),
+      ),
+    );
   }
 }

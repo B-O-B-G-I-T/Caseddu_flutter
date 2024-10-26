@@ -169,6 +169,8 @@ class ChatProvider extends ChangeNotifier {
         break;
       case SessionState.connecting:
         break;
+      case SessionState.tooFar:
+        break;
     }
 
     notifyListeners();
