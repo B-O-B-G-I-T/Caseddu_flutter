@@ -34,8 +34,8 @@ class _ChatPageState extends State<ChatPage> {
     chatProvider = Provider.of<ChatProvider>(context, listen: false);
     chatProvider.sender = widget.converser;
     myName = chatProvider.myName;
-    device = chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser);
-    chatProvider.eitherFailureOrConversation(chatProvider.myName, widget.converser);
+    device = chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser, orElse: () => Device("", "", SessionState.tooFar));
+    chatProvider.eitherFailureOrConversation(myName, widget.converser);
   }
 
   @override
@@ -53,20 +53,12 @@ class _ChatPageState extends State<ChatPage> {
 // TODO création de groupe de conversation
   @override
   Widget build(BuildContext context) {
-    // essai de trouver le device associe et de détermine si il est a coté ou loin
-    //device = Provider.of<Global>(context).devices.firstWhere((element) => element.deviceName == widget.converser);
-
     return Consumer<ChatProvider>(builder: (context, chatProvider, child) {
       device = chatProvider.devices.firstWhere(
         (element) => element.deviceName == widget.converser,
-        orElse: () => Device("", "", 1),
+        orElse: () => Device(widget.converser, widget.converser, SessionState.tooFar),
       );
 
-      if (device!.deviceId == '') {
-        longDistance = true;
-      } else {
-        longDistance = false;
-      }
       messageList = chatProvider.chat;
       return Scaffold(
         // resizeToAvoidBottomInset: false,

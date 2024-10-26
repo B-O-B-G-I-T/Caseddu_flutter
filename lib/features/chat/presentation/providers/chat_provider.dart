@@ -338,8 +338,4 @@ class ChatProvider extends ChangeNotifier {
     );
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
 }
