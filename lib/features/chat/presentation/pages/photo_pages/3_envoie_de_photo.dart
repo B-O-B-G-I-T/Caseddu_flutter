@@ -47,7 +47,17 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
       body: Consumer<ChatProvider>(
         builder: (context, chatProvider, child) {
           deviceApproximite = chatProvider.devices;
-          conversers = chatProvider.users.map((e) => Device(e.id, e.name, 0)).toList();
+          conversers = chatProvider.users
+              .map((e) {
+                var device = deviceApproximite.firstWhere(
+                  (d) => d.deviceName == e.name,
+                  orElse: () => Device(e.name, e.name, SessionState.tooFar),
+                );
+                return device;
+              })
+              // ignore: unnecessary_null_comparison
+              .where((device) => device != null)
+              .toList();
 
           if (_searchController.text.isEmpty) {
             deviceApproximiteFilter = deviceApproximite;
