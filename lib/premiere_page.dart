@@ -8,7 +8,7 @@ import 'main.dart';
 class PremierePage extends StatefulWidget {
   final int selectedIndex;
 
-  const PremierePage({Key? key, required this.selectedIndex}) : super(key: key);
+  const PremierePage({super.key, required this.selectedIndex});
 
   @override
   State<PremierePage> createState() => _PremierePageState();

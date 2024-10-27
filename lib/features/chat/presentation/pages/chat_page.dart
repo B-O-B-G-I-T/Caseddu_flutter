@@ -71,6 +71,13 @@ class _ChatPageState extends State<ChatPage> {
               longDistance: longDistance,
             ),
           ],
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(0),
+            child: Container(
+              color: Colors.grey,
+              height: 0.5,
+            ),
+          ),
         ),
         body: device!.deviceId != "" && device!.deviceName != ""
             ? SafeArea(

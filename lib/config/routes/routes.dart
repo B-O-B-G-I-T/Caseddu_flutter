@@ -10,7 +10,7 @@ import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../features/chat/presentation/pages/photo_pages/3_envoie_de_photo.dart';
 import '../../features/chat/presentation/pages/photo_pages/2_prise_photo.dart';
 import '../../features/parametre/presentation/pages/parameter_page.dart';
-import '../../PremierePage.dart';
+import '../../premiere_page.dart';
 
 // doc officiel : https://docs.flutter.dev/ui/navigation
 // doc du package : https://pub.dev/documentation/go_router/latest/topics/Get%20started-topic.html
