@@ -181,14 +181,14 @@ class _ImagePickerState extends State<MyImagePicker> {
         // print(listImages);
 
         ChatMessageParams chatMessageParams = ChatMessageParams(
-          msgId,
-          'bob',
-          widget.converser,
-          '',
-          listImages,
-          'image',
-          'Send',
-          timestamp,
+          id: msgId,
+          sender: 'bob',
+          receiver: widget.converser,
+          message: '',
+          images: listImages,
+          type: 'image',
+          sendOrReceived: 'Send',
+          timestamp: timestamp,
         );
         if (widget.device.state == SessionState.notConnected) {
           await widget.chatProvider.connectToDevice(widget.device);

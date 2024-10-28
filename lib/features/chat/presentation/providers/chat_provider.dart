@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../core/connection/network_info.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
+import '../../data/models/chat_message_model.dart';
 import '../../domain/entities/chat_message_entity.dart';
 import '../../domain/usecases/get_chat.dart';
 import '../../data/datasources/chat_local_data_source.dart';
@@ -92,45 +93,35 @@ class ChatProvider extends ChangeNotifier {
       // Vérifiez si data est une chaîne JSON valide
       try {
         var jsonData = jsonDecode(data['message']);
-
-        // Maintenant, jsonData est un objet Dart que vous pouvez utiliser
-        String id = jsonData['id'];
-        String sender = jsonData['sender'];
-        String receiver = jsonData['receiver'];
-        DateTime timestamp = DateTime.parse(jsonData['timestamp']);
-        String message = jsonData['message'];
-        String imagesEncode = jsonData['images'];
-
-        String type = jsonData['type'];
+        ChatMessageModel chatMessageModel = ChatMessageModel.fromJson(json: jsonData);
+        String imagesEncode = chatMessageModel.images;
         if (imagesEncode != "") {
           List<String> imageListPaths = await Utils.base64StringToListImage(imagesEncode);
           imagesEncode = imageListPaths.join(',');
         }
+
         Fluttertoast.showToast(
-          msg: '''
-            Sender: $sender
-            Receiver: $receiver
-            Timestamp: $timestamp
-            Message: $message
-            Type: $type
-          ''',
+          msg: '''Sender: ${chatMessageModel.sender} Receiver: ${chatMessageModel.receiver}  Type: ${chatMessageModel.type}
+              Timestamp: ${chatMessageModel.timestamp} 
+              Message: ${chatMessageModel.message}''',
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
+          //timeInSecForIosWeb: 1,
           backgroundColor: Colors.black87,
           textColor: Colors.white,
           fontSize: 16.0,
         );
+
         await eitherFailureOrEnregistreMessage(
           chatMessageParams: ChatMessageParams(
-            id,
-            sender,
-            receiver,
-            message,
-            imagesEncode,
-            type,
-            'Received',
-            timestamp,
+            id: chatMessageModel.id,
+            sender: chatMessageModel.sender,
+            receiver: chatMessageModel.receiver,
+            message: chatMessageModel.message,
+            images: imagesEncode,
+            type: chatMessageModel.type,
+            sendOrReceived: 'Received',
+            timestamp: chatMessageModel.timestamp,
           ),
         );
         // sert à mettre à jour les conversations
@@ -337,5 +328,4 @@ class ChatProvider extends ChangeNotifier {
       },
     );
   }
-
 }

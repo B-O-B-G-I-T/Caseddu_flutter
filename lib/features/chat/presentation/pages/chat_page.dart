@@ -159,6 +159,7 @@ class _ChatPageState extends State<ChatPage> {
                               ),
                             ),
                     ),
+                    // TODO: ferlmer le clavier lorsque l'on remonte la liste
                     SafeArea(
                       child: MessagePanel(
                         converser: widget.converser,

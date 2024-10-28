@@ -160,14 +160,14 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
               final String listImages = [widget.pictureTaken].join(',');
 
               ChatMessageParams chatMessageParams = ChatMessageParams(
-                msgId,
-                'bob',
-                device.deviceId,
-                '',
-                listImages,
-                'pictureTaken',
-                'send',
-                timestamp,
+                id: msgId,
+                sender: 'bob',
+                receiver: device.deviceId,
+                message: '',
+                images: listImages,
+                type: 'pictureTaken',
+                sendOrReceived: 'send',
+                timestamp: timestamp,
               );
               await chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
             }
