@@ -48,11 +48,72 @@ class AuthentificationProvider extends ChangeNotifier {
     );
   }
 
+  Future eitherFailureOrAuthentificationWithGoogle(String username) async {
+    AuthentificationRepositoryImpl repository = AuthentificationRepositoryImpl(
+      remoteDataSource: AuthentificationRemoteDataSourceImpl(
+        firebaseAuth: FirebaseAuth.instance,
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
+      ),
+    );
+    final AuthentificationParams authentificationParams = AuthentificationParams(
+      email: "email",
+      pseudo: username,
+    );
+    final failureOrAuthentification =
+        await GetAuthentification(authentificationRepository: repository).authentificationWithGoogle(authentificationParams: authentificationParams);
+
+    return failureOrAuthentification.fold(
+      (Failure newFailure) {
+        authentification = null;
+        failure = newFailure;
+        notifyListeners();
+      },
+      (AuthentificationEntity newAuthentification) {
+        authentification = newAuthentification;
+        failure = null;
+        notifyListeners();
+      },
+    );
+  }
+
+   Future eitherFailureOrAuthentificationWithApple(String username) async {
+    AuthentificationRepositoryImpl repository = AuthentificationRepositoryImpl(
+      remoteDataSource: AuthentificationRemoteDataSourceImpl(
+        firebaseAuth: FirebaseAuth.instance,
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
+      ),
+    );
+    final AuthentificationParams authentificationParams = AuthentificationParams(
+      email: "email",
+      pseudo: username,
+    );
+    final failureOrAuthentification =
+        await GetAuthentification(authentificationRepository: repository).authentificationWithApple(authentificationParams: authentificationParams);
+
+    return failureOrAuthentification.fold(
+      (Failure newFailure) {
+        authentification = null;
+        failure = newFailure;
+        notifyListeners();
+      },
+      (AuthentificationEntity newAuthentification) {
+        authentification = newAuthentification;
+        failure = null;
+        notifyListeners();
+      },
+    );
+  }
+
   Future eitherFailureOrRegister(String email, String password, String confirmPassword, String numero, String pseudo) async {
     AuthentificationRepositoryImpl repository = AuthentificationRepositoryImpl(
       remoteDataSource: AuthentificationRemoteDataSourceImpl(
         firebaseAuth: FirebaseAuth.instance,
-      ), networkInfo: NetworkInfoImpl(
+      ),
+      networkInfo: NetworkInfoImpl(
         DataConnectionChecker(),
       ),
     );
@@ -87,7 +148,8 @@ class AuthentificationProvider extends ChangeNotifier {
     AuthentificationRepositoryImpl repository = AuthentificationRepositoryImpl(
       remoteDataSource: AuthentificationRemoteDataSourceImpl(
         firebaseAuth: FirebaseAuth.instance,
-      ), networkInfo: NetworkInfoImpl(
+      ),
+      networkInfo: NetworkInfoImpl(
         DataConnectionChecker(),
       ),
     );

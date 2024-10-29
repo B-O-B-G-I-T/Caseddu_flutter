@@ -72,7 +72,8 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> with SingleTickerProvid
       child: Scaffold(
         // key: Global.scaffoldKey,
         appBar: AppBar(
-          toolbarHeight: 0,
+          
+          toolbarHeight: 40,
           bottom: TabBar(
             tabs: myTabs,
             controller: _tabController,

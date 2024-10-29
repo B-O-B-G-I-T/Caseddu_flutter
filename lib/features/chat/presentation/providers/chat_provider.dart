@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:data_connection_checker_tv/data_connection_checker.dart';
@@ -8,10 +9,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../core/connection/network_info.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
+import '../../data/models/chat_message_model.dart';
 import '../../domain/entities/chat_message_entity.dart';
 import '../../domain/usecases/get_chat.dart';
 import '../../data/datasources/chat_local_data_source.dart';
@@ -91,55 +94,58 @@ class ChatProvider extends ChangeNotifier {
     return nearbyService.dataReceivedSubscription(callback: (data) async {
       // Vérifiez si data est une chaîne JSON valide
       try {
-        var jsonData = jsonDecode(data['message']);
+        if (data['message'].startsWith("ACK ")) {
+          // Enregistre le message dans la base de données
+          final String messageId = data['message'].substring(4);
+            final ChatMessageEntity messageACK = chat.firstWhere(
+            (element) => element.id == messageId,
+            );
+            messageACK.ack = 1;
 
-        // Maintenant, jsonData est un objet Dart que vous pouvez utiliser
-        String id = jsonData['id'];
-        String sender = jsonData['sender'];
-        String receiver = jsonData['receiver'];
-        DateTime timestamp = DateTime.parse(jsonData['timestamp']);
-        String message = jsonData['message'];
-        String imagesEncode = jsonData['images'];
+          await eitherFailureOrEnregistreMessage(
+            chatMessageParams: messageACK.toParamsAKC(),
+          );
 
-        String type = jsonData['type'];
-        if (imagesEncode != "") {
-          List<String> imageListPaths = await Utils.base64StringToListImage(imagesEncode);
-          imagesEncode = imageListPaths.join(',');
+          // sert à mettre à jour les conversations
+          //await eitherFailureOrConversation(messageACK.sender, messageACK.receiver);
+        } else {
+          await receiveMessage(data, nearbyService);
         }
-        Fluttertoast.showToast(
-          msg: '''
-            Sender: $sender
-            Receiver: $receiver
-            Timestamp: $timestamp
-            Message: $message
-            Type: $type
-          ''',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black87,
-          textColor: Colors.white,
-          fontSize: 16.0,
-        );
-        await eitherFailureOrEnregistreMessage(
-          chatMessageParams: ChatMessageParams(
-            id,
-            sender,
-            receiver,
-            message,
-            imagesEncode,
-            type,
-            'Received',
-            timestamp,
-          ),
-        );
-        // sert à mettre à jour les conversations
-        await eitherFailureOrAllConversations();
         notifyListeners();
       } catch (e) {
         print('Erreur lors de la conversion des données JSON : $e');
       }
     });
+  }
+
+  Future<ChatMessageModel> receiveMessage(data, NearbyService nearbyService) async {
+    var jsonData = jsonDecode(data['message']);
+
+    ChatMessageModel chatMessageModel = ChatMessageModel.fromJson(json: jsonData);
+    String imagesEncode = chatMessageModel.images;
+    if (imagesEncode != "") {
+      List<String> imageListPaths = await Utils.base64StringToListImage(imagesEncode);
+      imagesEncode = imageListPaths.join(',');
+    }
+    chatMessageModel.images = imagesEncode;
+    //chatMessageModel.ACK = true;
+    Fluttertoast.showToast(
+      msg: '''Sender: ${chatMessageModel.sender} Receiver: ${chatMessageModel.receiver}  Type: ${chatMessageModel.type}
+            Timestamp: ${DateFormat('HH:mm:ss').format(chatMessageModel.timestamp)} 
+          Message: ${chatMessageModel.message}''',
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+      //timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black87,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+
+    nearbyService.sendMessage(chatMessageModel.sender, "ACK ${chatMessageModel.id}");
+    await eitherFailureOrEnregistreMessage(
+      chatMessageParams: chatMessageModel.toChatMessageParams(),
+    );
+    return chatMessageModel;
   }
 
   void updateDevices(List<Device> devices) {
@@ -169,6 +175,8 @@ class ChatProvider extends ChangeNotifier {
         break;
       case SessionState.connecting:
         break;
+      case SessionState.tooFar:
+        break;
     }
 
     notifyListeners();
@@ -179,8 +187,6 @@ class ChatProvider extends ChangeNotifier {
     chatMessageParams.sender = myName;
 
     chatMessageParams.nearbyService = controlerDevice;
-    //Global.cache[chatMessageParams.id] = chatMessageParams;
-    // insertIntoMessageTable(chatMessageParams);
 
     ChatRepositoryImpl repository = ChatRepositoryImpl(
       remoteDataSource: ChatRemoteDataSourceImpl(),
@@ -205,6 +211,7 @@ class ChatProvider extends ChangeNotifier {
       },
       (ChatMessageEntity chatMessageModel) {
         chat.add(chatMessageModel);
+
         failure = null;
         notifyListeners();
       },
@@ -244,10 +251,6 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<void> eitherFailureOrConversation(String senderName, String receiverName) async {
-    //chatMessageParams.sender = Global.myName;
-    //Global.cache[chatMessageParams.id] = chatMessageParams;
-    // insertIntoMessageTable(chatMessageParams);
-
     ChatRepositoryImpl repository = ChatRepositoryImpl(
       remoteDataSource: ChatRemoteDataSourceImpl(),
       localDataSource: ChatLocalDataSourceImpl(
@@ -275,10 +278,6 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<void> eitherFailureOrAllConversations() async {
-    //chatMessageParams.sender = Global.myName;
-    //Global.cache[chatMessageParams.id] = chatMessageParams;
-    // insertIntoMessageTable(chatMessageParams);
-
     ChatRepositoryImpl repository = ChatRepositoryImpl(
       remoteDataSource: ChatRemoteDataSourceImpl(),
       localDataSource: ChatLocalDataSourceImpl(
@@ -334,10 +333,5 @@ class ChatProvider extends ChangeNotifier {
         notifyListeners();
       },
     );
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 }

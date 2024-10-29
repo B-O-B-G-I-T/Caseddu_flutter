@@ -5,8 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
 import '../../../../core/utils/p2p/p2p_utils.dart';
 import '../providers/chat_provider.dart';
-import '../widgets/P2P_widget/search_widget.dart';
-import 'chat_page.dart';
+import '../widgets/P2P_widgets/search_widget.dart';
 
 enum DeviceType { advertiser, browser }
 
@@ -54,16 +53,17 @@ class _DevicesListPage extends State<DevicesListPage> {
               searchController: _searchController,
             ),
             // user de test d'affichage
-            MaterialButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const ChatPage(converser: "testChatPage"),
-                  ),
-                );
-              },
-              child: const Text("test chatPage"),
-            ),
+            // MaterialButton(
+            //   onPressed: () {
+            //     // TODO : faire avec goRouter
+            //     Navigator.of(context).push(
+            //       MaterialPageRoute(
+            //         builder: (context) => const ChatPage(converser: "testChatPage"),
+            //       ),
+            //     );
+            //   },
+            //   child: const Text("test chatPage"),
+            // ),
             DevicesListWidget(
               devices: deviceApproximiteFilter,
               onDeviceTap: (device) {

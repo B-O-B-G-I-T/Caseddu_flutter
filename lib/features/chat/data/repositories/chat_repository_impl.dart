@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:dartz/dartz.dart';
@@ -44,9 +46,6 @@ class ChatRepositoryImpl implements ChatRepository {
     } catch (e) {
       return Left(ServerFailure(errorMessage: e.toString()));
     }
-    // } else {
-    //   return Left(ServerFailure(errorMessage: "Erreur connection"));
-    // }
   }
 
   @override
@@ -59,31 +58,33 @@ class ChatRepositoryImpl implements ChatRepository {
     } catch (e) {
       return Left(ServerFailure(errorMessage: e.toString()));
     }
-    // } else {
-    //   return Left(ServerFailure(errorMessage: "Erreur connection"));
-    // }
   }
 
   @override
   Future<Either<Failure, ChatMessageModel>> envoieMessage({required ChatMessageParams chatMessageParams}) async {
-    ChatMessageModel chatMessageModel;
-
     try {
-      if (chatMessageParams.images != '') {
+      ChatMessageModel chatMessageModel;
+      // image envoyer avec la camera
+      if (chatMessageParams.type == 'pictureTaken') {
+        String imagebites = chatMessageParams.images;
+        chatMessageModel = await remoteDataSource.sentToConversations(chatMessageParams: chatMessageParams);
+        final File image = await Utils.base64StringToImage(imagebites);
+        chatMessageModel.images = image.path;
+
+        // image envoyer avec la galerie
+      } else if (chatMessageParams.type == 'image') {
         String imagePath = chatMessageParams.images;
 
         chatMessageParams.images = Utils.listImagesPathToBase64Strings(imagePath);
         chatMessageModel = await remoteDataSource.sentToConversations(chatMessageParams: chatMessageParams);
 
         chatMessageModel.images = imagePath;
-
-        await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
-      }else
-      {
-        chatMessageModel = await remoteDataSource.sentToConversations(chatMessageParams: chatMessageParams);
-        await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
       }
-
+      // message envoyer avec du text
+      else {
+        chatMessageModel = await remoteDataSource.sentToConversations(chatMessageParams: chatMessageParams);
+      }
+      await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
       return Right(chatMessageModel);
     } on ServerException {
       return Left(ServerFailure(errorMessage: 'This is a server exception'));
@@ -95,15 +96,13 @@ class ChatRepositoryImpl implements ChatRepository {
     //if (await networkInfo.isConnected!) {
     try {
       ChatMessageModel chatMessageModel = chatMessageParams.toModel();
-      await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: false);
+      bool isSender = chatMessageParams.sendOrReceived == 'Send';
+      await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: isSender);
 
       return Right(chatMessageModel);
     } catch (e) {
       return Left(ServerFailure(errorMessage: e.toString()));
     }
-    // } else {
-    //   return Left(ServerFailure(errorMessage: "Erreur connection"));
-    // }
   }
 
   @override

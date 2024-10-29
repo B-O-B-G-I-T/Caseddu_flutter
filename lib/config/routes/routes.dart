@@ -1,6 +1,8 @@
+import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/preview_picture/full_screen_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../features/auth/presentation/pages/connection_with.dart';
 import '../../features/auth/presentation/pages/login_screen.dart';
 import '../../features/auth/presentation/pages/oubli_mot_de_passe.dart';
 import '../../features/auth/presentation/pages/register_screen.dart';
@@ -8,15 +10,22 @@ import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../features/chat/presentation/pages/photo_pages/3_envoie_de_photo.dart';
 import '../../features/chat/presentation/pages/photo_pages/2_prise_photo.dart';
 import '../../features/parametre/presentation/pages/parameter_page.dart';
-import '../../PremierePage.dart';
+import '../../premiere_page.dart';
 
 // doc officiel : https://docs.flutter.dev/ui/navigation
 // doc du package : https://pub.dev/documentation/go_router/latest/topics/Get%20started-topic.html
 // code d'exemple : https://github.com/flutter/packages/blob/main/packages/go_router/example/lib/main.dart
 
+List<String> routesName = <String>[
+  "/enroler",
+  "/connectionWith",
+  "/oubliMotDePasse",
+];
+
 class Routes {
   // GoRouter configuration
   final _router = GoRouter(
+    observers: [],
     // l'écarn de login
     initialLocation: '/firstPage/0',
     //redige la ou l'on veut
@@ -24,20 +33,18 @@ class Routes {
       final user = Provider.of<User?>(context, listen: false);
 
       // ignore: unnecessary_null_comparison
-      if (user == null && state.matchedLocation != '/enroler' && state.matchedLocation != '/oubliMotDePasse') {
+      if (user == null && !routesName.contains(state.matchedLocation)) {
         return '/login';
       } else {
         return null;
       }
-
-      // && state.matchedLocation == '/login'
     },
     // créé les routes
     routes: [
       GoRoute(
         path: '/firstPage/:index',
         builder: (context, state) {
-          final index = int.parse(state.pathParameters['index']!) ;
+          final index = int.parse(state.pathParameters['index']!);
           return PremierePage(selectedIndex: index);
         },
       ),
@@ -53,6 +60,12 @@ class Routes {
           return const RegisterPage();
         },
       ),
+      GoRoute(
+          path: '/connectionWith',
+          builder: (context, state) {
+            final String typeOfConnection = state.extra.toString();
+            return ConnectionWithPage(typeOfConnection: typeOfConnection);
+          }),
       GoRoute(
         path: '/oubliMotDePasse',
         builder: (context, state) {
@@ -75,29 +88,42 @@ class Routes {
         },
       ),
       GoRoute(
+        path: '/fullScreenImage/:filePath',
+        name: 'fullScreenImage',
+        builder: (context, state) {
+          String filePath = state.extra.toString(); // -> le casting est important
+          return FullScreenImagePage(
+            imageUrl: filePath,
+          );
+        },
+      ),
+      GoRoute(
         path: '/EnvoieDePhotoPage',
         name: 'EnvoieDePhotoPage',
         builder: (context, state) {
           final String filePath = state.extra.toString();
-          return 
-          EnvoieDePhotoPage(
-            cheminVersImagePrise: filePath,
+          return EnvoieDePhotoPage(
+            pictureTaken: filePath,
           );
         },
       ),
       GoRoute(
         path: '/PrisePhoto/:filePath',
         name: 'PrisePhoto',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           String filePath = state.extra.toString(); // -> le casting est important
-          return PrisePhoto(
-            lastImage: filePath,
+
+          return CustomTransitionPage(
+            child: PrisePhoto(lastImage: filePath),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              // Aucune transition, on retourne directement l'enfant
+              return child;
+            },
+            transitionDuration: Duration.zero, // Pas de délai de transition
           );
         },
       ),
-      
     ],
-
   );
 
   // variable public

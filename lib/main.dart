@@ -1,11 +1,9 @@
-import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:json_theme/json_theme.dart';
 import 'package:flutter/services.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'config/routes/routes.dart';
@@ -38,40 +36,13 @@ void main() async {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   final chatProvider = ChatProvider(); // Initialisation manuelle
-  
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
 
-  if (Platform.isAndroid) {
-    [
-      Permission.camera,
-      Permission.microphone,
-      Permission.storage,
-      Permission.location,
-      Permission.bluetooth,
-      Permission.bluetoothConnect,
-      Permission.bluetoothScan,
-    ].request().then((status) {
-      // runApp(MyApp(theme: theme, cameras: cameras));
-    });
-  } else {
-    // [
-    //   Permission.camera,
-    //   Permission.microphone,
-    //   Permission.storage,
-    //   Permission.location,
-    //   Permission.bluetooth,
-    //   Permission.bluetoothConnect,
-    //   Permission.bluetoothScan,
-    // ].request().then((status) {
-    //   // runApp(MyApp(theme: theme, cameras: cameras));
-    // });
-  } // else {
   runApp(
-    
     MultiProvider(
-      
       providers: [
         Provider<AuthentificationRemoteDataSourceImpl>(
             create: (_) => AuthentificationRemoteDataSourceImpl(
@@ -95,7 +66,6 @@ void main() async {
         ),
 
         //ChangeNotifierProvider(create: (_) => Global()),
-
       ],
       child: MyApp(theme: theme, cameras: cameras),
     ),
@@ -114,7 +84,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp.router(
       routerConfig: Routes().router,
       debugShowCheckedModeBanner: false,
