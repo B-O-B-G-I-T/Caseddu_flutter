@@ -189,6 +189,7 @@ class _ImagePickerState extends State<MyImagePicker> {
           type: 'image',
           sendOrReceived: 'Send',
           timestamp: timestamp,
+          ack: 0,
         );
         if (widget.device.state == SessionState.notConnected) {
           await widget.chatProvider.connectToDevice(widget.device);

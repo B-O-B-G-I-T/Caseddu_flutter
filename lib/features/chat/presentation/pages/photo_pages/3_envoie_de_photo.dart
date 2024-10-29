@@ -168,6 +168,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                 type: 'pictureTaken',
                 sendOrReceived: 'send',
                 timestamp: timestamp,
+                ack: 0,
               );
               await chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
             }

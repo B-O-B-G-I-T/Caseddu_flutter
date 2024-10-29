@@ -10,15 +10,8 @@ class ChatMessageModel extends ChatMessageEntity {
     required super.message,
     required super.images,
     required super.type,
+    required super.ack,
   });
-
-  // set setSender(String setSender) {
-  //   sender = setSender;
-  // }
-
-  // set setReceiver(String newReceiver) {
-  //   receiver = newReceiver;
-  // }
 
   toJson() => {
         'id': id,
@@ -28,6 +21,7 @@ class ChatMessageModel extends ChatMessageEntity {
         'message': message,
         'images': images,
         'type': type,
+        'ack': ack,
       };
   @override
   String toString() => {
@@ -37,6 +31,7 @@ class ChatMessageModel extends ChatMessageEntity {
         'message': message,
         'images': images,
         'type': type,
+        'ack': ack, 
       }.toString();
 
   factory ChatMessageModel.fromJson({required Map<String, dynamic> json}) {
@@ -48,23 +43,25 @@ class ChatMessageModel extends ChatMessageEntity {
       images: json['images'],
       timestamp: DateTime.parse(json['timestamp']),
       type: json['type'],
+      ack: json['ack'],
     );
 
     return message;
   }
-  ChatMessageParams toChatMessageParams({required ChatMessageModel chatMessageModel}) {
-    var message = ChatMessageParams(
-      id: chatMessageModel.id,
-      sender: chatMessageModel.sender,
-      receiver: chatMessageModel.receiver,
-      message: chatMessageModel.message,
-      images: chatMessageModel.images,
-      type: chatMessageModel.type,
-      timestamp: chatMessageModel.timestamp,
-      sendOrReceived: '',
+  ChatMessageParams toChatMessageParams() {
+    final ChatMessageParams tampon = ChatMessageParams(
+      id: id,
+      sender: sender,
+      receiver: receiver,
+      message: message,
+      images: images,
+      type: type,
+      timestamp: timestamp,
+      sendOrReceived: 'Received',
+      ack: 1,
     );
 
-    return message;
+    return tampon;
   }
 
   ChatMessageEntity toEntity() {
@@ -76,6 +73,7 @@ class ChatMessageModel extends ChatMessageEntity {
       message: message,
       images: images,
       type: type,
+      ack: ack,
     );
   }
 }

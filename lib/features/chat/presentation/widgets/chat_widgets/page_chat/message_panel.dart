@@ -153,6 +153,7 @@ class _MessagePanelState extends State<MessagePanel> {
           type: 'payload',
           sendOrReceived: 'Send',
           timestamp: timestamp,
+          ack: 0,
         );
         if (widget.device.state == SessionState.notConnected && !widget.longDistance) {
           await chatProvider.connectToDevice(widget.device);

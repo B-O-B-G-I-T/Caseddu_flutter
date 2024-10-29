@@ -35,6 +35,7 @@ class ChatMessageParams {
   String images = '';
   String type = 'Payload';
   String sendOrReceived = '';
+  int ack = 0;
   DateTime timestamp = DateTime.now();
   bool broadcast = true;
   NearbyService? _nearbyService;
@@ -49,10 +50,15 @@ class ChatMessageParams {
     required this.sendOrReceived,
     required this.timestamp, 
     NearbyService? nearbyService,
+    required this.ack,
   }) : _nearbyService = nearbyService;
 
   set nearbyService(NearbyService? nearbyService) {
     _nearbyService = nearbyService;
+  }
+
+  set setAck(int value) {
+    ack = value;
   }
 
   NearbyService? get nearbyService => _nearbyService;
@@ -67,6 +73,7 @@ class ChatMessageParams {
       images: images,
       type: type,
       timestamp: timestamp,
+      ack: ack,
     );
   }
 
@@ -83,7 +90,7 @@ class ChatMessageParams {
       type: data['type'] ?? 'Payload',
       sendOrReceived: data['sendOrReceived'] ?? '',
       timestamp: DateTime.tryParse(data['timestamp'] ?? '') ?? DateTime.now(),
-      nearbyService: data['nearbyService'], // Pour NearbyService si fourni
+      nearbyService: data['nearbyService'], ack:  data['ack'] , // Pour NearbyService si fourni
     );
   }
 
@@ -100,6 +107,7 @@ class ChatMessageParams {
       'timestamp': timestamp.toIso8601String(),
       'broadcast': broadcast,
       'nearbyService': _nearbyService, // Peut nécessiter un traitement particulier
+      'ack': ack,
     };
   }
 

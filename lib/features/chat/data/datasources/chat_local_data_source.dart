@@ -22,10 +22,6 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
 
   @override
   Future<void> insertMessage({required ChatMessageModel chatMessageModel, required bool isSender}) async {
-    // final UserModel receiver = await getUserName(chatMessageModel.receiver);
-    // final UserModel sender = await getUserName(chatMessageModel.sender);
-    // chatMessageModel.setReceiver = receiver.id;
-    // chatMessageModel.setSender = sender.id;
 
     if (chatMessageModel.type == 'Image') {
       insertIntoMessagesTable(chatMessageModel, isSender);
@@ -65,25 +61,14 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
     final dbHelper = DatabaseHelper();
     List<ChatMessageModel> allChatMessages = await dbHelper.getAllChatMessages();
 
-    // for (var message in allChatMessages) {
-    //   print('Sender: ${message.sender}, Receiver: ${message.receiver}, Timestamp: ${message.timestamp}, Message: ${message.message}, Type: ${message.type}');
-    // }
-
     return allChatMessages;
   }
 
   @override
   Future<List<ChatMessageModel>> getConversation(String senderName, String receiverName) async {
     final dbHelper = DatabaseHelper();
-    // j'ai essaier de passer en id mais pas trop d'interet au final
-    //final UserModel senderId = await getUserName(senderName);
-    //final UserModel receiverId = await getUserName(receiverName);
-    //List<ChatMessageModel>? allChatMessages = await dbHelper.getConversation(senderId.id, receiverId.id);
-    List<ChatMessageModel>? allChatMessages = await dbHelper.getConversation(senderName, receiverName);
 
-    // for (var message in allChatMessages) {
-    //   print('Sender: ${message.sender}, Receiver: ${message.receiver}, Timestamp: ${message.timestamp}, Message: ${message.message}, Type: ${message.type}');
-    // }
+    List<ChatMessageModel>? allChatMessages = await dbHelper.getConversation(senderName, receiverName);
 
     return allChatMessages!;
   }
@@ -94,9 +79,7 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
 
     List<UserModel>? allChatMessages = await dbHelper.getAllConversation();
     if (allChatMessages != null) {
-      // for (var message in allChatMessages) {
-      //   print('Sender: ${message.sender}, Receiver: ${message.receiver}, Timestamp: ${message.timestamp}, Message: ${message.message}, Type: ${message.type}');
-      // }
+      
       // Parcourir la liste et ajouter f à chaque élément
       for (var user in allChatMessages) {
         ChatMessageModel? dernierMessage = await dbHelper.getLastMessage(user.id);

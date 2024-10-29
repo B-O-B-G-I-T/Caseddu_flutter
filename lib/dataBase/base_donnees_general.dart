@@ -17,7 +17,12 @@ class BaseDonneesGeneral {
     // await deleteDatabase(path);
 
     // Open/create the database at a given path
-    Database db = await openDatabase(path, version: 1, onCreate: _onCreate);
+    Database db = await openDatabase(
+      path,
+      version: 2,
+      onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
+    );
     return db;
   }
 
@@ -46,6 +51,7 @@ class BaseDonneesGeneral {
           message TEXT,
           images TEXT,
           type TEXT,
+          ack BOOLEAN DEFAULT 0,
           FOREIGN KEY (receiver) REFERENCES users(id)
         )
     ''');
@@ -61,19 +67,15 @@ class BaseDonneesGeneral {
           recurrence TEXT
         )
       ''');
+  }
 
-
-    //   await db.execute('''
-    //   CREATE TABLE conversations_messages (
-    //     id TEXT PRIMARY KEY,
-    //     title TEXT,
-    //     unreadCount INTEGER,
-    //     lastMessageId TEXT,
-    //     FOREIGN KEY (lastMessageId) REFERENCES chat_messages(id)
-    //   )
-    // ''');
-
-    // List<ChatMessageModel> messages = [];
-    // ChatMessageModel lastMessage;
+  // ------------------------ UPGRADE DATABASE ------------------------
+  static void _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Vérifiez si une mise à jour est nécessaire
+      await db.execute('''
+        ALTER TABLE chat_messages ADD COLUMN ACK BOOLEAN DEFAULT 0
+      ''');
+    }
   }
 }
