@@ -64,7 +64,7 @@ class _MessagePanelState extends State<MessagePanel> {
                   focusNode: _focusNode,
                   maxLines: null,
                   onTap: () => setState(() {
-                    _showGallery = !_showGallery;
+                    if (_showGallery) _showGallery = !_showGallery;
                   }),
                   onChanged: (value) async {
                     _showGallery = false;
@@ -145,14 +145,15 @@ class _MessagePanelState extends State<MessagePanel> {
         var timestamp = DateTime.now();
 
         ChatMessageParams chatMessageParams = ChatMessageParams(
-          msgId,
-          'bob',
-          widget.converser,
-          message,
-          '',
-          'payload',
-          'Send',
-          timestamp,
+          id: msgId,
+          sender: 'bob',
+          receiver: widget.converser,
+          message: message,
+          images: '',
+          type: 'payload',
+          sendOrReceived: 'Send',
+          timestamp: timestamp,
+          ack: 0,
         );
         if (widget.device.state == SessionState.notConnected && !widget.longDistance) {
           await chatProvider.connectToDevice(widget.device);

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 
 import '../../features/chat/data/models/chat_message_model.dart';
@@ -34,27 +35,34 @@ class ChatMessageParams {
   String images = '';
   String type = 'Payload';
   String sendOrReceived = '';
+  int ack = 0;
   DateTime timestamp = DateTime.now();
   bool broadcast = true;
   NearbyService? _nearbyService;
 
   ChatMessageParams(
-    this.id,
-    this.sender,
-    this.receiver,
-    this.message,
-    this.images,
-    this.type,
-    this.sendOrReceived,
-    this.timestamp, {
+    {required this.id,
+    required this.sender,
+    required this.receiver,
+    required this.message,
+    required this.images,
+    required this.type,
+    required this.sendOrReceived,
+    required this.timestamp, 
     NearbyService? nearbyService,
+    required this.ack,
   }) : _nearbyService = nearbyService;
 
   set nearbyService(NearbyService? nearbyService) {
     _nearbyService = nearbyService;
   }
 
+  set setAck(int value) {
+    ack = value;
+  }
+
   NearbyService? get nearbyService => _nearbyService;
+
 
   ChatMessageModel toModel() {
     return ChatMessageModel(
@@ -65,8 +73,44 @@ class ChatMessageParams {
       images: images,
       type: type,
       timestamp: timestamp,
+      ack: ack,
     );
   }
+
+
+  // Factory pour créer une instance de ChatMessageParams depuis une Map
+  factory ChatMessageParams.fromMap(Map<String, dynamic> data) {
+    
+    return ChatMessageParams(
+      id:data['id'] ?? '',
+      sender: data['sender'] ?? '',
+      receiver: data['receiver'] ?? '',
+      message : data['message'] ?? '',
+      images: data['images'] ?? '',
+      type: data['type'] ?? 'Payload',
+      sendOrReceived: data['sendOrReceived'] ?? '',
+      timestamp: DateTime.tryParse(data['timestamp'] ?? '') ?? DateTime.now(),
+      nearbyService: data['nearbyService'], ack:  data['ack'] , // Pour NearbyService si fourni
+    );
+  }
+
+  // Méthode pour convertir l'objet en Map, utile pour le stockage
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'sender': sender,
+      'receiver': receiver,
+      'message': message,
+      'images': images,
+      'type': type,
+      'sendOrReceived': sendOrReceived,
+      'timestamp': timestamp.toIso8601String(),
+      'broadcast': broadcast,
+      'nearbyService': _nearbyService, // Peut nécessiter un traitement particulier
+      'ack': ack,
+    };
+  }
+
 }
 
 // class EventParams {

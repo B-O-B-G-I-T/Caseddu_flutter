@@ -107,6 +107,7 @@ class _ChatPageState extends State<ChatPage> {
                                       itemCount: messageList.length,
                                       itemBuilder: (BuildContext context, int index) {
                                         // début de la structure des messages
+                                        final message = messageList[index];
                                         final bool isMe = messageList[index].sender != myName;
 
                                         return IntrinsicHeight(
@@ -130,20 +131,20 @@ class _ChatPageState extends State<ChatPage> {
                                                         children: [
                                                           receptionOuEnvoi(widget.converser, isMe),
                                                           // date de reception
-                                                          dateDuMessage(messageList[index].timestamp.toString()),
+                                                          dateDuMessage(message.timestamp.toString()),
                                                         ],
                                                       ),
                                                       const SizedBox(
                                                         height: 5,
                                                       ),
                                                       // texte ou image
-                                                      if (messageList[index].images != '')
-                                                        AllPreviewPictureChatWidget(messageList: messageList[index])
+                                                      if (message.images != '')
+                                                        AllPreviewPictureChatWidget(messageList: message)
                                                       else
                                                         Text(
-                                                          messageList[index].message,
+                                                          message.message,
                                                           textAlign: TextAlign.left,
-                                                          style: const TextStyle(color: Colors.black, fontSize: 14),
+                                                          style: TextStyle(color: message.ack==1 ? Colors.black : Colors.grey, fontSize: 14),
                                                         ),
                                                     ],
                                                   ),
@@ -159,6 +160,7 @@ class _ChatPageState extends State<ChatPage> {
                               ),
                             ),
                     ),
+                    // TODO: ferlmer le clavier lorsque l'on remonte la liste
                     SafeArea(
                       child: MessagePanel(
                         converser: widget.converser,

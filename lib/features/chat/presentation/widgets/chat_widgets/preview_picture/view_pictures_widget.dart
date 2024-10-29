@@ -8,8 +8,7 @@ Widget viewPicturesWidget({required BuildContext context, required List<String> 
     children: pictures.map((picture) {
       return GestureDetector(
         onTap: () {
-          // Afficher l'image en grand
-          //_showFullScreenImage(context, picture);
+          // Navigue vers l'affichage plein écran de l'image
           context.push(
             '/fullScreenImage/:filePath',
             extra: picture,
@@ -18,9 +17,25 @@ Widget viewPicturesWidget({required BuildContext context, required List<String> 
         child: SizedBox(
           width: 100, // Largeur maximale pour chaque image
           height: 200, // Hauteur maximale pour chaque image
-          child: FittedBox(
-            fit: BoxFit.contain, // Ajuste l'image pour remplir le conteneur tout en conservant les proportions
-            child: Image.asset(picture),
+          child: FutureBuilder(
+            future: precacheImage(AssetImage(picture), context),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                // Affiche un overlay pendant le chargement de l'image
+                return Container(
+                  color: Colors.black26,
+                  width: 100,
+                  height: 200,
+                  child: const Center(child: CircularProgressIndicator()),
+                );
+              } else {
+                // Affiche l'image une fois qu'elle est chargée
+                return FittedBox(
+                  fit: BoxFit.contain, // Ajuste l'image pour remplir le conteneur tout en conservant les proportions
+                  child: Image.asset(picture),
+                );
+              }
+            },
           ),
         ),
       );

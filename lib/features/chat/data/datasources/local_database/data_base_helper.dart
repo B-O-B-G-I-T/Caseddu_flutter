@@ -55,6 +55,7 @@ class DatabaseHelper {
     final db = await BaseDonneesGeneral.database;
     await db.delete('users', where: 'id = ?', whereArgs: [userId]);
   }
+
 // ------------------------ CHAT MESSAGES ------------------------
   Future<List<ChatMessageModel>> getAllChatMessages() async {
     final db = await BaseDonneesGeneral.database;
@@ -80,6 +81,7 @@ class DatabaseHelper {
         message: chatMessage.message,
         images: chatMessage.images,
         type: chatMessage.type,
+        ack: chatMessage.ack,
       );
     } else {
       UserModel user = await controlUtilisateur(chatMessage.sender);
@@ -91,6 +93,7 @@ class DatabaseHelper {
         message: chatMessage.message,
         images: chatMessage.images,
         type: chatMessage.type,
+        ack: chatMessage.ack,
       );
     }
 
@@ -128,12 +131,13 @@ class DatabaseHelper {
       return List.generate(maps.length, (index) {
         return ChatMessageModel(
           id: maps[index]['id'],
-          sender: maps[index]['sender'],
-          receiver: maps[index]['receiver'],
+          sender: maps[index]['sender'].toString(),
+          receiver: maps[index]['receiver'].toString(),
           timestamp: DateTime.parse(maps[index]['timestamp']),
           message: maps[index]['message'],
           images: maps[index]['images'],
           type: maps[index]['type'],
+          ack: maps[index]['ack'],
         );
       });
     } else {
@@ -159,6 +163,7 @@ class DatabaseHelper {
     final db = await BaseDonneesGeneral.database;
     await db.delete('chat_messages', where: 'sender = ? OR receiver = ?', whereArgs: [userId, userId]);
   }
+
 // ------------------------ GENERIC ------------------------
   Future<List<Map<String, dynamic>>> query(String table) async {
     Database dbClient = await BaseDonneesGeneral.database;

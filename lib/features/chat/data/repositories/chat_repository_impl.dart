@@ -46,9 +46,6 @@ class ChatRepositoryImpl implements ChatRepository {
     } catch (e) {
       return Left(ServerFailure(errorMessage: e.toString()));
     }
-    // } else {
-    //   return Left(ServerFailure(errorMessage: "Erreur connection"));
-    // }
   }
 
   @override
@@ -61,9 +58,6 @@ class ChatRepositoryImpl implements ChatRepository {
     } catch (e) {
       return Left(ServerFailure(errorMessage: e.toString()));
     }
-    // } else {
-    //   return Left(ServerFailure(errorMessage: "Erreur connection"));
-    // }
   }
 
   @override
@@ -76,8 +70,7 @@ class ChatRepositoryImpl implements ChatRepository {
         chatMessageModel = await remoteDataSource.sentToConversations(chatMessageParams: chatMessageParams);
         final File image = await Utils.base64StringToImage(imagebites);
         chatMessageModel.images = image.path;
-        //chatMessageModel.images = Utils.base64StringToImage(imagePath);
-        await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
+
         // image envoyer avec la galerie
       } else if (chatMessageParams.type == 'image') {
         String imagePath = chatMessageParams.images;
@@ -86,15 +79,12 @@ class ChatRepositoryImpl implements ChatRepository {
         chatMessageModel = await remoteDataSource.sentToConversations(chatMessageParams: chatMessageParams);
 
         chatMessageModel.images = imagePath;
-
-        await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
       }
       // message envoyer avec du text
       else {
         chatMessageModel = await remoteDataSource.sentToConversations(chatMessageParams: chatMessageParams);
-        await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
       }
-
+      await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: true);
       return Right(chatMessageModel);
     } on ServerException {
       return Left(ServerFailure(errorMessage: 'This is a server exception'));
@@ -106,15 +96,13 @@ class ChatRepositoryImpl implements ChatRepository {
     //if (await networkInfo.isConnected!) {
     try {
       ChatMessageModel chatMessageModel = chatMessageParams.toModel();
-      await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: false);
+      bool isSender = chatMessageParams.sendOrReceived == 'Send';
+      await localDataSource.insertMessage(chatMessageModel: chatMessageModel, isSender: isSender);
 
       return Right(chatMessageModel);
     } catch (e) {
       return Left(ServerFailure(errorMessage: e.toString()));
     }
-    // } else {
-    //   return Left(ServerFailure(errorMessage: "Erreur connection"));
-    // }
   }
 
   @override
