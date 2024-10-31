@@ -1,6 +1,5 @@
 // ignore_for_file: depend_on_referenced_packages, avoid_print
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:camera/camera.dart';
@@ -8,8 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image/image.dart' as IMG;
-import 'package:path/path.dart' show join;
-import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../widgets/camera_widgets/background_buttons_widget.dart';
 import '../../widgets/chat_widgets/page_chat/loader_for_chat.dart';
@@ -33,12 +30,12 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     ),
     ResolutionPreset.medium,
     imageFormatGroup: ImageFormatGroup.yuv420,
+
     //fps: 30,
   );
   Future<void>? initialiseControllerFuture;
   int _selecteCameraIndex = -1;
-  String _lastImage = '';
-  // bool _loading = true;
+
   bool _flashFront = false;
   bool _isCameraPermissionGranted = false;
 
@@ -122,24 +119,10 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     try {
       await initialiseControllerFuture;
 
-      String cheminVersImage = join(
-        (await getApplicationDocumentsDirectory()).path,
-        '${DateTime.now().millisecondsSinceEpoch}.jpg',
-      );
-
       final XFile file = await _cameraController.takePicture();
-      //await file.saveTo(cheminVersImage);
-      // print(_cameraController.value.previewSize);
-
+      
       final croppedFile = cropImageToScreenSizeInIsolate(file, context);
 
-      //final croppedFile = await _cropImageToScreenSizeWithImage(file, context);
-      //String? croppedImagePath = await cropImageToScreenSize(file, context);
-      //print(croppedFile!.path);
-      // setState(() {
-      //   _lastImage = croppedFile!.path;
-      //   //_lastImage = croppedImagePath!;
-      // });
     } catch (e) {
       print('Erreur lors de la capture de la photo : $e');
     }
@@ -179,7 +162,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       receivePort.close(); // Ferme le port une fois terminé
     });
     // Passe le `Completer` à la page suivante
-    context.push('/PrisePhoto2/:filePath', extra: completer);
+    context.push('/PrisePhoto/:filePath', extra: completer);
   }
 
 // Fonction pour recadrer l'image selon la taille de l'écran DONN2 PAR LE TYPE DE GIT
@@ -289,9 +272,6 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
   Future<void> _cameraToggle() async {
     setState(() {
-      if (_lastImage != '') {
-        _lastImage = '';
-      }
       if (_selecteCameraIndex > -1) {
         if (_selecteCameraIndex == 0) {
           _selecteCameraIndex = 1;
@@ -615,18 +595,11 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                   // ignore: use_build_context_synchronously
                   XFile file = XFile('/Users/bobsmac/Desktop/Caseddu_flutter/assets/images/femmephoto.jpg');
 
-                  // final croppedFile = await _cropImageToScreenSizeWithImage(file, context);
-                  // setState(() {
-                  //   _lastImage = croppedFile!.path;
-                  // });
-                  // context.push('/PrisePhoto2/:filePath', extra: _lastImage);
                   final croppedFile = cropImageToScreenSizeInIsolate(file, context);
 
-                  _lastImage = '';
                 } else {
                   await _prendrePhoto();
-                  //context.push('/PrisePhoto/:filePath', extra: _lastImage);
-                  //_lastImage = '';
+                  
                 }
               }),
         ),

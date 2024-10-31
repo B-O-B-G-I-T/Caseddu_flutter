@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../widgets/camera_widgets/modifier_picture_widget.dart';
 
-class PrisePhoto2 extends StatefulWidget {
-  const PrisePhoto2({super.key, required this.lastImageCompleter});
+class PrisePhoto extends StatefulWidget {
+  const PrisePhoto({super.key, required this.lastImageCompleter});
   final Completer<String?> lastImageCompleter;
 
   @override
-  State<PrisePhoto2> createState() => _PrisePhotoState();
+  State<PrisePhoto> createState() => _PrisePhotoState();
 }
 
-class _PrisePhotoState extends State<PrisePhoto2> {
+class _PrisePhotoState extends State<PrisePhoto> {
   double _dragExtent = 0.0; 
  // Variable pour suivre l'étendue du glissement
   double _dragText = 0.0; 
