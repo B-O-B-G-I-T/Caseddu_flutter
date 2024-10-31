@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages, avoid_print
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:camera/camera.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image/image.dart' as IMG;
-import 'package:image_cropper/image_cropper.dart';
 import 'package:path/path.dart' show join;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -129,67 +129,57 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
       final XFile file = await _cameraController.takePicture();
       //await file.saveTo(cheminVersImage);
-      print(_cameraController.value.previewSize);
+      // print(_cameraController.value.previewSize);
 
-      final croppedFile = await _cropImageToScreenSizeWithImage(file, context);
+      final croppedFile = cropImageToScreenSizeInIsolate(file, context);
+
+      //final croppedFile = await _cropImageToScreenSizeWithImage(file, context);
       //String? croppedImagePath = await cropImageToScreenSize(file, context);
       //print(croppedFile!.path);
-      setState(() {
-        _lastImage = croppedFile!.path;
-        //_lastImage = croppedImagePath!;
-      });
+      // setState(() {
+      //   _lastImage = croppedFile!.path;
+      //   //_lastImage = croppedImagePath!;
+      // });
     } catch (e) {
       print('Erreur lors de la capture de la photo : $e');
     }
   }
 
-// Fonction pour recadrer l'image selon la taille de l'écran MADE BY CHAT
-  Future<File?> _cropImageToScreenSize(XFile imageFile, BuildContext context) async {
-    // Lire l'image en bytes
-    final imageBytes = await imageFile.readAsBytes();
-    IMG.Image? originalImage = IMG.decodeImage(imageBytes);
+//! ISOLATE
+  Future<void> cropImageToScreenSizeInIsolate(XFile file, BuildContext context) async {
+    final completer = Completer<String?>();
+    // Port pour recevoir le résultat
+    final receivePort = ReceivePort();
+    // récupère la taille de l'écran
+    final screenSize = MediaQuery.of(context).size;
+    final double screenWidth = screenSize.width + 45;
+    final double screenHeight = screenSize.height;
+    // file
+    final String path = file.path;
 
-    if (originalImage != null) {
-      // Obtenir les dimensions de l'écran
-      final screenSize = MediaQuery.of(context).size;
-      final screenWidth = screenSize.width + 45;
-      final screenHeight = screenSize.height;
+    // Lance l'Isolate
+    await Isolate.spawn<Map<String, dynamic>>(
+      _cropImageToScreenSizeInIsolateWithPort,
+      {
+        'sendPort': receivePort.sendPort,
+        'screenWidth': screenWidth,
+        'screenHeight': screenHeight,
+        'path': path,
+      },
+    );
 
-      // Calculer le ratio d'aspect de l'écran (width/height)
-      double screenAspectRatio = screenWidth / screenHeight;
-
-      // Ratio d'aspect de l'image capturée (width/height)
-      double imageAspectRatio = originalImage.width / originalImage.height;
-
-      int cropWidth, cropHeight;
-
-      // Si le ratio d'aspect de l'image est plus large que l'écran
-      if (imageAspectRatio > screenAspectRatio) {
-        cropHeight = originalImage.height;
-        cropWidth = (cropHeight * screenAspectRatio).toInt();
-      } else {
-        cropWidth = originalImage.width;
-        cropHeight = (cropWidth / screenAspectRatio).toInt();
+    // Écoute les messages de l’isolate
+    receivePort.listen((message) {
+      if (message is String) {
+        // Vérifie si l'isolate a envoyé un message d’erreur
+        completer.completeError("Erreur lors du recadrage de l'image.");
+      } else if (message is File) {
+        completer.complete(message.path); // Passe le chemin du fichier recadré
       }
-
-      // Calcul du décalage pour centrer l'image recadrée
-      int xOffset = (originalImage.width - cropWidth) ~/ 2;
-      int yOffset = (originalImage.height - cropHeight) ~/ 2;
-
-      // Recadrer l'image selon le ratio d'aspect
-      IMG.Image croppedImage = IMG.copyCrop(
-        originalImage,
-        x: xOffset,
-        y: yOffset,
-        width: cropWidth,
-        height: cropHeight,
-      );
-
-      // Enregistrer l'image recadrée
-      final croppedImageFile = await File(imageFile.path).writeAsBytes(IMG.encodeJpg(croppedImage));
-      return croppedImageFile;
-    }
-    return null;
+      receivePort.close(); // Ferme le port une fois terminé
+    });
+    // Passe le `Completer` à la page suivante
+    context.push('/PrisePhoto2/:filePath', extra: completer);
   }
 
 // Fonction pour recadrer l'image selon la taille de l'écran DONN2 PAR LE TYPE DE GIT
@@ -251,83 +241,6 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       return croppedImageFile;
     }
     return null;
-  }
-
-// Fonction qui gère l'isolate
-  Future<String?> cropImageToScreenSize(XFile imageFile, BuildContext context) async {
-    try {
-      // Lire l'image en bytes
-      final imageBytes = await imageFile.readAsBytes();
-
-      // Obtenir les dimensions de l'écran
-      final screenSize = MediaQuery.of(context).size;
-      final screenWidth = screenSize.width;
-      final screenHeight = screenSize.height;
-
-      // Calculer le ratio d'aspect de l'écran (width/height)
-      double screenAspectRatio = screenWidth / screenHeight;
-
-      // Créer des paramètres pour l'isolate
-      final params = {
-        'imageBytes': imageBytes,
-        'screenAspectRatio': screenAspectRatio,
-      };
-
-      // Utiliser Isolate pour effectuer le traitement dans un thread séparé
-      final String croppedImagePath = await compute(_cropImageInIsolate, params);
-
-      // Retourner le chemin de l'image recadrée
-      return croppedImagePath;
-    } catch (e) {
-      print("Erreur lors du recadrage de l'image : $e");
-      return null;
-    }
-  }
-
-// Fonction qui sera exécutée dans l'isolate
-  Future<String> _cropImageInIsolate(Map<String, dynamic> params) async {
-    final Uint8List imageBytes = params['imageBytes'];
-    final double screenAspectRatio = params['screenAspectRatio'];
-
-    // Décoder l'image
-    IMG.Image? originalImage = IMG.decodeImage(imageBytes);
-    if (originalImage == null) {
-      throw Exception("Impossible de décoder l'image");
-    }
-
-    // Calculer les dimensions pour recadrer l'image
-    int cropWidth, cropHeight;
-    double imageAspectRatio = originalImage.width / originalImage.height;
-
-    if (imageAspectRatio > screenAspectRatio) {
-      cropHeight = originalImage.height;
-      cropWidth = (cropHeight * screenAspectRatio).toInt();
-    } else {
-      cropWidth = originalImage.width;
-      cropHeight = (cropWidth / screenAspectRatio).toInt();
-    }
-
-    int xOffset = (originalImage.width - cropWidth) ~/ 2;
-    int yOffset = (originalImage.height - cropHeight) ~/ 2;
-
-    // Recadrer l'image
-    IMG.Image croppedImage = IMG.copyCrop(
-      originalImage,
-      x: xOffset,
-      y: yOffset,
-      width: cropWidth,
-      height: cropHeight,
-    );
-
-    // Enregistrer l'image recadrée dans un fichier temporaire
-    final directory = await getTemporaryDirectory();
-    String filePath = join(directory.path, '${DateTime.now().millisecondsSinceEpoch}.jpg');
-    File imageFile = File(filePath);
-
-    await imageFile.writeAsBytes(IMG.encodeJpg(croppedImage));
-
-    // Retourner le chemin du fichier
-    return filePath;
   }
 
   Future<void> getAllPermission() async {
@@ -650,7 +563,6 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
           icon: Icons.camera,
           onTap: () async {
             // Action pour Option 1
-            print(await compute(testFunction, ""));
           },
         ),
         extraButton(
@@ -702,33 +614,90 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                 if (widget.cameras.isEmpty) {
                   // ignore: use_build_context_synchronously
                   XFile file = XFile('/Users/bobsmac/Desktop/Caseddu_flutter/assets/images/femmephoto.jpg');
-                  //final croppedFile = await _cropImageToScreenSize(file, context);
-                  //context.push('/PrisePhoto/:filePath', extra: "/Users/bobsmac/Desktop/Caseddu_flutter/assets/images/femmephoto.jpg");
 
-                  final croppedFile = await _cropImageToScreenSizeWithImage(file, context);
-                  setState(() {
-                    _lastImage = croppedFile!.path;
-                  });
-                  context.push('/PrisePhoto/:filePath', extra: _lastImage);
+                  // final croppedFile = await _cropImageToScreenSizeWithImage(file, context);
+                  // setState(() {
+                  //   _lastImage = croppedFile!.path;
+                  // });
+                  // context.push('/PrisePhoto2/:filePath', extra: _lastImage);
+                  final croppedFile = cropImageToScreenSizeInIsolate(file, context);
+
                   _lastImage = '';
                 } else {
-                  // ignore: use_build_context_synchronously
-
                   await _prendrePhoto();
-                  context.push('/PrisePhoto/:filePath', extra: _lastImage);
-                  _lastImage = '';
+                  //context.push('/PrisePhoto/:filePath', extra: _lastImage);
+                  //_lastImage = '';
                 }
               }),
         ),
       ),
     );
   }
+}
 
-  Future<String> testFunction(String s) async {
-    Timer timer = Timer(const Duration(seconds: 15), () {
-      print("Finished");
-    }); // Timer
-    await Future.delayed(const Duration(seconds: 15));
-    return "Anything";
+// Fonction pour recadrer l'image selon la taille de l'écran DONN2 PAR LE TYPE DE GIT
+Future<void> _cropImageToScreenSizeInIsolateWithPort(Map<String, dynamic> arguments) async {
+  // print("L'Isolate de recadrage d'image a commencé à tourner.");
+  final SendPort sendPort = arguments['sendPort'];
+  final double screenWidth = arguments['screenWidth'];
+  final double screenHeight = arguments['screenHeight'];
+
+  final String path = arguments['path'];
+
+  // file
+  final Uint8List capturedImgBytes = await File(path).readAsBytes();
+
+  IMG.Image? img = IMG.decodeImage(capturedImgBytes);
+
+  if (img != null) {
+    // Calculer le ratio d'aspect de l'écran (width/height)
+    double aspectRatio = screenWidth / screenHeight;
+
+    // Ratio d'aspect de l'image capturée (width/height)
+    double cameraRatio = aspectRatio; // Remplacer selon tes besoins réels si nécessaire
+
+    int oldWidth = img.width;
+    int oldHeight = img.height;
+
+    /// Bug-Fix: Camera has a wrong orientation when the flash is activated
+    if (oldHeight / oldWidth == cameraRatio) {
+      img = IMG.copyRotate(img, angle: 90);
+      oldWidth = img.width;
+      oldHeight = img.height;
+    }
+
+    double newWidth = oldWidth.toDouble();
+    double newHeight = oldHeight.toDouble();
+
+    double x = 0;
+    double y = 0;
+
+    if (aspectRatio <= cameraRatio) {
+      newWidth = oldHeight * aspectRatio;
+      x = (oldWidth - newWidth) / 2;
+    } else {
+      newHeight = oldWidth / aspectRatio;
+      y = (oldHeight - newHeight) / 2;
+    }
+
+    // Recadrer l'image selon le ratio d'aspect
+    IMG.Image croppedImage = IMG.copyCrop(
+      img,
+      x: x.toInt(),
+      y: y.toInt(),
+      width: newWidth.toInt(),
+      height: newHeight.toInt(),
+    );
+
+    // Appliquer l'orientation de l'image après recadrage
+    croppedImage = IMG.bakeOrientation(croppedImage);
+
+    // Enregistrer l'image recadrée
+    final croppedImageFile = await File(path).writeAsBytes(IMG.encodeJpg(croppedImage));
+    print(croppedImageFile.path);
+    // Envoie le résultat à l'Isolate parent
+    sendPort.send(croppedImageFile);
+    //sendPort.send(null);
   }
+  sendPort.send('lose');
 }

@@ -81,7 +81,6 @@ class MyApp extends StatelessWidget {
 
   const MyApp({Key? key, required this.theme, required this.cameras}) : super(key: key);
   // This widget is the root of your application.
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
