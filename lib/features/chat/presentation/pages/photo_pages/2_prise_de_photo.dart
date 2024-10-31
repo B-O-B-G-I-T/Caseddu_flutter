@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -13,10 +12,10 @@ class PrisePhoto extends StatefulWidget {
 }
 
 class _PrisePhotoState extends State<PrisePhoto> {
-  double _dragExtent = 0.0; 
- // Variable pour suivre l'étendue du glissement
-  double _dragText = 0.0; 
- // Variable pour suivre l'étendue du glissement
+  double _dragExtent = 0.0;
+  // Variable pour suivre l'étendue du glissement
+  double _dragText = 0.0;
+  // Variable pour suivre l'étendue du glissement
   final int _animationValue = 300;
 
   bool _isDragging = false;
@@ -24,6 +23,7 @@ class _PrisePhotoState extends State<PrisePhoto> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       extendBodyBehindAppBar: true,
       body: FutureBuilder<String?>(
         future: widget.lastImageCompleter.future,

@@ -42,6 +42,10 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   double _minAvailableZoom = 1.0;
   double _maxAvailableZoom = 1.0;
   double _startZoom = 0;
+  double _currentZoom = 1.0;
+  final double _zoomSensitivity = 50.0; // Augmenter cette valeur pour réduire la sensibilité du zoom
+  final double _maxZoomStep = 0.2; // Limiter l'amplitude de chaque mise à jour
+  final double _deadZone = 20.0; // Zone morte de
 
   bool _showExtraButtons = false; // Variable d'état pour afficher le conteneur supplémentaire
   final GlobalKey _addButtonKey = GlobalKey(); // Key pour obtenir la position du bouton "add"
@@ -120,9 +124,8 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       await initialiseControllerFuture;
 
       final XFile file = await _cameraController.takePicture();
-      
-      final croppedFile = cropImageToScreenSizeInIsolate(file, context);
 
+      final croppedFile = cropImageToScreenSizeInIsolate(file, context);
     } catch (e) {
       print('Erreur lors de la capture de la photo : $e');
     }
@@ -383,13 +386,32 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                   onDoubleTap: () {
                     _cameraToggle();
                   },
-                  onVerticalDragStart: (details) {
+                  onVerticalDragStart: (details) async {
                     _startZoom = details.globalPosition.dy;
                   },
                   onVerticalDragUpdate: (details) async {
-                    double zoomLevel = (_startZoom - details.globalPosition.dy) / 20;
-                    zoomLevel = zoomLevel.clamp(_minAvailableZoom, _maxAvailableZoom); // Limiter le zoom dans les bornes
-                    await _cameraController.setZoomLevel(zoomLevel); // Mettre à jour le niveau de zoom
+                    double dragDistance = _startZoom - details.globalPosition.dy;
+
+                    // Vérification de la zone morte
+                    if (dragDistance.abs() < _deadZone) return;
+
+                    // Ajuster la distance de glissement pour tenir compte de la zone morte
+                    double adjustedDragDistance = dragDistance - (_deadZone);
+
+                    // Appliquer une amplification quadratique pour un zoom plus rapide
+                    double zoomAdjustment = (adjustedDragDistance * 10) / _zoomSensitivity;
+
+                    // Limiter l'ajustement pour un zoom contrôlé
+                    zoomAdjustment = zoomAdjustment.clamp(-_maxZoomStep, _maxZoomStep);
+
+                    // Calcul du nouveau niveau de zoom
+                    double newZoomLevel = (_currentZoom + zoomAdjustment).clamp(_minAvailableZoom, _maxAvailableZoom);
+
+                    // Mise à jour du zoom si changement significatif
+                    if ((newZoomLevel - _currentZoom).abs() > 0.01) {
+                      await _cameraController.setZoomLevel(newZoomLevel);
+                      _currentZoom = newZoomLevel;
+                    }
                   },
                 );
               },
@@ -596,10 +618,8 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                   XFile file = XFile('/Users/bobsmac/Desktop/Caseddu_flutter/assets/images/femmephoto.jpg');
 
                   final croppedFile = cropImageToScreenSizeInIsolate(file, context);
-
                 } else {
                   await _prendrePhoto();
-                  
                 }
               }),
         ),

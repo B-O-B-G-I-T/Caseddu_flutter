@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 
 import '../../features/chat/data/models/chat_message_model.dart';
