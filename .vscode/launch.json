@@ -11,19 +11,19 @@
             "type": "dart"
         },
         {
-            "name": "Caseddu_flutter (profile mode)",
+            "name": "profile mode",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "Caseddu_flutter (release mode)",
+            "name": "release mode",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
         },
         {
-            "name": "Caseddu_flutter (debug mode)",
+            "name": "debug mode",
             "request": "launch",
             "type": "dart",
             "flutterMode": "debug"
