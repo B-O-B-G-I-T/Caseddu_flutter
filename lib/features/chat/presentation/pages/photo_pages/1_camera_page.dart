@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image/image.dart' as IMG;
+import 'package:image_cropper/image_cropper.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../widgets/camera_widgets/background_buttons_widget.dart';
 import '../../widgets/chat_widgets/page_chat/loader_for_chat.dart';
@@ -126,6 +127,25 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       final XFile file = await _cameraController.takePicture();
 
       final croppedFile = cropImageToScreenSizeInIsolate(file, context);
+
+// peut etre utilisé une solution native
+
+      // final screenSize = MediaQuery.of(context).size;
+      // final double screenWidth = screenSize.width + 45;
+      // final double screenHeight = screenSize.height;
+
+      // CroppedFile? croppedFile = await ImageCropper().cropImage(
+      // sourcePath: file.path,
+      // Set the crop area to the size of the screen
+      // aspectRatio: CropAspectRatio(
+      //   ratioX: screenWidth,
+      //   ratioY: screenHeight,
+      // ),
+      //compressFormat: ImageCompressFormat.png,
+      //compressQuality: 100,
+      // maxHeight: screenHeight.toInt(),
+      // maxWidth: screenWidth.toInt(),
+      //);
     } catch (e) {
       print('Erreur lors de la capture de la photo : $e');
     }
@@ -166,67 +186,6 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     });
     // Passe le `Completer` à la page suivante
     context.push('/PrisePhoto/:filePath', extra: completer);
-  }
-
-// Fonction pour recadrer l'image selon la taille de l'écran DONN2 PAR LE TYPE DE GIT
-  Future<File?> _cropImageToScreenSizeWithImage(XFile imageFile, BuildContext context) async {
-    // Lire l'image en bytes
-    final capturedImgBytes = await imageFile.readAsBytes();
-    IMG.Image? img = IMG.decodeImage(capturedImgBytes);
-
-    if (img != null) {
-      // Obtenir les dimensions de l'écran
-      final screenSize = MediaQuery.of(context).size;
-      final screenWidth = screenSize.width + 45;
-      final screenHeight = screenSize.height;
-
-      // Calculer le ratio d'aspect de l'écran (width/height)
-      double aspectRatio = screenWidth / screenHeight;
-
-      // Ratio d'aspect de l'image capturée (width/height)
-      double cameraRatio = aspectRatio; // Remplacer selon tes besoins réels si nécessaire
-
-      int oldWidth = img.width;
-      int oldHeight = img.height;
-
-      /// Bug-Fix: Camera has a wrong orientation when the flash is activated
-      if (oldHeight / oldWidth == cameraRatio) {
-        img = IMG.copyRotate(img, angle: 90);
-        oldWidth = img.width;
-        oldHeight = img.height;
-      }
-
-      double newWidth = oldWidth.toDouble();
-      double newHeight = oldHeight.toDouble();
-
-      double x = 0;
-      double y = 0;
-
-      if (aspectRatio <= cameraRatio) {
-        newWidth = oldHeight * aspectRatio;
-        x = (oldWidth - newWidth) / 2;
-      } else {
-        newHeight = oldWidth / aspectRatio;
-        y = (oldHeight - newHeight) / 2;
-      }
-
-      // Recadrer l'image selon le ratio d'aspect
-      IMG.Image croppedImage = IMG.copyCrop(
-        img,
-        x: x.toInt(),
-        y: y.toInt(),
-        width: newWidth.toInt(),
-        height: newHeight.toInt(),
-      );
-
-      // Appliquer l'orientation de l'image après recadrage
-      croppedImage = IMG.bakeOrientation(croppedImage);
-
-      // Enregistrer l'image recadrée
-      final croppedImageFile = await File(imageFile.path).writeAsBytes(IMG.encodeJpg(croppedImage));
-      return croppedImageFile;
-    }
-    return null;
   }
 
   Future<void> getAllPermission() async {
@@ -693,4 +652,40 @@ Future<void> _cropImageToScreenSizeInIsolateWithPort(Map<String, dynamic> argume
     //sendPort.send(null);
   }
   sendPort.send('lose');
+}
+
+Future<void> cropImageToScreenSize(Map<String, dynamic> arguments) async {
+  // Get the screen size
+  final SendPort sendPort = arguments['sendPort'];
+  final double screenWidth = arguments['screenWidth'];
+  final double screenHeight = arguments['screenHeight'];
+  final String path = arguments['path'];
+  try {
+    // Crop the image
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: path,
+      // Set the crop area to the size of the screen
+      aspectRatio: CropAspectRatio(
+        ratioX: screenWidth,
+        ratioY: screenHeight,
+      ),
+      compressFormat: ImageCompressFormat.png,
+      //compressQuality: 100,
+      maxHeight: screenHeight.toInt(),
+      maxWidth: screenWidth.toInt(),
+    );
+
+    // Save the cropped image or use it as needed
+    if (croppedFile != null) {
+      final newFilePath = await File(croppedFile.path).copy(path);
+      print('Cropped image saved to: $newFilePath');
+      sendPort.send(newFilePath.path); // Ensure to send the path string
+    } else {
+      print('Cropping failed: croppedFile is null');
+      sendPort.send('Cropping failed');
+    }
+  } catch (e) {
+    print('Error during cropping: $e');
+    sendPort.send('Error: $e');
+  }
 }
