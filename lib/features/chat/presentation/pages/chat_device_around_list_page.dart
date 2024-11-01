@@ -9,15 +9,15 @@ import '../widgets/P2P_widgets/search_widget.dart';
 
 enum DeviceType { advertiser, browser }
 
-class DevicesListPage extends StatefulWidget {
-  const DevicesListPage({Key? key, required this.deviceType}) : super(key: key);
+class ChatDeviceAroundList extends StatefulWidget {
+  const ChatDeviceAroundList({Key? key, required this.deviceType}) : super(key: key);
   final DeviceType deviceType;
 
   @override
-  State<DevicesListPage> createState() => _DevicesListPage();
+  State<ChatDeviceAroundList> createState() => _ChatDeviceAroundList();
 }
 
-class _DevicesListPage extends State<DevicesListPage> {
+class _ChatDeviceAroundList extends State<ChatDeviceAroundList> {
   late ChatProvider chatProvider;
   final TextEditingController _searchController = TextEditingController();
   List<Device> deviceApproximite = [];

@@ -9,14 +9,14 @@ import 'package:caseddu/features/chat/presentation/providers/chat_provider.dart'
 import 'package:caseddu/features/chat/presentation/widgets/P2P_widgets/list_tile_pour_utilisateur_connu.dart';
 import 'package:caseddu/features/chat/presentation/widgets/P2P_widgets/search_widget.dart';
 
-class ListeDesChatsPage extends StatefulWidget {
-  const ListeDesChatsPage({Key? key}) : super(key: key);
+class ChatKnownListPage extends StatefulWidget {
+  const ChatKnownListPage({Key? key}) : super(key: key);
 
   @override
-  State<ListeDesChatsPage> createState() => _ListeDesChatsPageState();
+  State<ChatKnownListPage> createState() => _ChatKnownListPageState();
 }
 
-class _ListeDesChatsPageState extends State<ListeDesChatsPage> {
+class _ChatKnownListPageState extends State<ChatKnownListPage> {
   final TextEditingController _searchController = TextEditingController();
   late ChatProvider chatProvider;
   List<UserEntity> allConversations = [];

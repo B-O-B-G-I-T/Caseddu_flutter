@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/chat_provider.dart';
-import 'chat_list_device_page.dart';
-import 'liste_des_chats.dart';
+import 'chat_device_around_list_page.dart';
+import 'chat_known_list_page.dart';
 
 class ChatHomeScreen extends StatefulWidget {
   const ChatHomeScreen({super.key});
@@ -35,32 +35,17 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-
     chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    //chatProvider.eitherFailureOrInit();
     _tabController = TabController(vsync: this, length: myTabs.length);
-    // init(context);
-    // refreshMessages();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // readAllUpdateConversation(context);
-    // init(context);
   }
 
-  /// When the messaging is done, the services
-  /// or the subscrption needs to be closed
-  /// Hence the deviceSubscription stream is cancelled.
-  /// Also the nearby services are stopped.
   @override
   void dispose() {
-    //Global.deviceSubscription!.cancel();
-    //Global.receivedDataSubscription!.cancel();
-    //Global.nearbyService!.stopBrowsingForPeers();
-    //Global.nearbyService!.stopAdvertisingPeer();
-
     _tabController.dispose();
     super.dispose();
   }
@@ -82,10 +67,10 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> with SingleTickerProvid
         body: TabBarView(
           controller: _tabController,
           children: const [
-            DevicesListPage(
+            ChatDeviceAroundList(
               deviceType: DeviceType.browser,
             ),
-            ListeDesChatsPage(),
+            ChatKnownListPage(),
           ],
         ),
       ),
