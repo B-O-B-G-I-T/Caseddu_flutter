@@ -60,6 +60,7 @@ class ChatProvider extends ChangeNotifier {
       },
       (NearbyService nearbyService) {
         controlerDevice = nearbyService;
+
         checkDevices(nearbyService);
         checkReceiveData(nearbyService);
         failure = null;
@@ -71,6 +72,7 @@ class ChatProvider extends ChangeNotifier {
   //--------------- Reception des connections
   StreamSubscription checkDevices(NearbyService nearbyService) {
     return nearbyService.stateChangedSubscription(callback: (devicesList) {
+      
       for (var element in devicesList) {
         if (Platform.isAndroid) {
           if (element.state == SessionState.connected) {
@@ -97,10 +99,10 @@ class ChatProvider extends ChangeNotifier {
         if (data['message'].startsWith("ACK ")) {
           // Enregistre le message dans la base de données
           final String messageId = data['message'].substring(4);
-            final ChatMessageEntity messageACK = chat.firstWhere(
+          final ChatMessageEntity messageACK = chat.firstWhere(
             (element) => element.id == messageId,
-            );
-            messageACK.ack = 1;
+          );
+          messageACK.ack = 1;
 
           await eitherFailureOrEnregistreMessage(
             chatMessageParams: messageACK.toParamsAKC(),

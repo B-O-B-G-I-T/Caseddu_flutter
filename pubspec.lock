@@ -398,10 +398,11 @@ packages:
   flutter_nearby_connections:
     dependency: "direct main"
     description:
-      name: flutter_nearby_connections
-      sha256: f2003fde3df5d99ce15693b1603de168f66a2e7c50b84786191236cc32e3afdc
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "2f4747648a2fb6a4b6a9e171051988e77373ee4a"
+      url: "https://github.com/B-O-B-G-I-T/flutter_nearby_connections.git"
+    source: git
     version: "1.1.2"
   flutter_plugin_android_lifecycle:
     dependency: transitive

@@ -84,7 +84,11 @@ dependencies:
   photo_manager: ^3.3.0
   
   # peer-to-peer
-  flutter_nearby_connections: ^1.1.2
+  flutter_nearby_connections:
+    git:
+      url: https://github.com/B-O-B-G-I-T/flutter_nearby_connections.git
+  
+  #flutter_nearby_connections: ^1.1.2
   
   # pour les taches de fond
   #workmanager: ^0.5.2

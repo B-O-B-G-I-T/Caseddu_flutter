@@ -25,7 +25,6 @@ class _ChatDeviceAroundList extends State<ChatDeviceAroundList> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -52,18 +51,6 @@ class _ChatDeviceAroundList extends State<ChatDeviceAroundList> {
               },
               searchController: _searchController,
             ),
-            // user de test d'affichage
-            // MaterialButton(
-            //   onPressed: () {
-            //     // TODO : faire avec goRouter
-            //     Navigator.of(context).push(
-            //       MaterialPageRoute(
-            //         builder: (context) => const ChatPage(converser: "testChatPage"),
-            //       ),
-            //     );
-            //   },
-            //   child: const Text("test chatPage"),
-            // ),
             DevicesListWidget(
               devices: deviceApproximiteFilter,
               onDeviceTap: (device) {
@@ -82,10 +69,10 @@ class DevicesListWidget extends StatelessWidget {
   final Function(Device) onDeviceTap;
 
   const DevicesListWidget({
-    Key? key,
+    super.key,
     required this.devices,
     required this.onDeviceTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
