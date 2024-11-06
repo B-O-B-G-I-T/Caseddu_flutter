@@ -282,7 +282,6 @@ class DeviceListItem extends StatelessWidget {
               children: [
                 ConnectionButton(
                   device: device,
-
                 ),
                 RoundCheckbox(
                   value: isSelected,

@@ -84,8 +84,6 @@ class ChatProvider extends ChangeNotifier {
 
       updateDevices(devicesList);
       updateConnectedDevices(devicesList.where((d) => d.state == SessionState.connected).toList());
-
-      // print(devicesList.map((device) => {'deviceId': device.deviceId, 'deviceName': device.deviceName, 'state': device.state}).toList());
       notifyListeners();
     });
   }
