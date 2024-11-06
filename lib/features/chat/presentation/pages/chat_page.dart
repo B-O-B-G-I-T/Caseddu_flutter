@@ -5,10 +5,9 @@ import '../../../../core/utils/p2p/fonctions.dart';
 import '../../domain/entities/chat_message_entity.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/P2P_widgets/connection_button.dart';
-import '../widgets/chat_widgets/preview_picture/all_preview_picture_widget.dart';
+import '../widgets/chat_widgets/page_chat/chat_Bubble_widget.dart';
 import '../widgets/chat_widgets/page_chat/message_panel.dart';
 import '../widgets/chat_widgets/page_chat/lost_connexion_widget.dart';
-import '../widgets/chat_widgets/page_chat/utils_widgets.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key, required this.converser});
@@ -24,7 +23,6 @@ class _ChatPageState extends State<ChatPage> {
   List<ChatMessageEntity> messageList = [];
   late Device? device;
   TextEditingController myController = TextEditingController();
-  bool longDistance = false;
   late String myName = '';
   late ChatProvider chatProvider;
 
@@ -68,7 +66,6 @@ class _ChatPageState extends State<ChatPage> {
           actions: [
             ConnectionButton(
               device: device!,
-              longDistance: longDistance,
             ),
           ],
           bottom: PreferredSize(
@@ -102,6 +99,7 @@ class _ChatPageState extends State<ChatPage> {
                                     ListView.builder(
                                       // Builder to view messages chronologically
                                       shrinkWrap: true,
+
                                       physics: const NeverScrollableScrollPhysics(),
                                       padding: const EdgeInsets.all(0),
                                       itemCount: messageList.length,
@@ -110,48 +108,10 @@ class _ChatPageState extends State<ChatPage> {
                                         final message = messageList[index];
                                         final bool isMe = messageList[index].sender != myName;
 
-                                        return IntrinsicHeight(
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(4.0),
-                                            child: Row(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                // barre coloré
-                                                laBarre(isMe),
-                                                // titre et text
-                                                Expanded(
-                                                  flex: 6,
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      // titre et date de reception
-                                                      // titre
-                                                      Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          receptionOuEnvoi(widget.converser, isMe),
-                                                          // date de reception
-                                                          dateDuMessage(message.timestamp.toString()),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      // texte ou image
-                                                      if (message.images != '')
-                                                        AllPreviewPictureChatWidget(messageList: message)
-                                                      else
-                                                        Text(
-                                                          message.message,
-                                                          textAlign: TextAlign.left,
-                                                          style: TextStyle(color: message.ack==1 ? Colors.black : Colors.grey, fontSize: 14),
-                                                        ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+                                        return ChatBubble(
+                                          isMe: isMe,
+                                          converser: widget.converser,
+                                          message: message,
                                         );
                                       },
                                     ),
@@ -165,7 +125,7 @@ class _ChatPageState extends State<ChatPage> {
                       child: MessagePanel(
                         converser: widget.converser,
                         device: device!,
-                        longDistance: longDistance,
+
                       ),
                     ),
                   ],

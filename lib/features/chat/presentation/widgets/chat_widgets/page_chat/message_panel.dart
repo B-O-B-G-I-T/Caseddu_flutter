@@ -11,11 +11,10 @@ import '../../../../../../core/params/params.dart';
 import '../../../providers/chat_provider.dart';
 
 class MessagePanel extends StatefulWidget {
-  MessagePanel({super.key, required this.converser, required this.device, required this.longDistance});
+  MessagePanel({super.key, required this.converser, required this.device});
 
   final Device device;
   final String converser;
-  final bool longDistance;
   final List<File> pictures = [];
 
   @override
@@ -68,7 +67,7 @@ class _MessagePanelState extends State<MessagePanel> {
                   }),
                   onChanged: (value) async {
                     _showGallery = false;
-                    if (widget.device.state == SessionState.notConnected && !widget.longDistance) {
+                    if (widget.device.state != SessionState.connected) {
                       await chatProvider.connectToDevice(widget.device);
                     }
                   },
@@ -102,8 +101,8 @@ class _MessagePanelState extends State<MessagePanel> {
           FocusScope.of(context).unfocus();
 
           permissionStatus = await PhotoManager.requestPermissionExtend();
-          if (permissionStatus == PermissionState.authorized && !widget.longDistance && context.mounted) {
-            if (widget.device.state == SessionState.notConnected) {
+          if (permissionStatus == PermissionState.authorized && widget.device.state != SessionState.tooFar) {
+            if (widget.device.state != SessionState.connected) {
               await chatProvider.connectToDevice(widget.device);
             }
             setState(() {
@@ -130,7 +129,7 @@ class _MessagePanelState extends State<MessagePanel> {
   }
 
   void sendMessage() async {
-    if (widget.longDistance && widget.device.state == SessionState.notConnected) {
+    if ( widget.device.state == SessionState.tooFar) {
       Fluttertoast.showToast(
           msg: 'hors de portée',
           toastLength: Toast.LENGTH_LONG,
@@ -155,7 +154,7 @@ class _MessagePanelState extends State<MessagePanel> {
           timestamp: timestamp,
           ack: 0,
         );
-        if (widget.device.state == SessionState.notConnected && !widget.longDistance) {
+        if (widget.device.state != SessionState.connected) {
           await chatProvider.connectToDevice(widget.device);
         }
         chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);

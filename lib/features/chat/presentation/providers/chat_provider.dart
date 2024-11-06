@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:data_connection_checker_tv/data_connection_checker.dart';
@@ -305,6 +304,8 @@ class ChatProvider extends ChangeNotifier {
       },
     );
   }
+
+// TODO: Supprimer un message de la conversation
 
   Future<void> deleteConversation(UserEntity userEntity) async {
     //chatMessageParams.sender = Global.myName;
