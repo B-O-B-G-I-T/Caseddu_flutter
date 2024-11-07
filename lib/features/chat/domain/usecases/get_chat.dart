@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
+import '../../data/models/chat_message_model.dart';
 import '../repositories/chat_repository.dart';
 
 class GetChat {
@@ -30,8 +31,12 @@ Future<Either<Failure, List<UserEntity>>> getAllConversations() async {
     return await chatRepository.enregistreMessage(chatMessageParams: chatMessageParams);
   }
 
+  Future<Either<Failure, void>> deleteMessage(ChatMessageEntity chatMessageEntity ) async {
+    return await chatRepository.deleteMessage(chatMessageEntity: chatMessageEntity);
+  }
+
   Future<Either<Failure, void>> deleteConversation(UserEntity userEntity) async {
-    return await chatRepository.deleteConversation( userEntity);
+    return await chatRepository.deleteConversation(  userEntity: userEntity);
   }
 
 }

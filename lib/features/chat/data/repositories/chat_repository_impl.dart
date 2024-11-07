@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
+import 'package:caseddu/features/chat/domain/entities/chat_message_entity.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
@@ -106,7 +107,17 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteConversation(UserEntity userEntity) async {
+  Future<Either<Failure, void>> deleteMessage({ required ChatMessageEntity chatMessageEntity}) async {
+    try {
+      await localDataSource.deleteMessage(chatMessageEntity);
+      return Right(true);
+
+    } catch (e) {
+      return Left(ServerFailure(errorMessage: e.toString()));
+    }
+  }
+  @override
+  Future<Either<Failure, void>> deleteConversation({ required UserEntity userEntity}) async {
     try {
       await localDataSource.deleteConversation(userEntity);
       return Right(true);
@@ -114,4 +125,5 @@ class ChatRepositoryImpl implements ChatRepository {
       return Left(ServerFailure(errorMessage: e.toString()));
     }
   }
+  
 }

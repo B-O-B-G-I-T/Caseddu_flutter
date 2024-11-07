@@ -10,15 +10,17 @@ class ChatMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return message.images.isNotEmpty
-        ? AllPreviewPictureChatWidget(messageList: message)
-        : Text(
-            message.message,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              color: message.ack == 1 ? Colors.black : Colors.grey,
-              fontSize: 14,
-            ),
-          );
+    if (message.images.isNotEmpty) {
+      return AllPreviewPictureChatWidget(messageList: message);
+    } else {
+      return Text(
+        message.message,
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          color: message.ack == 1 ? Colors.black : Colors.grey,
+          fontSize: 14,
+        ),
+      );
+    }
   }
 }

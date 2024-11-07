@@ -71,7 +71,6 @@ class ChatProvider extends ChangeNotifier {
   //--------------- Reception des connections
   StreamSubscription checkDevices(NearbyService nearbyService) {
     return nearbyService.stateChangedSubscription(callback: (devicesList) {
-      
       for (var element in devicesList) {
         if (Platform.isAndroid) {
           if (element.state == SessionState.connected) {
@@ -105,9 +104,15 @@ class ChatProvider extends ChangeNotifier {
             chatMessageParams: messageACK.toParamsAKC(),
           );
 
-          // sert à mettre à jour les conversations
-          //await eitherFailureOrConversation(messageACK.sender, messageACK.receiver);
-        } else {
+        }else if (data['message'].startsWith("DELETE ")) {
+          // Enregistre le message dans la base de données
+          final String messageId = data['message'].substring(7);
+          final ChatMessageEntity messageDELETE = chat.firstWhere(
+                (element) => element.id == messageId,
+          );
+          await eitherFailureOrDeleteMessage (chatMessageEntity:  messageDELETE);
+        } 
+        else {
           await receiveMessage(data, nearbyService);
         }
         notifyListeners();
@@ -303,9 +308,38 @@ class ChatProvider extends ChangeNotifier {
     );
   }
 
-// TODO: Supprimer un message de la conversation
+  Future<void> eitherFailureOrDeleteMessage({required ChatMessageEntity chatMessageEntity}) async {
+    //chatMessageParams.sender = Global.myName;
+    //Global.cache[chatMessageParams.id] = chatMessageParams;
+    // insertIntoMessageTable(chatMessageParams);
 
-  Future<void> deleteConversation(UserEntity userEntity) async {
+    ChatRepositoryImpl repository = ChatRepositoryImpl(
+      remoteDataSource: ChatRemoteDataSourceImpl(),
+      localDataSource: ChatLocalDataSourceImpl(
+        sharedPreferences: await SharedPreferences.getInstance(),
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
+      ),
+    );
+
+    final failureOrChat = await GetChat(chatRepository: repository).deleteMessage(chatMessageEntity);
+
+    failureOrChat.fold(
+      (Failure newFailure) {
+        //chat = null;
+        failure = newFailure;
+        notifyListeners();
+      },
+      (void messages) {
+        chat.remove(chatMessageEntity);
+        failure = null;
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> eitherFailureOrDeleteConversation({ required UserEntity userEntity}) async {
     //chatMessageParams.sender = Global.myName;
     //Global.cache[chatMessageParams.id] = chatMessageParams;
     // insertIntoMessageTable(chatMessageParams);

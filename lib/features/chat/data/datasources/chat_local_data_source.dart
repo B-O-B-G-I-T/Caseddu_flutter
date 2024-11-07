@@ -1,3 +1,4 @@
+import 'package:caseddu/features/chat/domain/entities/chat_message_entity.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +11,7 @@ abstract class ChatLocalDataSource {
   Future<List<ChatMessageModel>> getAllMessages();
   Future<List<ChatMessageModel>> getConversation(String senderName, String receiverName);
   Future<List<UserModel>> getAllConversation();
+  Future<void> deleteMessage(ChatMessageEntity chatMessageEntity);
   Future<void> deleteConversation(UserEntity userEntity);
 }
 
@@ -22,7 +24,6 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
 
   @override
   Future<void> insertMessage({required ChatMessageModel chatMessageModel, required bool isSender}) async {
-
     if (chatMessageModel.type == 'Image') {
       insertIntoMessagesTable(chatMessageModel, isSender);
     } else {
@@ -79,7 +80,6 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
 
     List<UserModel>? allChatMessages = await dbHelper.getAllConversation();
     if (allChatMessages != null) {
-      
       // Parcourir la liste et ajouter f à chaque élément
       for (var user in allChatMessages) {
         ChatMessageModel? dernierMessage = await dbHelper.getLastMessage(user.id);
@@ -93,10 +93,16 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
   }
 
   @override
+  Future<void> deleteMessage(ChatMessageEntity chatMessageEntity) async {
+    final dbHelper = DatabaseHelper();
+    dbHelper.deleteMessage(chatMessageEntity.id);
+
+  }
+
+  @override
   Future<void> deleteConversation(UserEntity userEntity) async {
     final dbHelper = DatabaseHelper();
     dbHelper.deleteConversation(userEntity.id);
     dbHelper.deleteUser(userEntity.id);
-
   }
 }

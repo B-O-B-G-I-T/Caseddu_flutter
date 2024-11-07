@@ -89,46 +89,55 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
                         ]
                       : [],
                 ),
-                child: Material(
-                  elevation: _isPressed ? 3 : 0,
-                  shadowColor: Colors.black.withOpacity(0.4),
-                  color: Colors.white,
-                  child: IntrinsicHeight(
-                    key: _chatBubbleKey, // Attach the GlobalKey here
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Colored bar
-                          laBarre(widget.isMe),
-                          // Title and text
-                          Expanded(
-                            flex: 6,
-                            child: Column(
+                child: widget.message.type == "DELETE"
+                    ? const Center(
+                        child: Text(
+                          "Message supprimé",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14,
+                          ),
+                        ),
+                      )
+                    : Material(
+                        elevation: _isPressed ? 3 : 0,
+                        shadowColor: Colors.black.withOpacity(0.4),
+                        color: Colors.white,
+                        child: IntrinsicHeight(
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                // Title and received date
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    // Title
-                                    receptionOuEnvoi(widget.converser, widget.isMe),
-                                    // Received date
-                                    dateDuMessage(widget.message.timestamp.toString()),
-                                  ],
+                                // Colored bar
+                                laBarre(widget.isMe),
+                                // Title and text
+                                Expanded(
+                                  flex: 6,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // Title and received date
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          // Title
+                                          receptionOuEnvoi(widget.converser, widget.isMe),
+                                          // Received date
+                                          dateDuMessage(widget.message.timestamp.toString()),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 5),
+                                      // Message text or image
+                                      ChatMessageWidget(message: widget.message),
+                                    ],
+                                  ),
                                 ),
-                                const SizedBox(height: 5),
-                                // Message text or image
-                                ChatMessageWidget(message: widget.message),
                               ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                ),
               ),
             ),
           );
@@ -163,16 +172,38 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
           if (widget.message.ack == 0)
             const PopupMenuItem(
               value: 'send_back',
-              child: Text('Renvoyer'),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Renvoyer'),
+                  Icon(Icons.send),
+                ],
+              ),
             ),
           const PopupMenuItem(
             value: 'copy',
-            child: SizedBox(width: 5000, child: Text('Copier')),
+            child: SizedBox(
+              width: 5000,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Copier'),
+                  Icon(Icons.copy),
+                ],
+              ),
+            ),
           ),
-          const PopupMenuItem(
-            value: 'delete',
-            child: Text('Supprimer'),
-          ),
+          if (!widget.isMe)
+            const PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Supprimer'),
+                  Icon(Icons.delete),
+                ],
+              ),
+            ),
         ],
         elevation: 8.0, // Shadow for the menu
         color: Colors.white, // White background for the menu
@@ -187,7 +218,19 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
         );
       } else if (menuResult == 'delete') {
         // Handle delete functionality
-        // For example, trigger a delete function or show a confirmation
+        if (chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser).state != SessionState.connected) {
+          Fluttertoast.showToast(
+              msg: 'hors de portée',
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.TOP,
+              timeInSecForIosWeb: 10,
+              backgroundColor: Colors.grey,
+              fontSize: 16.0);
+        } else {
+          chatProvider.eitherFailureOrDeleteMessage(chatMessageEntity: widget.message);
+          final ChatMessageParams params = widget.message.toParamsDelete();
+          chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: params);
+        }
       } else if (menuResult == 'send_back') {
         var msgId = nanoid(21);
         var timestamp = DateTime.now();
@@ -203,7 +246,8 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
           timestamp: timestamp,
           ack: 0,
         );
-        chatProvider.chat.remove(widget.message);
+
+        chatProvider.eitherFailureOrDeleteMessage(chatMessageEntity: widget.message);
         final d = chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser);
         if (d.state == SessionState.notConnected) {
           await chatProvider.connectToDevice(d);
