@@ -10,14 +10,9 @@ import 'package:go_router/go_router.dart';
 // Package imports:
 import 'package:pro_image_editor/pro_image_editor.dart';
 
-// Project imports:
-import '../../../../../core/utils/p2p/fonctions.dart';
-import 'preview_img.dart';
-
 mixin ExampleHelperState<T extends StatefulWidget> on State<T> {
   final editorKey = GlobalKey<ProImageEditorState>();
   Uint8List? editedBytes;
-  double? _generationTime;
   DateTime? startEditingTime;
 
   Future<void> onImageEditingStarted() async {
@@ -31,7 +26,6 @@ mixin ExampleHelperState<T extends StatefulWidget> on State<T> {
 
   void setGenerationTime() {
     if (startEditingTime != null) {
-      _generationTime = DateTime.now().difference(startEditingTime!).inMilliseconds.toDouble();
     }
   }
 

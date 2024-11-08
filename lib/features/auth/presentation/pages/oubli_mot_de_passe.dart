@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/errors/widgets/attente_widget.dart';
-import '../../../../core/errors/widgets/firebase_Succes.dart';
+import '../../../../core/errors/widgets/firebase_succes.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
 import '../providers/authentification_provider.dart';
 

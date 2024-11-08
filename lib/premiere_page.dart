@@ -32,18 +32,6 @@ class _PremierePageState extends State<PremierePage> {
     const ChatHomeScreen(),
   ];
 
-// fonction pour selectionner la page /////////////////////////////
-  Widget _pageSelectionne() {
-    switch (_selectedIndex) {
-      case 0:
-        return CameraPage(
-          cameras: cameras,
-        );
-      default:
-        return const ChatHomeScreen();
-    }
-  }
-
 // fonction qui met à jour l'index de la page
   void _onItemTapped(int index) {
     setState(() {

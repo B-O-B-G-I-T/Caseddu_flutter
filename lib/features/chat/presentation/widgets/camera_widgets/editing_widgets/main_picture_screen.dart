@@ -1,11 +1,7 @@
 // Flutter imports:
-import 'package:caseddu/config/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 // Project imports:
-import 'package:pro_image_editor/designs/frosted_glass/frosted_glass.dart';
-import 'package:pro_image_editor/designs/frosted_glass/frosted_glass_effect.dart';
 import 'package:pro_image_editor/pro_image_editor.dart';
 
 import '../background_buttons_widget.dart';
@@ -14,7 +10,7 @@ import '../background_buttons_widget.dart';
 /// within an image editing application. This widget provides an interface for
 /// users to interact with the image editor and access the sticker editor
 /// feature.
-class mainPictureScreen extends StatefulWidget {
+class MainPictureScreen extends StatefulWidget {
   /// Creates a [mainPictureScreen].
   ///
   /// The [editor] and [openStickerEditor] parameters are required to configure
@@ -30,7 +26,7 @@ class mainPictureScreen extends StatefulWidget {
   ///   openStickerEditor: () => myStickerEditorFunction(),
   /// )
   /// ```
-  const mainPictureScreen({
+  const MainPictureScreen({
     super.key,
     required this.editor,
     required this.openStickerEditor,
@@ -48,10 +44,10 @@ class mainPictureScreen extends StatefulWidget {
   final Function() openStickerEditor;
 
   @override
-  State<mainPictureScreen> createState() => _mainPictureScreenState();
+  State<MainPictureScreen> createState() => _MainPictureScreenState();
 }
 
-class _mainPictureScreenState extends State<mainPictureScreen> {
+class _MainPictureScreenState extends State<MainPictureScreen> {
   final Color _foregroundColor = const Color(0xFFFFFFFF);
 
   @override

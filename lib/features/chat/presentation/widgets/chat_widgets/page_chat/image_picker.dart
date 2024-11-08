@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
+
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -48,6 +50,7 @@ class _ImagePickerState extends State<MyImagePicker> {
     } else if (result.hasAccess) {
       // Accès limité accordé
       await _loadAndDisplayLimitedImages();
+
       Utils.showLimitedAccessDialog(context: context);
     } else {
       // Permission refusée ou non demandée

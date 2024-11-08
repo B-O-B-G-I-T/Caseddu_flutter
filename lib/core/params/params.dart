@@ -60,6 +60,7 @@ class ChatMessageParams {
     ack = value;
   }
 
+  // ignore: unnecessary_getters_setters
   NearbyService? get nearbyService => _nearbyService;
 
 

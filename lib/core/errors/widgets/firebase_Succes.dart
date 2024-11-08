@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/material.dart';
 
 @override
@@ -6,7 +8,10 @@ Future fireBaseSucces(BuildContext context, String title, String text) {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(title, style: const TextStyle(color: Colors.green),),
+          title: Text(
+            title,
+            style: const TextStyle(color: Colors.green),
+          ),
           content: Text(text),
           actions: <Widget>[
             TextButton(
@@ -17,6 +22,5 @@ Future fireBaseSucces(BuildContext context, String title, String text) {
             ),
           ],
         );
-        
       });
 }

@@ -79,7 +79,7 @@ class MyApp extends StatelessWidget {
   //pour la camera
   final List<CameraDescription> cameras;
 
-  const MyApp({Key? key, required this.theme, required this.cameras}) : super(key: key);
+  const MyApp({super.key, required this.theme, required this.cameras});
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {

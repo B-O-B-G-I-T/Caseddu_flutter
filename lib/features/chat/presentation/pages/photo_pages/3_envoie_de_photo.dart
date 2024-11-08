@@ -1,3 +1,4 @@
+// ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:go_router/go_router.dart';
@@ -172,7 +173,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
               );
               await chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
             }
-
+if (!context.mounted) return;
             context.go('/firstPage/1');
           });
         },

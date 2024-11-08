@@ -4,8 +4,8 @@ import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 
 class UserModel extends UserEntity{
 
-  UserModel( {required String id, required String name, ChatMessageModel? dernierMessage
-  }) : super(id: id, name: name, dernierMessage: dernierMessage);
+  UserModel( {required super.id, required super.name, super.dernierMessage
+  });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
