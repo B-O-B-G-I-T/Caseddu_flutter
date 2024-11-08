@@ -71,7 +71,6 @@ class ChatProvider extends ChangeNotifier {
   //--------------- Reception des connections
   StreamSubscription checkDevices(NearbyService nearbyService) {
     return nearbyService.stateChangedSubscription(callback: (devicesList) {
-      
       for (var element in devicesList) {
         if (Platform.isAndroid) {
           if (element.state == SessionState.connected) {
@@ -104,11 +103,19 @@ class ChatProvider extends ChangeNotifier {
           await eitherFailureOrEnregistreMessage(
             chatMessageParams: messageACK.toParamsAKC(),
           );
+          return;
+        }
+// passse les data en JSON
+        ChatMessageModel chatMessageModel = await manageDataReceivedToJson(data);
 
-          // sert à mettre à jour les conversations
-          //await eitherFailureOrConversation(messageACK.sender, messageACK.receiver);
+        if (chatMessageModel.type == 'DELETE') {
+          // Enregistre le message supprimé dans la base de données
+          await eitherFailureOrDeleteMessage(chatMessageEntity: chatMessageModel);
+
+          await eitherFailureOrEnregistreMessage(chatMessageParams: chatMessageModel.toChatMessageParams());
         } else {
-          await receiveMessage(data, nearbyService);
+// enregistre le message dans la base de données et envoie ack
+          await receiveMessage(chatMessageModel: chatMessageModel, nearbyService: nearbyService);
         }
         notifyListeners();
       } catch (e) {
@@ -117,16 +124,7 @@ class ChatProvider extends ChangeNotifier {
     });
   }
 
-  Future<ChatMessageModel> receiveMessage(data, NearbyService nearbyService) async {
-    var jsonData = jsonDecode(data['message']);
-
-    ChatMessageModel chatMessageModel = ChatMessageModel.fromJson(json: jsonData);
-    String imagesEncode = chatMessageModel.images;
-    if (imagesEncode != "") {
-      List<String> imageListPaths = await Utils.base64StringToListImage(imagesEncode);
-      imagesEncode = imageListPaths.join(',');
-    }
-    chatMessageModel.images = imagesEncode;
+  Future<ChatMessageModel> receiveMessage({required ChatMessageModel chatMessageModel, required NearbyService nearbyService}) async {
     //chatMessageModel.ACK = true;
     Fluttertoast.showToast(
       msg: '''Sender: ${chatMessageModel.sender} Receiver: ${chatMessageModel.receiver}  Type: ${chatMessageModel.type}
@@ -144,6 +142,19 @@ class ChatProvider extends ChangeNotifier {
     await eitherFailureOrEnregistreMessage(
       chatMessageParams: chatMessageModel.toChatMessageParams(),
     );
+    return chatMessageModel;
+  }
+
+  Future<ChatMessageModel> manageDataReceivedToJson(data) async {
+    var jsonData = jsonDecode(data['message']);
+
+    ChatMessageModel chatMessageModel = ChatMessageModel.fromJson(json: jsonData);
+    String imagesEncode = chatMessageModel.images;
+    if (imagesEncode != "") {
+      List<String> imageListPaths = await Utils.base64StringToListImage(imagesEncode);
+      imagesEncode = imageListPaths.join(',');
+    }
+    chatMessageModel.images = imagesEncode;
     return chatMessageModel;
   }
 
@@ -303,9 +314,38 @@ class ChatProvider extends ChangeNotifier {
     );
   }
 
-// TODO: Supprimer un message de la conversation
+  Future<void> eitherFailureOrDeleteMessage({required ChatMessageEntity chatMessageEntity}) async {
+    //chatMessageParams.sender = Global.myName;
+    //Global.cache[chatMessageParams.id] = chatMessageParams;
+    // insertIntoMessageTable(chatMessageParams);
 
-  Future<void> deleteConversation(UserEntity userEntity) async {
+    ChatRepositoryImpl repository = ChatRepositoryImpl(
+      remoteDataSource: ChatRemoteDataSourceImpl(),
+      localDataSource: ChatLocalDataSourceImpl(
+        sharedPreferences: await SharedPreferences.getInstance(),
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
+      ),
+    );
+
+    final failureOrChat = await GetChat(chatRepository: repository).deleteMessage(chatMessageEntity);
+
+    failureOrChat.fold(
+      (Failure newFailure) {
+        //chat = null;
+        failure = newFailure;
+        notifyListeners();
+      },
+      (void messages) {
+        chat.removeWhere((element) => element.id == chatMessageEntity.id);
+        failure = null;
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> eitherFailureOrDeleteConversation({required UserEntity userEntity}) async {
     //chatMessageParams.sender = Global.myName;
     //Global.cache[chatMessageParams.id] = chatMessageParams;
     // insertIntoMessageTable(chatMessageParams);

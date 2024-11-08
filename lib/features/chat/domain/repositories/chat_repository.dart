@@ -15,6 +15,6 @@ abstract class ChatRepository {
   Future<Either<Failure, ChatMessageEntity>> enregistreMessage({
     required ChatMessageParams chatMessageParams,
   });
-  Future<Either<Failure, void>> deleteConversation(UserEntity userEntity);
-
+  Future<Either<Failure, void>> deleteConversation({required UserEntity userEntity});
+  Future<Either<Failure, void>> deleteMessage({required ChatMessageEntity chatMessageEntity});
 }

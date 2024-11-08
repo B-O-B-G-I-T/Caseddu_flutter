@@ -75,7 +75,7 @@ class _ChatKnownListPageState extends State<ChatKnownListPage> {
                           key: Key('${conversation.id}-${DateTime.now().millisecondsSinceEpoch}'),
                           direction: DismissDirection.endToStart,
                           onDismissed: (_) {
-                            provider.deleteConversation(conversation);
+                            provider.eitherFailureOrDeleteConversation(userEntity: conversation);
                           },
                           background: Container(
                             alignment: Alignment.centerRight,

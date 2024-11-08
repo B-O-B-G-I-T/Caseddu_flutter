@@ -159,6 +159,10 @@ class DatabaseHelper {
     }
   }
 
+  Future<void> deleteMessage(String messsageId) async {
+    final db = await BaseDonneesGeneral.database;
+    await db.delete('chat_messages', where: 'id = ?', whereArgs: [messsageId]);
+  }
   Future<void> deleteConversation(String userId) async {
     final db = await BaseDonneesGeneral.database;
     await db.delete('chat_messages', where: 'sender = ? OR receiver = ?', whereArgs: [userId, userId]);
