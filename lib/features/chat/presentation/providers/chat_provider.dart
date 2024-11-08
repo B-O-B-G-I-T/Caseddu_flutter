@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
@@ -119,7 +120,7 @@ class ChatProvider extends ChangeNotifier {
         }
         notifyListeners();
       } catch (e) {
-        print('Erreur lors de la conversion des données JSON : $e');
+        log('Erreur lors de la conversion des données JSON : $e', name: 'ChatProvider');
       }
     });
   }
@@ -178,6 +179,12 @@ class ChatProvider extends ChangeNotifier {
           deviceID: device.deviceId,
           deviceName: device.deviceName,
         );
+        devices = devices.map((d) {
+          if (d.deviceId == device.deviceId) {
+            d.state = SessionState.connecting;
+          }
+          return d;
+        }).toList();
         //log("Want to connect");
         break;
       case SessionState.connected:

@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pro_image_editor/pro_image_editor.dart';
 import 'package:pro_image_editor/designs/frosted_glass/frosted_glass.dart';
-
 import 'editing_widgets/main_picture_screen.dart';
 import 'stickers_widget.dart';
 import 'example_helper.dart';
@@ -231,7 +230,7 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
       if (editor.selectedLayerIndex < 0)
         ReactiveCustomWidget(
           stream: rebuildStream,
-          builder: (_) => mainPictureScreen(
+          builder: (_) => MainPictureScreen(
             editor: editor,
             openStickerEditor: () => _openStickerEditor(editor),
           ),

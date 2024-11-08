@@ -11,13 +11,13 @@ class ListTilePourUtilisateurConnu extends StatelessWidget {
   final VoidCallback onTap;
 
   const ListTilePourUtilisateurConnu({
-    Key? key,
+    super.key,
     required this.deviceName,
     required this.message,
     required this.timestamp,
     required this.typeMessage,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

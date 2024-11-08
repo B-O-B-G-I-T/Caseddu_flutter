@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages, avoid_print
+// ignore_for_file: depend_on_referenced_packages, avoid_print, library_prefixes, file_names
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
@@ -125,8 +125,8 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       await initialiseControllerFuture;
 
       final XFile file = await _cameraController.takePicture();
-
-      final croppedFile = cropImageToScreenSizeInIsolate(file, context);
+if (!mounted) return;
+      cropImageToScreenSizeInIsolate(file, context);
 
 // peut etre utilisé une solution native
 
@@ -185,6 +185,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       receivePort.close(); // Ferme le port une fois terminé
     });
     // Passe le `Completer` à la page suivante
+    if (!context.mounted) return;
     context.push('/PrisePhoto/:filePath', extra: completer);
   }
 
@@ -576,7 +577,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                   // ignore: use_build_context_synchronously
                   XFile file = XFile('/Users/bobsmac/Desktop/Caseddu_flutter/assets/images/femmephoto.jpg');
 
-                  final croppedFile = cropImageToScreenSizeInIsolate(file, context);
+                  cropImageToScreenSizeInIsolate(file, context);
                 } else {
                   await _prendrePhoto();
                 }

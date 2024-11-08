@@ -1,3 +1,5 @@
+// ignore_for_file: void_checks, prefer_const_constructors
+
 import 'dart:io';
 
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
@@ -110,6 +112,7 @@ class ChatRepositoryImpl implements ChatRepository {
   Future<Either<Failure, void>> deleteMessage({ required ChatMessageEntity chatMessageEntity}) async {
     try {
       await localDataSource.deleteMessage(chatMessageEntity);
+
       return Right(true);
 
     } catch (e) {

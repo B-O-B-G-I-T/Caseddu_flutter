@@ -38,10 +38,10 @@ class ConnectionWithPage extends StatelessWidget {
                   //attenteWidget(context);
                   if (typeOfConnection == "google") {
                     await authentificationProvider.eitherFailureOrAuthentificationWithGoogle(username);
-                  }else if (typeOfConnection == "apple") {
+                  } else if (typeOfConnection == "apple") {
                     await authentificationProvider.eitherFailureOrAuthentificationWithApple(username);
                   }
-
+                  if (!context.mounted) return;
                   context.pop(); // Ferme la boîte de dialogue
 
                   if (authentificationProvider.authentification != null) {

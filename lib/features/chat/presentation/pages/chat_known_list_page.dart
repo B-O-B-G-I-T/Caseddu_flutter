@@ -10,7 +10,7 @@ import 'package:caseddu/features/chat/presentation/widgets/P2P_widgets/list_tile
 import 'package:caseddu/features/chat/presentation/widgets/P2P_widgets/search_widget.dart';
 
 class ChatKnownListPage extends StatefulWidget {
-  const ChatKnownListPage({Key? key}) : super(key: key);
+  const ChatKnownListPage({super.key});
 
   @override
   State<ChatKnownListPage> createState() => _ChatKnownListPageState();

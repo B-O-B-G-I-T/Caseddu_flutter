@@ -1,4 +1,7 @@
+// ignore_for_file: unnecessary_import, depend_on_referenced_packages
+
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -78,7 +81,7 @@ class Utils {
         final bytes = imageFile.readAsBytesSync();
         base64Strings.add(base64Encode(bytes));
       } else {
-        print('Image not found');
+        log( 'Image not found', name: 'Utils');
       }
     }
     return base64Strings.join(',');
@@ -108,7 +111,7 @@ class Utils {
           (await getApplicationDocumentsDirectory()).path,
           '$uniqueId.jpg',
         );
-        print(cheminVersImage);
+        debugPrint(cheminVersImage);
         File imageFile = File(cheminVersImage);
         await imageFile.writeAsBytes(bytes);
         imageFiles.add(imageFile.path);

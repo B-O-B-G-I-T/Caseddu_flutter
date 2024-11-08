@@ -10,7 +10,7 @@ import '../widgets/P2P_widgets/search_widget.dart';
 enum DeviceType { advertiser, browser }
 
 class ChatDeviceAroundList extends StatefulWidget {
-  const ChatDeviceAroundList({Key? key, required this.deviceType}) : super(key: key);
+  const ChatDeviceAroundList({super.key, required this.deviceType});
   final DeviceType deviceType;
 
   @override

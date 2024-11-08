@@ -1,3 +1,4 @@
+// ignore_for_file: unused_field
 import 'dart:async';
 import 'package:caseddu/dataBase/base_donnees_general.dart';
 import 'package:nanoid/nanoid.dart';

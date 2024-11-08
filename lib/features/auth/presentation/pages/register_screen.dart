@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../core/errors/widgets/attente_widget.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
 import '../providers/authentification_provider.dart';
@@ -265,7 +264,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           attenteWidget(context);
 
                           await authentificationProvider.eitherFailureOrRegister(email, password, confirmPassword, "0", pseudo);
-
+if (!context.mounted) return;
                           context.pop(); // Ferme la boîte de dialogue
 
                           if (authentificationProvider.failure == null) {

@@ -4,7 +4,6 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
-import '../../data/models/chat_message_model.dart';
 import '../repositories/chat_repository.dart';
 
 class GetChat {
