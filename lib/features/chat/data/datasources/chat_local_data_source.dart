@@ -12,6 +12,7 @@ abstract class ChatLocalDataSource {
   Future<List<ChatMessageModel>> getConversation(String senderName, String receiverName);
   Future<List<UserModel>> getAllConversation();
   Future<void> deleteMessage(ChatMessageEntity chatMessageEntity);
+
   Future<void> deleteConversation(UserEntity userEntity);
 }
 
@@ -96,6 +97,7 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
   Future<void> deleteMessage(ChatMessageEntity chatMessageEntity) async {
     final dbHelper = DatabaseHelper();
     dbHelper.deleteMessage(chatMessageEntity.id);
+    
 
   }
 

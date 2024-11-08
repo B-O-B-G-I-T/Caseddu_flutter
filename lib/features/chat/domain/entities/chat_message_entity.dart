@@ -46,7 +46,7 @@ class ChatMessageEntity {
       receiver: receiver,
       timestamp: timestamp,
       message: "DELETE ",
-      images: images,
+      images: "",
       type: "DELETE",
       sendOrReceived: 'Send',
       ack: 1,

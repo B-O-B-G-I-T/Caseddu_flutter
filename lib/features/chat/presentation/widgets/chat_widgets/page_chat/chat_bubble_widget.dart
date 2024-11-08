@@ -1,6 +1,4 @@
 // ignore_for_file: use_build_context_synchronously
-import 'dart:math';
-
 import 'package:caseddu/features/chat/domain/entities/chat_message_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -90,15 +88,7 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
                       : [],
                 ),
                 child: widget.message.type == "DELETE"
-                    ? const Center(
-                        child: Text(
-                          "Message supprimé",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                        ),
-                      )
+                    ? DeleteMessageWidget(isMe: widget.isMe, deviceName: widget.converser)
                     : Material(
                         elevation: _isPressed ? 3 : 0,
                         shadowColor: Colors.black.withOpacity(0.4),
@@ -161,106 +151,17 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
         0,
       );
 
-      final menuResult = await showMenu(
-        constraints: BoxConstraints(
-          minWidth: 100,
-          maxWidth: size.width,
-        ),
-        context: context,
-        position: menuPosition,
-        items: [
-          if (widget.message.ack == 0)
-            const PopupMenuItem(
-              value: 'send_back',
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Renvoyer'),
-                  Icon(Icons.send),
-                ],
-              ),
-            ),
-          const PopupMenuItem(
-            value: 'copy',
-            child: SizedBox(
-              width: 5000,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Copier'),
-                  Icon(Icons.copy),
-                ],
-              ),
-            ),
-          ),
-          if (!widget.isMe)
-            const PopupMenuItem(
-              value: 'delete',
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Supprimer'),
-                  Icon(Icons.delete),
-                ],
-              ),
-            ),
-        ],
-        elevation: 8.0, // Shadow for the menu
-        color: Colors.white, // White background for the menu
-      );
+      final menuResult = await showMymenu(size, context, menuPosition);
 
       // Handle menu item selection
       if (menuResult == 'copy') {
         // Copy the message text to clipboard
-        Clipboard.setData(ClipboardData(text: widget.message.message));
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Message copied')),
-        );
+        copyMessage(context);
       } else if (menuResult == 'delete') {
         // Handle delete functionality
-        if (chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser).state != SessionState.connected) {
-          Fluttertoast.showToast(
-              msg: 'hors de portée',
-              toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.TOP,
-              timeInSecForIosWeb: 10,
-              backgroundColor: Colors.grey,
-              fontSize: 16.0);
-        } else {
-          chatProvider.eitherFailureOrDeleteMessage(chatMessageEntity: widget.message);
-          final ChatMessageParams params = widget.message.toParamsDelete();
-          chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: params);
-        }
+        deleteMessageByMenu();
       } else if (menuResult == 'send_back') {
-        var msgId = nanoid(21);
-        var timestamp = DateTime.now();
-
-        ChatMessageParams chatMessageParams = ChatMessageParams(
-          id: msgId,
-          sender: 'bob',
-          receiver: widget.converser,
-          message: widget.message.message,
-          images: '',
-          type: 'payload',
-          sendOrReceived: 'Send',
-          timestamp: timestamp,
-          ack: 0,
-        );
-
-        chatProvider.eitherFailureOrDeleteMessage(chatMessageEntity: widget.message);
-        final d = chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser);
-        if (d.state == SessionState.notConnected) {
-          await chatProvider.connectToDevice(d);
-        } else if (d.state == SessionState.tooFar) {
-          Fluttertoast.showToast(
-              msg: 'hors de portée',
-              toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.TOP,
-              timeInSecForIosWeb: 10,
-              backgroundColor: Colors.grey,
-              fontSize: 16.0);
-        }
-        chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
+        await sendBackByMenu();
       }
     }
 
@@ -270,5 +171,135 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
     });
 
     _animationController.reverse();
+  }
+
+  Future<void> sendBackByMenu() async {
+    var msgId = nanoid(21);
+    var timestamp = DateTime.now();
+
+    ChatMessageParams chatMessageParams = ChatMessageParams(
+      id: msgId,
+      sender: 'bob',
+      receiver: widget.converser,
+      message: widget.message.message,
+      images: '',
+      type: 'payload',
+      sendOrReceived: 'Send',
+      timestamp: timestamp,
+      ack: 0,
+    );
+
+    chatProvider.eitherFailureOrDeleteMessage(chatMessageEntity: widget.message);
+    final d = chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser);
+    if (d.state == SessionState.notConnected) {
+      await chatProvider.connectToDevice(d);
+    } else if (d.state == SessionState.tooFar) {
+      Fluttertoast.showToast(
+          msg: 'hors de portée',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 10,
+          backgroundColor: Colors.grey,
+          fontSize: 16.0);
+    }
+    chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
+  }
+
+  void deleteMessageByMenu() {
+    if (chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser).state != SessionState.connected) {
+      Fluttertoast.showToast(
+          msg: 'hors de portée',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 10,
+          backgroundColor: Colors.grey,
+          fontSize: 16.0);
+    } else {
+      chatProvider.eitherFailureOrDeleteMessage(chatMessageEntity: widget.message);
+      final ChatMessageParams params = widget.message.toParamsDelete();
+      chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: params);
+    }
+  }
+
+  Future<String?> showMymenu(Size size, BuildContext context, RelativeRect menuPosition) {
+    return showMenu(
+      constraints: BoxConstraints(
+        minWidth: 100,
+        maxWidth: size.width,
+      ),
+      context: context,
+      position: menuPosition,
+      items: [
+        if (widget.message.ack == 0)
+          const PopupMenuItem(
+            value: 'send_back',
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Renvoyer'),
+                Icon(Icons.send),
+              ],
+            ),
+          ),
+        const PopupMenuItem(
+          value: 'copy',
+          child: SizedBox(
+            width: 5000,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Copier'),
+                Icon(Icons.copy),
+              ],
+            ),
+          ),
+        ),
+        if (!widget.isMe)
+          const PopupMenuItem(
+            value: 'delete',
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Supprimer'),
+                Icon(Icons.delete),
+              ],
+            ),
+          ),
+      ],
+      elevation: 8.0, // Shadow for the menu
+      color: Colors.white, // White background for the menu
+    );
+  }
+
+  void copyMessage(context) {
+    // Copy the message text to clipboard
+    Clipboard.setData(ClipboardData(text: widget.message.message));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Message copied')),
+    );
+  }
+}
+
+class DeleteMessageWidget extends StatelessWidget {
+  const DeleteMessageWidget({
+    super.key,
+    required this.isMe,
+    required this.deviceName,
+  });
+
+  final bool isMe;
+  final String deviceName;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        !isMe ? "Message supprimé" : "Message supprimé par $deviceName",
+        style: const TextStyle(
+          color: Colors.grey,
+          fontSize: 14,
+        ),
+      ),
+    );
   }
 }

@@ -34,6 +34,9 @@ class _ChatPageState extends State<ChatPage> {
     myName = chatProvider.myName;
     device = chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser, orElse: () => Device("", "", SessionState.tooFar));
     chatProvider.eitherFailureOrConversation(myName, widget.converser);
+
+    // Ajout de la logique de défilement automatique
+    // chatProvider.addListener(_scrollToBottomOnNewMessage);
   }
 
   @override
@@ -48,6 +51,15 @@ class _ChatPageState extends State<ChatPage> {
     super.dispose();
   }
 
+  // Cette méthode est déclenchée lorsque de nouveaux messages sont reçus
+  void _scrollToBottomOnNewMessage() {
+    if (mounted) {
+      setState(() {
+        messageList = chatProvider.chat;
+      });
+    }
+  }
+
 // TODO création de groupe de conversation
   @override
   Widget build(BuildContext context) {
@@ -57,7 +69,9 @@ class _ChatPageState extends State<ChatPage> {
         orElse: () => Device(widget.converser, widget.converser, SessionState.tooFar),
       );
 
-      messageList = chatProvider.chat;
+      // Assurer que les messages sont triés avant le rendu
+      messageList = chatProvider.chat..sort((a, b) => a.timestamp.compareTo(b.timestamp));
+
       return Scaffold(
         // resizeToAvoidBottomInset: false,
         resizeToAvoidBottomInset: true,
@@ -97,6 +111,7 @@ class _ChatPageState extends State<ChatPage> {
                                       style: const TextStyle(color: Colors.grey),
                                     ),
                                     ListView.builder(
+                                      key: const PageStorageKey<String>('chatList'),
                                       // Builder to view messages chronologically
                                       shrinkWrap: true,
 
@@ -125,7 +140,6 @@ class _ChatPageState extends State<ChatPage> {
                       child: MessagePanel(
                         converser: widget.converser,
                         device: device!,
-
                       ),
                     ),
                   ],

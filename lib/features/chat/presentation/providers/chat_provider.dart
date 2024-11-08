@@ -103,17 +103,19 @@ class ChatProvider extends ChangeNotifier {
           await eitherFailureOrEnregistreMessage(
             chatMessageParams: messageACK.toParamsAKC(),
           );
+          return;
+        }
+// passse les data en JSON
+        ChatMessageModel chatMessageModel = await manageDataReceivedToJson(data);
 
-        }else if (data['message'].startsWith("DELETE ")) {
-          // Enregistre le message dans la base de données
-          final String messageId = data['message'].substring(7);
-          final ChatMessageEntity messageDELETE = chat.firstWhere(
-                (element) => element.id == messageId,
-          );
-          await eitherFailureOrDeleteMessage (chatMessageEntity:  messageDELETE);
-        } 
-        else {
-          await receiveMessage(data, nearbyService);
+        if (chatMessageModel.type == 'DELETE') {
+          // Enregistre le message supprimé dans la base de données
+          await eitherFailureOrDeleteMessage(chatMessageEntity: chatMessageModel);
+
+          await eitherFailureOrEnregistreMessage(chatMessageParams: chatMessageModel.toChatMessageParams());
+        } else {
+// enregistre le message dans la base de données et envoie ack
+          await receiveMessage(chatMessageModel: chatMessageModel, nearbyService: nearbyService);
         }
         notifyListeners();
       } catch (e) {
@@ -122,16 +124,7 @@ class ChatProvider extends ChangeNotifier {
     });
   }
 
-  Future<ChatMessageModel> receiveMessage(data, NearbyService nearbyService) async {
-    var jsonData = jsonDecode(data['message']);
-
-    ChatMessageModel chatMessageModel = ChatMessageModel.fromJson(json: jsonData);
-    String imagesEncode = chatMessageModel.images;
-    if (imagesEncode != "") {
-      List<String> imageListPaths = await Utils.base64StringToListImage(imagesEncode);
-      imagesEncode = imageListPaths.join(',');
-    }
-    chatMessageModel.images = imagesEncode;
+  Future<ChatMessageModel> receiveMessage({required ChatMessageModel chatMessageModel, required NearbyService nearbyService}) async {
     //chatMessageModel.ACK = true;
     Fluttertoast.showToast(
       msg: '''Sender: ${chatMessageModel.sender} Receiver: ${chatMessageModel.receiver}  Type: ${chatMessageModel.type}
@@ -149,6 +142,19 @@ class ChatProvider extends ChangeNotifier {
     await eitherFailureOrEnregistreMessage(
       chatMessageParams: chatMessageModel.toChatMessageParams(),
     );
+    return chatMessageModel;
+  }
+
+  Future<ChatMessageModel> manageDataReceivedToJson(data) async {
+    var jsonData = jsonDecode(data['message']);
+
+    ChatMessageModel chatMessageModel = ChatMessageModel.fromJson(json: jsonData);
+    String imagesEncode = chatMessageModel.images;
+    if (imagesEncode != "") {
+      List<String> imageListPaths = await Utils.base64StringToListImage(imagesEncode);
+      imagesEncode = imageListPaths.join(',');
+    }
+    chatMessageModel.images = imagesEncode;
     return chatMessageModel;
   }
 
@@ -332,14 +338,14 @@ class ChatProvider extends ChangeNotifier {
         notifyListeners();
       },
       (void messages) {
-        chat.remove(chatMessageEntity);
+        chat.removeWhere((element) => element.id == chatMessageEntity.id);
         failure = null;
         notifyListeners();
       },
     );
   }
 
-  Future<void> eitherFailureOrDeleteConversation({ required UserEntity userEntity}) async {
+  Future<void> eitherFailureOrDeleteConversation({required UserEntity userEntity}) async {
     //chatMessageParams.sender = Global.myName;
     //Global.cache[chatMessageParams.id] = chatMessageParams;
     // insertIntoMessageTable(chatMessageParams);
