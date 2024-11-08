@@ -179,6 +179,12 @@ class ChatProvider extends ChangeNotifier {
           deviceID: device.deviceId,
           deviceName: device.deviceName,
         );
+        devices = devices.map((d) {
+          if (d.deviceId == device.deviceId) {
+            d.state = SessionState.connecting;
+          }
+          return d;
+        }).toList();
         //log("Want to connect");
         break;
       case SessionState.connected:
