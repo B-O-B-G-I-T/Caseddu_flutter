@@ -131,13 +131,22 @@ class _MessagePanelState extends State<MessagePanel> {
   }
 
   void sendMessage() async {
-    if ( widget.device.state == SessionState.tooFar) {
+    if (widget.device.state == SessionState.tooFar) {
       Fluttertoast.showToast(
-          msg: 'hors de portée',
+          msg: 'Out of reach',
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.TOP,
-          timeInSecForIosWeb: 10,
-          backgroundColor: Colors.grey,
+          timeInSecForIosWeb: 3,
+          backgroundColor: Colors.black,
+          fontSize: 16.0);
+    } else if (widget.device.state == SessionState.connecting) {
+      Fluttertoast.showToast(
+          msg: "Try it when you're connected",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 3,
+          backgroundColor: Colors.yellow,
+          textColor: Colors.black,
           fontSize: 16.0);
     } else {
       if (myController.text != "") {

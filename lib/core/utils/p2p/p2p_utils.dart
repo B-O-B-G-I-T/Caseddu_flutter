@@ -35,7 +35,10 @@ Widget getButtonStateIcon(SessionState state) {
     case SessionState.connected:
       return const Icon(Icons.wifi_off_outlined);
     case SessionState.connecting:
-      return const Icon(Icons.hourglass_top_rounded);
+      return const Icon(
+        Icons.hourglass_top_rounded,
+        color: Colors.black,
+      );
     case SessionState.tooFar:
       return const Icon(Icons.phonelink_erase_rounded);
     default:

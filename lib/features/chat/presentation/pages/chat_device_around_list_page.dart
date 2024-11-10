@@ -110,7 +110,10 @@ class DevicesListWidget extends StatelessWidget {
                             child: Center(
                               child: Text(
                                 getButtonStateName(device),
-                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  color: device.state != SessionState.connecting ? Colors.white : Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),
