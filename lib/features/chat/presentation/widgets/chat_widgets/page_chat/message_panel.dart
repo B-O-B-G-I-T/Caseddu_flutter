@@ -171,6 +171,7 @@ class _MessagePanelState extends State<MessagePanel> {
         chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
       }
     }
+    _focusNode.requestFocus();
     myController.clear();
   }
 }
