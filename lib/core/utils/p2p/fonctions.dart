@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_import, depend_on_referenced_packages
+// ignore_for_file: unnecessary_import, depend_on_referenced_packages, use_build_context_synchronously
 
 import 'dart:convert';
 import 'dart:developer';
@@ -39,7 +39,7 @@ class Utils {
     return "$formattedDate $formattedTime";
   }
 
-  static String depuisQuandCeMessageEstRecu({required String timeStamp}) {
+  static String depuisQuandCeMessageEstRecu({required String timeStamp, required BuildContext context}) {
     DateTime dateTime = DateTime.parse(timeStamp);
     DateTime dateTimeNow = DateTime.now();
     Duration diff = dateTimeNow.difference(dateTime);
@@ -48,13 +48,13 @@ class Utils {
     int hours = diff.inHours.remainder(24); // Le nombre d'heures restantes
     int minutes = diff.inMinutes.remainder(60); // Le nombre de minutes restantes
     if (days > 0) {
-      return '$days jour${days > 1 ? 's' : ''}';
+      return AppLocalizations.of(context)!.nDay(days);
     } else if (hours > 0) {
-      return '$hours heure${hours > 1 ? 's' : ''}';
+      return AppLocalizations.of(context)!.nHour(hours);
     } else if (minutes > 0) {
-      return '$minutes minute${minutes > 1 ? 's' : ''}';
+      return AppLocalizations.of(context)!.nMinutes(minutes);
     } else {
-      return 'maintenant';
+      return AppLocalizations.of(context)!.now;
     }
   }
 
@@ -82,7 +82,7 @@ class Utils {
         final bytes = imageFile.readAsBytesSync();
         base64Strings.add(base64Encode(bytes));
       } else {
-        log( 'Image not found', name: 'Utils');
+        log('Image not found', name: 'Utils');
       }
     }
     return base64Strings.join(',');
@@ -134,18 +134,18 @@ class Utils {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(AppLocalizations.of(context)!.limited_access),
-          content:  Text(
+          content: Text(
             AppLocalizations.of(context)!.limited_access,
           ),
           actions: <Widget>[
             TextButton(
-              child:  Text(AppLocalizations.of(context)!.cancel),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child:  Text(AppLocalizations.of(context)!.open_parameters),
+              child: Text(AppLocalizations.of(context)!.open_parameters),
               onPressed: () {
                 Navigator.of(context).pop();
                 PhotoManager.openSetting();
@@ -162,8 +162,8 @@ class Utils {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title:  Text(AppLocalizations.of(context)!.permission_required),
-          content:  Text(AppLocalizations.of(context)!.permission_required),
+          title: Text(AppLocalizations.of(context)!.permission_required),
+          content: Text(AppLocalizations.of(context)!.permission_required),
           actions: <Widget>[
             TextButton(
               child: Text(AppLocalizations.of(context)!.open_parameters),
@@ -184,8 +184,6 @@ class Utils {
       },
     );
   }
-
-
 
 // Fonction pour télécharger l'image et l'enregistrer dans la galerie
   static Future<void> saveImageToGallery(String imageUrl, BuildContext context) async {
@@ -240,37 +238,4 @@ class Utils {
       );
     }
   }
-
-  
-  // static void envoieDeMessage(
-  //     {required String destinataire, required String message, context}) {
-  //   var msgId = nanoid(21);
-
-  //   var payload = Payload(msgId, Global.myName, destinataire, message,
-  //       DateTime.now().toUtc().toString(), "Payload");
-
-  //   Global.cache[msgId] = payload;
-  //   //insertIntoMessageTable(payload);
-  //   Provider.of<Global>(context, listen: false).sentToConversations(
-  //     Msg(message, "sent", payload.timestamp, "Payload", msgId),
-  //     destinataire,
-  //   );
-  // }
-
-  // static void envoieDePhoto(
-  //     {required String destinataire, required String chemin, context}) {
-  //   var msgId = nanoid(21);
-  //   File file = File(chemin);
-  //   var imageTo64String = Utils.imageToBase64String(file);
-  //   var payload = Payload(msgId, Global.myName, destinataire, chemin,
-  //       DateTime.now().toUtc().toString(), "Image");
-
-  //   Global.cache[msgId] = payload;
-  //   //insertIntoMessageTable(payload);
-
-  //   Provider.of<Global>(context, listen: false).sentToConversations(
-  //       Msg(imageTo64String, "sent", payload.timestamp, "Image", msgId),
-  //       destinataire,
-  //       isImage: chemin);
-  // }
 }

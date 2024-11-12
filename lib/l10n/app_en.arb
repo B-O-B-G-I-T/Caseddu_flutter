@@ -88,6 +88,37 @@
     "error_while_saving_the_image": "Error while saving the image",
     "out_of_range": "Out of range",
     "try_it_when_you_re_connected": "Try it when you're connected",
+    "now": "Now",
+    "nDay": "{count, plural,=1{1 day} other{{count} days}}",
+    "@nDay": {
+    "description": "A plural message",
+    "placeholders": {
+        "count": {
+        "type": "num",
+        "format": "compact"
+        }
+    }
+    },
+    "nHour": "{count, plural,=1{1 hour} other{{count} hours}}",
+    "@nHour": {
+    "description": "A plural message",
+    "placeholders": {
+        "count": {
+        "type": "num",
+        "format": "compact"
+        }
+    }
+    },
+    "nMinutes": "{count, plural,=1{1 minute} other{{count} minutes}}",
+    "@nMinutes": {
+    "description": "A plural message",
+    "placeholders": {
+        "count": {
+        "type": "num",
+        "format": "compact"
+        }
+    }
+    },
     "template": "Template"
 
 }

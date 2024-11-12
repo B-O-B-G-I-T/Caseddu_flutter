@@ -109,7 +109,7 @@ class _ChatPageState extends State<ChatPage> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      Utils.depuisQuandCeMessageEstRecu(timeStamp: messageList.first.timestamp.toString()),
+                                      Utils.depuisQuandCeMessageEstRecu(timeStamp: messageList.first.timestamp.toString(), context: context),
                                       style: const TextStyle(color: Colors.grey),
                                     ),
                                     ListView.builder(

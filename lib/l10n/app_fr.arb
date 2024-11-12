@@ -88,5 +88,36 @@
     "error_while_saving_the_image": "Erreur lors de l'enregistrement de l'image'",
     "out_of_range": "hors de portée",
     "try_it_when_you_re_connected": "Essaie-le lorsque tu es connecté",
+    "now": "Maintenant",
+    "nDay": "{count, plural,=1{1 jour} other{{count} jours}}",
+    "@nDay": {
+    "description": "A plural message",
+    "placeholders": {
+        "count": {
+        "type": "num",
+        "format": "compact"
+        }
+    }
+    },
+    "nHour": "{count, plural,=1{1 heure} other{{count} heures}}",
+    "@nHour": {
+    "description": "A plural message",
+    "placeholders": {
+        "count": {
+        "type": "num",
+        "format": "compact"
+        }
+    }
+    },
+    "nMinutes": "{count, plural,=1{1 minute} other{{count} minutes}}",
+    "@nMinutes": {
+    "description": "A plural message",
+    "placeholders": {
+        "count": {
+        "type": "num",
+        "format": "compact"
+        }
+    }
+    },
     "template": "Modèle"
 }

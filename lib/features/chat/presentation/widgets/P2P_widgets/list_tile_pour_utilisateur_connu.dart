@@ -34,7 +34,7 @@ class ListTilePourUtilisateurConnu extends StatelessWidget {
         children: [
           typeMessage == "Payload" ? Text(message.isNotEmpty ? message : AppLocalizations.of(context)!.no_old_messages) : const Icon(Icons.image),
           const Text(" - "),
-          Text(Utils.depuisQuandCeMessageEstRecu(timeStamp: timestamp)),
+          Text(Utils.depuisQuandCeMessageEstRecu(timeStamp: timestamp, context: context)),
         ],
       ),
       trailing: const Icon(Icons.arrow_forward_ios_rounded),
