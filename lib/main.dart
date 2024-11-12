@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:json_theme/json_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -84,9 +85,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: Routes().router,
       debugShowCheckedModeBanner: false,
-      title: 'Caseddu ',
+      title: 'Caseddu',
       theme: theme,
     );
   }

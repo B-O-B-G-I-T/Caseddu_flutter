@@ -1,5 +1,5 @@
 // ignore_for_file: unused_element
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:provider/provider.dart';
@@ -98,8 +98,8 @@ class _ChatPageState extends State<ChatPage> {
                   children: [
                     Expanded(
                       child: messageList.isEmpty
-                          ? const Center(
-                              child: Text('Lancé la conversation'),
+                          ? Center(
+                              child: Text(AppLocalizations.of(context)!.start_conversation),
                             )
                           : Align(
                               alignment: Alignment.topCenter,
@@ -137,7 +137,6 @@ class _ChatPageState extends State<ChatPage> {
                               ),
                             ),
                     ),
-                    // TODO: ferlmer le clavier lorsque l'on remonte la liste
                     SafeArea(
                       child: MessagePanel(
                         converser: widget.converser,

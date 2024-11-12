@@ -11,6 +11,7 @@ import 'package:path/path.dart' show join;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Utils {
   static String toDateTime(DateTime dateTime) {
@@ -132,19 +133,19 @@ class Utils {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Accès limité'),
-          content: const Text(
-            'Vous avez accordé un accès limité aux photos. Cela peut restreindre certaines fonctionnalités de l\'application. Pour une expérience complète, veuillez accorder un accès complet dans les paramètres de l\'application.',
+          title: Text(AppLocalizations.of(context)!.limited_access),
+          content:  Text(
+            AppLocalizations.of(context)!.limited_access,
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Annuler'),
+              child:  Text(AppLocalizations.of(context)!.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Ouvrir les paramètres'),
+              child:  Text(AppLocalizations.of(context)!.open_parameters),
               onPressed: () {
                 Navigator.of(context).pop();
                 PhotoManager.openSetting();
@@ -161,13 +162,11 @@ class Utils {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Permission requise'),
-          content: const Text(
-            'Cette application a besoin d\'accès à vos photos pour fonctionner correctement. Veuillez activer les autorisations dans les paramètres de l\'application.',
-          ),
+          title:  Text(AppLocalizations.of(context)!.permission_required),
+          content:  Text(AppLocalizations.of(context)!.permission_required),
           actions: <Widget>[
             TextButton(
-              child: const Text('Ouvrir les paramètres'),
+              child: Text(AppLocalizations.of(context)!.open_parameters),
               onPressed: () {
                 Navigator.of(context).pop();
                 // Ouvrir les paramètres de l'application
@@ -175,7 +174,7 @@ class Utils {
               },
             ),
             TextButton(
-              child: const Text('Annuler'),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },

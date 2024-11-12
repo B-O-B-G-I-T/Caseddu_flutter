@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../core/errors/widgets/attente_widget.dart';
 import '../../../../core/errors/widgets/firebase_succes.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
@@ -104,7 +104,7 @@ class _OubliMotDePasseScreenState extends State<OubliMotDePassePage> {
                       }
                     }
                   },
-                  child: const Text("Change le mot de passe"),
+                  child:  Text(AppLocalizations.of(context)!.change_password),
                 ),
               ],
             ),

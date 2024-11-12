@@ -1,4 +1,4 @@
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,7 +18,7 @@ class LostConnectionWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                'Le device n\'est plus disponible à proximité.',
+                AppLocalizations.of(context)!.device_not_available,
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               const SizedBox(height: 20),
@@ -27,7 +27,7 @@ class LostConnectionWidget extends StatelessWidget {
                   // Navigate to a new page or show a dialog
                   context.pop();
                 },
-                child: const Text('Rechercher à nouveau'),
+                child: Text(AppLocalizations.of(context)!.search_again),
               ),
             ],
           ),

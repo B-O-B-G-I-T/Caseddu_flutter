@@ -6,6 +6,7 @@ import '../../../../core/utils/p2p/fonctions.dart';
 import '../../../../core/utils/p2p/p2p_utils.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/P2P_widgets/search_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 enum DeviceType { advertiser, browser }
 
@@ -78,9 +79,9 @@ class DevicesListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: devices.isEmpty
-          ? const Center(
+          ? Center(
               child: Text(
-                "Personne à proximité avec l'app,\nfait diffuser l'app aux non initiés.\n Agrandi ton cercle.",
+                AppLocalizations.of(context)!.no_nearby_users,
                 textAlign: TextAlign.center,
               ),
             )

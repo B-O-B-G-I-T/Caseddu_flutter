@@ -11,6 +11,7 @@ import '../../../data/models/chat_message_model.dart';
 import '../../providers/chat_provider.dart';
 import '../../widgets/P2P_widgets/connection_button.dart';
 import '../../widgets/P2P_widgets/search_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EnvoieDePhotoPage extends StatefulWidget {
   const EnvoieDePhotoPage({super.key, required this.pictureTaken});
@@ -73,7 +74,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                 SliverAppBar(
                   floating: true,
                   snap: true,
-                  title: const Text("Envoie de photo"),
+                  title: Text(AppLocalizations.of(context)!.send_photo),
                   centerTitle: true,
                   leading: IconButton(
                     icon: const Icon(Icons.arrow_back),
@@ -99,8 +100,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                   // les paires connus
                   Padding(
                     padding: const EdgeInsets.all(8),
-                    child: Text(
-                      "Les paires connus",
+                    child: Text(AppLocalizations.of(context)!.known_pairs, 
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
@@ -117,8 +117,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                   // liste des devices approximités
                   Padding(
                     padding: const EdgeInsets.all(8),
-                    child: Text(
-                      "Les paires approximités",
+                    child: Text(AppLocalizations.of(context)!.approximate_pairs,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
@@ -347,10 +346,10 @@ class NoDevice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(8.0),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
       child: Text(
-        'Aucun appareil disponible',
+        AppLocalizations.of(context)!.no_devices_available,
       ),
     );
   }
