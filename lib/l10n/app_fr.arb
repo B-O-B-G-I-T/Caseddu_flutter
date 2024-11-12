@@ -17,6 +17,7 @@
     "cancel": "Annuler",
     "permission_required": "Permission requise",
     "permission_access": "Cette application a besoin d'accès à vos photos pour fonctionner correctement. Veuillez activer les autorisations dans les paramètres de l'application.",
+    "permission_denied": "Permission refusée",
     "open_parameters": "Ouvrir les paramètres",
     "limited_access": "Accès limité",
     "access_picture": "Vous avez accordé un accès limité aux photos. Cela peut restreindre certaines fonctionnalités de l'application. Pour une expérience complète, veuillez accorder un accès complet dans les paramètres de l'application.",
@@ -76,5 +77,9 @@
     "logout": "Déconnexion",
     "edit_name": "Modifie le nom",
     "result": "Résultat",
+    "image_successfully_saved_to_gallery": "Image enregistrée avec succès dans la galerie ✅",
+    "error_while_saving_the_image": "Erreur lors de l'enregistrement de l'image'",
+    "out_of_range": "hors de portée",
+    "try_it_when_you_re_connected": "Essaie-le lorsque tu es connecté",
     "template": "Modèle"
 }

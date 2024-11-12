@@ -38,7 +38,7 @@ class _OubliMotDePasseScreenState extends State<OubliMotDePassePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Entre ton email",
+                  AppLocalizations.of(context)!.enter_email,
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
 

@@ -17,6 +17,7 @@
     "cancel": "Cancel",
     "permission_required": "Permission Required",
     "permission_access": "This application needs access to your photos to function properly. Please enable permissions in the application settings.",
+    "permission_denied": "Permission denied",
     "open_parameters": "Open settings",
     "limited_access": "Limited access",
     "access_picture": "You have granted limited access to photos. This may restrict certain features of the application. For a complete experience, please allow full access in the application settings.",
@@ -76,5 +77,10 @@
     "logout": "Logout",
     "edit_name": "Edit name",
     "result": "Result",
+    "image_successfully_saved_to_gallery": "Image successfully saved to gallery ✅",
+    "error_while_saving_the_image": "Error while saving the image",
+    "out_of_range": "Out of range",
+    "try_it_when_you_re_connected": "Try it when you're connected",
     "template": "Template"
+
 }

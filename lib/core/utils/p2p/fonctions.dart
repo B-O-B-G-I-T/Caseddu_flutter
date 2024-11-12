@@ -204,7 +204,7 @@ class Utils {
         if (assetEntity != null) {
           // Affichage d'un message de succès avec Fluttertoast
           Fluttertoast.showToast(
-            msg: 'Image enregistrée avec succès dans la galerie ✅',
+            msg: AppLocalizations.of(context)!.image_successfully_saved_to_gallery,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             backgroundColor: Colors.black,
@@ -212,7 +212,7 @@ class Utils {
           );
         } else {
           Fluttertoast.showToast(
-            msg: 'Erreur lors de l\'enregistrement de l\'image',
+            msg: AppLocalizations.of(context)!.error_while_saving_the_image,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             backgroundColor: Colors.red,
@@ -222,7 +222,7 @@ class Utils {
       } catch (e) {
         // Gestion des erreurs
         Fluttertoast.showToast(
-          msg: 'Erreur : $e',
+          msg: 'Error : $e',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.red,
@@ -232,7 +232,7 @@ class Utils {
     } else {
       // Permission refusée
       Fluttertoast.showToast(
-        msg: 'Permission refusée',
+        msg: AppLocalizations.of(context)!.permission_denied,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,

@@ -196,7 +196,7 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
       await chatProvider.connectToDevice(d);
     } else if (d.state == SessionState.tooFar) {
       Fluttertoast.showToast(
-          msg: 'hors de portée',
+          msg: AppLocalizations.of(context)!.out_of_range,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.TOP,
           timeInSecForIosWeb: 10,
@@ -209,7 +209,7 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
   void deleteMessageByMenu() {
     if (chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser).state != SessionState.connected) {
       Fluttertoast.showToast(
-          msg: 'hors de portée',
+          msg: AppLocalizations.of(context)!.out_of_range,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.TOP,
           timeInSecForIosWeb: 10,
@@ -262,7 +262,7 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(AppLocalizations.of(context)!.delete),
-                Icon(Icons.delete),
+                const Icon(Icons.delete),
               ],
             ),
           ),
