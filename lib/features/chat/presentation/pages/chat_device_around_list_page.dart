@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
 import '../../../../core/utils/p2p/p2p_utils.dart';
 import '../providers/chat_provider.dart';
+import '../widgets/P2P_widgets/connection_button.dart';
 import '../widgets/P2P_widgets/search_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -97,28 +98,10 @@ class DevicesListWidget extends StatelessWidget {
                       ListTile(
                         title: Text(device.deviceName),
                         subtitle: Text(
-                          getStateName(device.state),
+                          getStateName(device.state, context),
                           style: TextStyle(color: getStateColor(device.state)),
                         ),
-                        trailing: GestureDetector(
-                          onTap: () => onDeviceTap(device),
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                            padding: const EdgeInsets.all(8.0),
-                            height: 35,
-                            width: 100,
-                            color: getButtonColor(device.state),
-                            child: Center(
-                              child: Text(
-                                getButtonStateName(device),
-                                style: TextStyle(
-                                  color: device.state != SessionState.connecting ? Colors.white : Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+                        trailing: ConnectionButton(device: device),
                         onTap: () {
                           context.push('/ChatPage/${device.deviceName}');
                         },

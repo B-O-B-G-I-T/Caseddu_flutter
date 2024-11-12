@@ -145,16 +145,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
           setState(() async {
             await connectAll();
             for (var device in deviceSelectionne) {
-              // if (device.state == SessionState.notConnected) {
-              //   Fluttertoast.showToast(
-              //       msg: 'hors de portée',
-              //       toastLength: Toast.LENGTH_LONG,
-              //       gravity: ToastGravity.TOP,
-              //       timeInSecForIosWeb: 10,
-              //       backgroundColor: Colors.grey,
-              //       fontSize: 16.0);
-              // } else {
-
+              
               final String msgId = nanoid(21);
               final DateTime timestamp = DateTime.now();
               final String listImages = [widget.pictureTaken].join(',');
@@ -267,7 +258,7 @@ class DeviceListItem extends StatelessWidget {
         ListTile(
           title: Text(device.deviceName),
           subtitle: Text(
-            getStateName(device.state),
+            getStateName(device.state, context),
             style: TextStyle(color: getStateColor(device.state)),
           ),
           onTap: () async {
