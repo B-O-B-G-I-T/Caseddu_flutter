@@ -11,6 +11,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../widgets/camera_widgets/background_buttons_widget.dart';
 import '../../widgets/chat_widgets/page_chat/loader_for_chat.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CameraPage extends StatefulWidget {
   //pour la camera
@@ -97,7 +98,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
             return loaderForCamera();
           } else {
             if (snapshot.hasError) {
-              return Text('Erreur: ${snapshot.error}');
+              return Text(AppLocalizations.of(context)!.error_message(snapshot.error.toString()));
             } else {
               if (snapshot.connectionState == ConnectionState.done || widget.cameras.isEmpty) {
                 if (_isCameraPermissionGranted) {
@@ -125,7 +126,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       await initialiseControllerFuture;
 
       final XFile file = await _cameraController.takePicture();
-if (!mounted) return;
+      if (!mounted) return;
       cropImageToScreenSizeInIsolate(file, context);
 
 // peut etre utilisé une solution native
@@ -311,8 +312,8 @@ if (!mounted) return;
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text(
-            "On n'a pas la permission de l'appareil photo",
+          Text(
+            AppLocalizations.of(context)!.no_camera_permission,
           ),
           const SizedBox(height: 16),
           ElevatedButton(
@@ -320,7 +321,7 @@ if (!mounted) return;
               openAppSettings();
               getPermissionStatus();
             },
-            child: const Text("Peux tu nous l'accorder"),
+            child: Text(AppLocalizations.of(context)!.grant_permission),
           ),
         ],
       ),

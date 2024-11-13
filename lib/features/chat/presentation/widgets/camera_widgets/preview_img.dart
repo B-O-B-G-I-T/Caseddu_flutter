@@ -2,7 +2,7 @@
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // Flutter imports:
 import 'package:flutter/material.dart';
 
@@ -98,7 +98,7 @@ class _PreviewImgPageState extends State<PreviewImgPage> {
         data: ThemeData.dark(),
         child: Scaffold(
           appBar: AppBar(
-            title: const Text('Result'),
+            title: Text(AppLocalizations.of(context)!.result),
           ),
           body: CustomPaint(
             painter: const PixelTransparentPainter(
@@ -158,7 +158,7 @@ class _PreviewImgPageState extends State<PreviewImgPage> {
                     defaultColumnWidth: const IntrinsicColumnWidth(),
                     children: [
                       TableRow(children: [
-                        const Text('Generation-Time'),
+                        Text(AppLocalizations.of(context)!.generation_time),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: Text(
@@ -170,7 +170,7 @@ class _PreviewImgPageState extends State<PreviewImgPage> {
                       ]),
                       tableSpace,
                       TableRow(children: [
-                        const Text('Image-Size'),
+                        Text(AppLocalizations.of(context)!.image_size),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: Text(
@@ -182,7 +182,7 @@ class _PreviewImgPageState extends State<PreviewImgPage> {
                       ]),
                       tableSpace,
                       TableRow(children: [
-                        const Text('Content-Type'),
+                        Text(AppLocalizations.of(context)!.content_type),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: Text(
@@ -194,13 +194,13 @@ class _PreviewImgPageState extends State<PreviewImgPage> {
                       ]),
                       tableSpace,
                       TableRow(children: [
-                        const Text('Dimension'),
+                        Text(AppLocalizations.of(context)!.dimension),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: Text(
                             snapshot.connectionState == ConnectionState.done
                                 ? '${_numberFormatter.format(snapshot.data!.rawSize.width.round())} x ${_numberFormatter.format(snapshot.data!.rawSize.height.round())}'
-                                : 'Loading...',
+                                : AppLocalizations.of(context)!.loading,
                             style: _valueStyle,
                             textAlign: TextAlign.right,
                           ),
@@ -208,13 +208,13 @@ class _PreviewImgPageState extends State<PreviewImgPage> {
                       ]),
                       tableSpace,
                       TableRow(children: [
-                        const Text('Pixel-Ratio'),
+                        Text(AppLocalizations.of(context)!.pixel_ratio),
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0),
                           child: Text(
                             snapshot.connectionState == ConnectionState.done
                                 ? snapshot.data!.pixelRatio.toStringAsFixed(3)
-                                : 'Loading...',
+                                : AppLocalizations.of(context)!.loading,
                             style: _valueStyle,
                             textAlign: TextAlign.right,
                           ),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchWidget extends StatelessWidget {
   const SearchWidget({
     super.key,
-    required this.onChanged, required this.searchController,
+    required this.onChanged,
+    required this.searchController,
   });
   final ValueChanged<String> onChanged;
   final TextEditingController searchController;
@@ -14,7 +16,7 @@ class SearchWidget extends StatelessWidget {
       child: TextField(
         controller: searchController,
         decoration: InputDecoration(
-          hintText: "Search...",
+          hintText: AppLocalizations.of(context)!.search,
           hintStyle: TextStyle(color: Colors.grey.shade600),
           prefixIcon: Icon(
             Icons.search,
@@ -23,9 +25,7 @@ class SearchWidget extends StatelessWidget {
           ),
           filled: true,
           fillColor: Colors.grey.shade100,
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(50),
-              borderSide: BorderSide.none),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(50), borderSide: BorderSide.none),
         ),
         onTap: () => searchController.clear(),
         onChanged: onChanged,

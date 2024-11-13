@@ -10,6 +10,7 @@ import '../../../../../../core/params/params.dart';
 import '../../../providers/chat_provider.dart';
 import 'chat_message_text_widget.dart';
 import 'utils_widgets.dart'; // For Clipboard functionality
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChatBubble extends StatefulWidget {
   final bool isMe;
@@ -112,7 +113,7 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           // Title
-                                          receptionOuEnvoi(widget.converser, widget.isMe),
+                                          receptionOuEnvoi(widget.converser, context, widget.isMe),
                                           // Received date
                                           dateDuMessage(widget.message.timestamp.toString()),
                                         ],
@@ -195,7 +196,7 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
       await chatProvider.connectToDevice(d);
     } else if (d.state == SessionState.tooFar) {
       Fluttertoast.showToast(
-          msg: 'hors de portée',
+          msg: AppLocalizations.of(context)!.out_of_range,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.TOP,
           timeInSecForIosWeb: 10,
@@ -208,7 +209,7 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
   void deleteMessageByMenu() {
     if (chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser).state != SessionState.connected) {
       Fluttertoast.showToast(
-          msg: 'hors de portée',
+          msg: AppLocalizations.of(context)!.out_of_range,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.TOP,
           timeInSecForIosWeb: 10,
@@ -231,37 +232,37 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
       position: menuPosition,
       items: [
         if (widget.message.ack == 0)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'send_back',
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Renvoyer'),
-                Icon(Icons.send),
+                Text(AppLocalizations.of(context)!.resend),
+                const Icon(Icons.send),
               ],
             ),
           ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 'copy',
           child: SizedBox(
             width: 5000,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Copier'),
-                Icon(Icons.copy),
+                Text(AppLocalizations.of(context)!.copy),
+                const Icon(Icons.copy),
               ],
             ),
           ),
         ),
         if (!widget.isMe)
-          const PopupMenuItem(
+          PopupMenuItem(
             value: 'delete',
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Supprimer'),
-                Icon(Icons.delete),
+                Text(AppLocalizations.of(context)!.delete),
+                const Icon(Icons.delete),
               ],
             ),
           ),
@@ -275,7 +276,7 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
     // Copy the message text to clipboard
     Clipboard.setData(ClipboardData(text: widget.message.message));
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Message copied')),
+      SnackBar(content: Text(AppLocalizations.of(context)!.message_copied)),
     );
   }
 }
@@ -294,7 +295,7 @@ class DeleteMessageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        !isMe ? "Message supprimé" : "Message supprimé par $deviceName",
+        !isMe ? AppLocalizations.of(context)!.message_deleted : AppLocalizations.of(context)!.message_deleted_by_device(deviceName),
         style: const TextStyle(
           color: Colors.grey,
           fontSize: 14,

@@ -1,0 +1,124 @@
+{
+    "@@locale": "en",
+    "enter_pseudo": "Enter username",
+    "enter_a_number": "Enter a number",
+    "enter_your_password": "Enter your password",
+    "i_hope_you_haven_t_forgotten_it": "I hope you haven't forgotten it",
+    "enter_a_valid_username": "Enter a valid username",
+    "enter_a_valid_number": "Enter a valid number",
+    "enter_a_valid_email": "Enter a valid email",
+    "creation": "Creation",
+    "hey_you": "Hey you!",
+    "forgot_password": "Forgot password?",
+    "login": "Login",
+    "not_a_member": "Not a member?",
+    "sign_up": "Sign up",
+    "waiting": "Please wait...",
+    "cancel": "Cancel",
+    "permission_required": "Permission Required",
+    "permission_access": "This application needs access to your photos to function properly. Please enable permissions in the application settings.",
+    "permission_denied": "Permission denied",
+    "open_parameters": "Open settings",
+    "limited_access": "Limited access",
+    "access_picture": "You have granted limited access to photos. This may restrict certain features of the application. For a complete experience, please allow full access in the application settings.",
+    "enter_email": "Enter your email",
+    "change_password": "Change password",
+    "who_are_you": "Who are you?",
+    "enter_username": "Enter a username",
+    "am_i_member": "Am I a member?",
+    "connect": "Connect",
+    "all_chats_tab": "All Chats",
+    "devices_tab": "Proximity",
+    "no_nearby_users": "No nearby users with the app, spread the app to those who aren't familiar with it. Expand your circle.",
+    "no_conversations": "No conversations",
+    "deleted": "Deleted",
+    "start_conversation": "Start conversation",
+    "error_message": "Error: {snapshot}",
+    "@error_message": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+        "snapshot": {
+        "type": "String",
+        "example": "Bob"
+        }
+    }
+    },
+    "no_camera_permission": "We do not have camera permission",
+    "grant_permission": "Can you grant us permission?",
+    "no_image_available": "No image available",
+    "no_messages": "No messages",
+    "send_photo": "Send a picture",
+    "connected": "Connected",
+    "connecting": "Connecting",
+    "too_far": "Too far",
+    "disconnected": "Disconnected",
+    "known_pairs": "Known pairs",
+    "approximate_pairs": "Approximate pairs",
+    "no_devices_available": "No devices available",
+    "generation_time": "Generation time",
+    "image_size": "Image size",
+    "content_type": "Content type",
+    "dimension": "Dimension",
+    "loading": "Loading...",
+    "pixel_ratio": "Pixel ratio",
+    "resend": "Resend",
+    "copy": "Copy",
+    "delete": "Delete",
+    "message_copied": "Message copied",
+    "message_deleted": "You deleted the message",
+    "message_deleted_by_device": "Message deleted by {deviceName}",
+    "@message_deleted_by_device": {
+    "description": "A message with a single message_deleted_by_device",
+    "placeholders": {
+        "deviceName": {
+        "type": "String",
+        "example": "Bob"
+        }
+    }
+    },
+    "device_not_available": "The device is no longer available nearby.",
+    "search" : "Search...",
+    "search_again": "Search again",
+    "me": "Me",
+    "no_old_messages": "No old messages",
+    "logout": "Logout",
+    "edit_name": "Edit name",
+    "result": "Result",
+    "image_successfully_saved_to_gallery": "Image successfully saved to gallery ✅",
+    "error_while_saving_the_image": "Error while saving the image",
+    "out_of_range": "Out of range",
+    "try_it_when_you_re_connected": "Try it when you're connected",
+    "now": "Now",
+    "nDay": "{count, plural,=1{1 day} other{{count} days}}",
+    "@nDay": {
+    "description": "A plural message",
+    "placeholders": {
+        "count": {
+        "type": "num",
+        "format": "compact"
+        }
+    }
+    },
+    "nHour": "{count, plural,=1{1 hour} other{{count} hours}}",
+    "@nHour": {
+    "description": "A plural message",
+    "placeholders": {
+        "count": {
+        "type": "num",
+        "format": "compact"
+        }
+    }
+    },
+    "nMinutes": "{count, plural,=1{1 minute} other{{count} minutes}}",
+    "@nMinutes": {
+    "description": "A plural message",
+    "placeholders": {
+        "count": {
+        "type": "num",
+        "format": "compact"
+        }
+    }
+    },
+    "template": "Template"
+
+}

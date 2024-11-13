@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../../core/utils/p2p/fonctions.dart';
 import '../chat_widgets/circle_avatar.dart';
 
@@ -32,9 +32,9 @@ class ListTilePourUtilisateurConnu extends StatelessWidget {
       ),
       subtitle: Row(
         children: [
-          typeMessage == "Payload" ? Text(message.isNotEmpty ? message : "Pas d'ancien message") : const Icon(Icons.image),
+          typeMessage == "Payload" ? Text(message.isNotEmpty ? message : AppLocalizations.of(context)!.no_old_messages) : const Icon(Icons.image),
           const Text(" - "),
-          Text(Utils.depuisQuandCeMessageEstRecu(timeStamp: timestamp)),
+          Text(Utils.depuisQuandCeMessageEstRecu(timeStamp: timestamp, context: context)),
         ],
       ),
       trailing: const Icon(Icons.arrow_forward_ios_rounded),

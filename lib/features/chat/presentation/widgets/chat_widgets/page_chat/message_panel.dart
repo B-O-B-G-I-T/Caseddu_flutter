@@ -1,5 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io';
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/page_chat/image_picker.dart';
@@ -133,7 +133,7 @@ class _MessagePanelState extends State<MessagePanel> {
   void sendMessage() async {
     if (widget.device.state == SessionState.tooFar) {
       Fluttertoast.showToast(
-          msg: 'Out of reach',
+          msg: AppLocalizations.of(context)!.out_of_range,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.TOP,
           timeInSecForIosWeb: 3,
@@ -141,7 +141,7 @@ class _MessagePanelState extends State<MessagePanel> {
           fontSize: 16.0);
     } else if (widget.device.state == SessionState.connecting) {
       Fluttertoast.showToast(
-          msg: "Try it when you're connected",
+          msg: AppLocalizations.of(context)!.try_it_when_you_re_connected,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.TOP,
           timeInSecForIosWeb: 3,
@@ -171,6 +171,7 @@ class _MessagePanelState extends State<MessagePanel> {
         chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
       }
     }
+    _focusNode.requestFocus();
     myController.clear();
   }
 }

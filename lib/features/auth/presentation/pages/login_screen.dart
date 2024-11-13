@@ -1,6 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 import 'dart:io';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -50,9 +50,9 @@ class _LoginPageState extends State<LoginPage> {
                     Icons.admin_panel_settings_outlined,
                     size: 200,
                   ),
-                  const Text(
-                    "Salut toi",
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.hey_you,
+                    style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                     ),
@@ -128,14 +128,14 @@ class _LoginPageState extends State<LoginPage> {
                     onTap: () {
                       context.push('/oubliMotDePasse');
                     },
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 25),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
-                            "Mot de passe oublié",
-                            style: TextStyle(color: Colors.blue),
+                            AppLocalizations.of(context)!.forgot_password,
+                            style: const TextStyle(color: Colors.blue),
                           )
                         ],
                       ),
@@ -146,12 +146,11 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
                     child: ElevatedButton(
-                      child: const SizedBox(
+                      child:  SizedBox(
                         height: 50,
                         width: 150,
                         child: Center(
-                          child: Text(
-                            "Connexion",
+                          child: Text(AppLocalizations.of(context)!.login,
                             //style: TextStyle(
                             //color: Colors.white,
                             //fontWeight: FontWeight.bold),
@@ -211,14 +210,12 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        "Tu n'est pas membre ? ",
+                      Text(AppLocalizations.of(context)!.not_a_member,
                         style: Theme.of(context).textTheme.labelLarge,
                       ),
                       GestureDetector(
-                        child: const Text(
-                          "Enrole toi",
-                          style: TextStyle(color: Colors.blue),
+                        child: Text(AppLocalizations.of(context)!.sign_up,
+                          style: const TextStyle(color: Colors.blue),
                         ),
                         onTap: () {
                           context.push('/enroler');

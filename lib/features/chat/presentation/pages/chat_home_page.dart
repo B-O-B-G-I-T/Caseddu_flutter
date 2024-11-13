@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/chat_provider.dart';
 import 'chat_device_around_list_page.dart';
 import 'chat_known_list_page.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChatHomeScreen extends StatefulWidget {
   const ChatHomeScreen({super.key});
@@ -12,17 +13,9 @@ class ChatHomeScreen extends StatefulWidget {
 }
 
 class _ChatHomeScreenState extends State<ChatHomeScreen> with SingleTickerProviderStateMixin {
-  static const List<Tab> myTabs = <Tab>[
-    Tab(
-      text: "Devices",
-    ),
-    Tab(
-      text: "All Chats",
-    ),
-  ];
-
   bool isLoading = false;
   late TabController _tabController;
+  late List<Tab> myTabs;
 
   /// After reading all the cache, the home screen becomes visible.
   Future refreshMessages() async {
@@ -36,12 +29,20 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> with SingleTickerProvid
   void initState() {
     super.initState();
     chatProvider = Provider.of<ChatProvider>(context, listen: false);
-    _tabController = TabController(vsync: this, length: myTabs.length);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    myTabs = <Tab>[
+      Tab(
+        text: AppLocalizations.of(context)!.devices_tab,
+      ),
+      Tab(
+        text: AppLocalizations.of(context)!.all_chats_tab,
+      ),
+    ];
+    _tabController = TabController(vsync: this, length: myTabs.length);
   }
 
   @override
@@ -57,7 +58,6 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> with SingleTickerProvid
       child: Scaffold(
         // key: Global.scaffoldKey,
         appBar: AppBar(
-          
           toolbarHeight: 40,
           bottom: TabBar(
             tabs: myTabs,

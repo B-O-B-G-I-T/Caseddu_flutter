@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../widgets/camera_widgets/modifier_picture_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PrisePhoto extends StatefulWidget {
   const PrisePhoto({super.key, required this.lastImageCompleter});
@@ -32,9 +33,9 @@ class _PrisePhotoState extends State<PrisePhoto> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator()); // Affiche le chargement
           } else if (snapshot.hasError) {
-            return Center(child: Text(snapshot.error.toString())); // Gestion d'erreur
+            return Center(child: Text(AppLocalizations.of(context)!.error_message(snapshot.error.toString()))); // Gestion d'erreur
           } else if (!snapshot.hasData) {
-            return const Center(child: Text("Aucune image disponible"));
+            return Center(child: Text(AppLocalizations.of(context)!.no_image_available)); // Gestion d'erreur
           }
 
           final croppedImagePath = snapshot.data!;
@@ -92,10 +93,9 @@ class _PrisePhotoState extends State<PrisePhoto> {
                           color: const Color.fromARGB(255, 39, 39, 39),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: const Text(
-                          'Annuler',
+                        child:  Text(AppLocalizations.of(context)!.cancel,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.white, fontSize: 20),
+                          style: const TextStyle(color: Colors.white, fontSize: 20),
                         ),
                       ),
                     ),

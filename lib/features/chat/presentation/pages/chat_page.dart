@@ -1,5 +1,5 @@
 // ignore_for_file: unused_element
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:provider/provider.dart';
@@ -63,6 +63,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
 // TODO création de groupe de conversation
+// TODO amélioration de historique de conversation et gestion de la liste
   @override
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(builder: (context, chatProvider, child) {
@@ -98,8 +99,8 @@ class _ChatPageState extends State<ChatPage> {
                   children: [
                     Expanded(
                       child: messageList.isEmpty
-                          ? const Center(
-                              child: Text('Lancé la conversation'),
+                          ? Center(
+                              child: Text(AppLocalizations.of(context)!.start_conversation),
                             )
                           : Align(
                               alignment: Alignment.topCenter,
@@ -109,7 +110,7 @@ class _ChatPageState extends State<ChatPage> {
                                 child: Column(
                                   children: [
                                     Text(
-                                      Utils.depuisQuandCeMessageEstRecu(timeStamp: messageList.first.timestamp.toString()),
+                                      Utils.depuisQuandCeMessageEstRecu(timeStamp: messageList.first.timestamp.toString(), context: context),
                                       style: const TextStyle(color: Colors.grey),
                                     ),
                                     ListView.builder(
@@ -137,7 +138,6 @@ class _ChatPageState extends State<ChatPage> {
                               ),
                             ),
                     ),
-                    // TODO: ferlmer le clavier lorsque l'on remonte la liste
                     SafeArea(
                       child: MessagePanel(
                         converser: widget.converser,

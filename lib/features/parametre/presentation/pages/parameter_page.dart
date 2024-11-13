@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
 import '../providers/parametre_provider.dart';
 
@@ -44,7 +44,7 @@ class _ParametrePageState extends State<ParametrePage> {
                   //   // context.push('/login');
                   //   // print(context.mounted);
                 },
-                child: const Text("Déconnexion")),
+                child:  Text(AppLocalizations.of(context)!.logout)),
 
 // modifie le nom a supprime en prod
             TextField(
@@ -55,7 +55,7 @@ class _ParametrePageState extends State<ParametrePage> {
                   User? user = FirebaseAuth.instance.currentUser;
                   user?.updateDisplayName(_txt.text.trim());
                 },
-                child: const Text("Modifie le nom"))
+                child: Text(AppLocalizations.of(context)!.edit_name)),
           ]),
         ),
       ),
