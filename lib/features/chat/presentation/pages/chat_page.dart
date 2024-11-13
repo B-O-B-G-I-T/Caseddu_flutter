@@ -63,6 +63,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
 // TODO création de groupe de conversation
+// TODO amélioration de historique de conversation et gestion de la liste
   @override
   Widget build(BuildContext context) {
     return Consumer<ChatProvider>(builder: (context, chatProvider, child) {
