@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../../domain/entities/chat_message_entity.dart';
 import '../preview_picture/all_preview_picture_widget.dart';
 

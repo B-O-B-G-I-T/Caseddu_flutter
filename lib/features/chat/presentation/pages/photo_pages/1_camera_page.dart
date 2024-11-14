@@ -10,7 +10,7 @@ import 'package:image/image.dart' as IMG;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../widgets/camera_widgets/background_buttons_widget.dart';
-import '../../widgets/chat_widgets/page_chat/loader_for_chat.dart';
+import '../../widgets/camera_widgets/loader_for_camera.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CameraPage extends StatefulWidget {

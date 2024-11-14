@@ -47,6 +47,7 @@
     "grant_permission": "Peux-tu nous l'accorder",
     "no_image_available": "Aucune image disponible",
     "no_messages": "Pas de messages",
+    "no_more_messages": "Pas plus de messages",
     "send_photo": "Envoyer une photo",
     "connected": "Connecté",
     "connecting": "En cours",

@@ -31,6 +31,9 @@ class ChatProvider extends ChangeNotifier {
   List<Device> connectedDevices = [];
   List<UserEntity> users = [];
 
+  bool _isLoadingOldMessages = false;
+  bool hasMoreMessages = true;
+  bool get isLoadingOldMessages => _isLoadingOldMessages;
   ChatProvider({
     this.failure,
   }) {
@@ -262,12 +265,13 @@ class ChatProvider extends ChangeNotifier {
           chat.add(chatMessageModel);
         }
         failure = null;
+
         notifyListeners();
       },
     );
   }
 
-  Future<void> eitherFailureOrConversation(String senderName, String receiverName) async {
+  Future<void> eitherFailureOrConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20}) async {
     ChatRepositoryImpl repository = ChatRepositoryImpl(
       remoteDataSource: ChatRemoteDataSourceImpl(),
       localDataSource: ChatLocalDataSourceImpl(
@@ -277,18 +281,29 @@ class ChatProvider extends ChangeNotifier {
         DataConnectionChecker(),
       ),
     );
-    chat = [];
-    final failureOrChat = await GetChat(chatRepository: repository).getConversation(senderName, receiverName);
+    if (_isLoadingOldMessages || !hasMoreMessages) return;
 
+    _isLoadingOldMessages = true;
+    notifyListeners();
+    //chat = [];
+    final failureOrChat = await GetChat(chatRepository: repository).getConversation(senderName, receiverName, beforeDate: beforeDate, limit: limit);
+    await Future.delayed(Duration(seconds: 3));
     failureOrChat.fold(
       (Failure newFailure) {
         //chat = null;
         failure = newFailure;
+        hasMoreMessages = false;
+        _isLoadingOldMessages = false;
         notifyListeners();
       },
       (List<ChatMessageEntity> messages) {
-        chat = messages;
+        if (messages.isNotEmpty) {
+          chat.addAll(messages);
+        }
+        // Si le nombre de messages reçus est inférieur à la limite, on considère qu'il n'y en a plus à charger
+        _isLoadingOldMessages = false;
         failure = null;
+
         notifyListeners();
       },
     );
