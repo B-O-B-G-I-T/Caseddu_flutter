@@ -34,6 +34,12 @@ class ChatProvider extends ChangeNotifier {
   bool _isLoadingOldMessages = false;
   bool hasMoreMessages = true;
   bool get isLoadingOldMessages => _isLoadingOldMessages;
+
+  // Stream pour les nouveaux messages reçus
+  final StreamController<void> _newMessageController = StreamController<void>.broadcast();
+
+  Stream<void> get newMessageStream => _newMessageController.stream;
+
   ChatProvider({
     this.failure,
   }) {
@@ -121,7 +127,9 @@ class ChatProvider extends ChangeNotifier {
 // enregistre le message dans la base de données et envoie ack
           await receiveMessage(chatMessageModel: chatMessageModel, nearbyService: nearbyService);
         }
-        notifyListeners();
+        // Diffuse le nouveau message via le Stream
+        _newMessageController.sink.add(null);
+        //notifyListeners();
       } catch (e) {
         log('Erreur lors de la conversion des données JSON : $e', name: 'ChatProvider');
       }
@@ -287,7 +295,7 @@ class ChatProvider extends ChangeNotifier {
     notifyListeners();
     //chat = [];
     final failureOrChat = await GetChat(chatRepository: repository).getConversation(senderName, receiverName, beforeDate: beforeDate, limit: limit);
-    await Future.delayed(Duration(seconds: 3));
+    // await Future.delayed(Duration(seconds: 3));
     failureOrChat.fold(
       (Failure newFailure) {
         //chat = null;

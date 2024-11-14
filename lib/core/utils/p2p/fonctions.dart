@@ -29,13 +29,25 @@ class Utils {
     return time;
   }
 
-  // Function to format the date in viewable form
-  static String dateFormatter({required String timeStamp}) {
-    // From timestamp to readable date and hour minutes
+// Function to format the date in viewable form
+  static String dateFormatter({required String timeStamp, BuildContext? context, String? locale}) {
+    // Si la locale n'est pas fournie, on utilise celle du contexte (si le contexte est non nul)
+    locale ??= context != null ? Localizations.localeOf(context).toString() : 'en_US'; // Valeur par défaut si pas de contexte
+
     DateTime dateTime = DateTime.parse(timeStamp);
-    String formattedDate = DateFormat('dd/MM/yyyy').format(dateTime);
-    String formattedTime = DateFormat('hh:mm aa').format(dateTime);
-    return "$formattedDate $formattedTime";
+
+    // Créez un format de date en fonction de la locale
+    String formattedTime;
+
+    if (locale == 'fr') {
+      formattedTime = DateFormat('HH:mm', locale).format(dateTime); // Format français 24h
+    } else if (locale == 'en') {
+      formattedTime = DateFormat('hh:mm a', locale).format(dateTime); // Format anglais AM/PM
+    } else {
+      formattedTime = DateFormat('hh:mm a', locale).format(dateTime); // Format anglais AM/PM
+    }
+
+    return formattedTime;
   }
 
   static String depuisQuandCeMessageEstRecu({required String timeStamp, required BuildContext context}) {
