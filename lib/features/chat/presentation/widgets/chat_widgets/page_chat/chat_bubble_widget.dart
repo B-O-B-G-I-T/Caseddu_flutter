@@ -16,12 +16,14 @@ class ChatBubble extends StatefulWidget {
   final bool isMe;
   final String converser;
   final ChatMessageEntity message;
+  final bool collapseMessages;
 
   const ChatBubble({
     super.key,
     required this.isMe,
     required this.converser,
     required this.message,
+    required this.collapseMessages,
   });
 
   @override
@@ -32,6 +34,7 @@ class ChatBubble extends StatefulWidget {
 class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateMixin {
   bool _isPressed = false;
   final GlobalKey _chatBubbleKey = GlobalKey(); // GlobalKey to access widget position and size
+
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<Offset> _offsetAnimation;
@@ -96,7 +99,7 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
                         color: Colors.white,
                         child: IntrinsicHeight(
                           child: Padding(
-                            padding: const EdgeInsets.all(4.0),
+                            padding: !widget.collapseMessages ? const EdgeInsets.fromLTRB(4, 4, 4, 0) : const EdgeInsets.fromLTRB(4, 0, 4, 0),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -112,10 +115,12 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          // Title
-                                          receptionOuEnvoi(widget.converser, context, widget.isMe),
-                                          // Received date
-                                          dateDuMessage(widget.message.timestamp.toString()),
+                                          if (!widget.collapseMessages) ...[
+                                            // Title
+                                            receptionOuEnvoi(widget.converser, context, widget.isMe),
+                                            // Received date
+                                            dateDuMessage(widget.message.timestamp.toString(), context),
+                                          ],
                                         ],
                                       ),
                                       const SizedBox(height: 5),

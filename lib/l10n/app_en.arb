@@ -47,6 +47,7 @@
     "grant_permission": "Can you grant us permission?",
     "no_image_available": "No image available",
     "no_messages": "No messages",
+    "no_more_messages": "No more messages",
     "send_photo": "Send a picture",
     "connected": "Connected",
     "connecting": "Connecting",

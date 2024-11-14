@@ -31,6 +31,15 @@ class ChatProvider extends ChangeNotifier {
   List<Device> connectedDevices = [];
   List<UserEntity> users = [];
 
+  bool _isLoadingOldMessages = false;
+  bool hasMoreMessages = true;
+  bool get isLoadingOldMessages => _isLoadingOldMessages;
+
+  // Stream pour les nouveaux messages reçus
+  final StreamController<void> _newMessageController = StreamController<void>.broadcast();
+
+  Stream<void> get newMessageStream => _newMessageController.stream;
+
   ChatProvider({
     this.failure,
   }) {
@@ -118,7 +127,9 @@ class ChatProvider extends ChangeNotifier {
 // enregistre le message dans la base de données et envoie ack
           await receiveMessage(chatMessageModel: chatMessageModel, nearbyService: nearbyService);
         }
-        notifyListeners();
+        // Diffuse le nouveau message via le Stream
+        _newMessageController.sink.add(null);
+        //notifyListeners();
       } catch (e) {
         log('Erreur lors de la conversion des données JSON : $e', name: 'ChatProvider');
       }
@@ -262,12 +273,13 @@ class ChatProvider extends ChangeNotifier {
           chat.add(chatMessageModel);
         }
         failure = null;
+
         notifyListeners();
       },
     );
   }
 
-  Future<void> eitherFailureOrConversation(String senderName, String receiverName) async {
+  Future<void> eitherFailureOrConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20}) async {
     ChatRepositoryImpl repository = ChatRepositoryImpl(
       remoteDataSource: ChatRemoteDataSourceImpl(),
       localDataSource: ChatLocalDataSourceImpl(
@@ -277,18 +289,29 @@ class ChatProvider extends ChangeNotifier {
         DataConnectionChecker(),
       ),
     );
-    chat = [];
-    final failureOrChat = await GetChat(chatRepository: repository).getConversation(senderName, receiverName);
+    if (_isLoadingOldMessages || !hasMoreMessages) return;
 
+    _isLoadingOldMessages = true;
+    notifyListeners();
+    //chat = [];
+    final failureOrChat = await GetChat(chatRepository: repository).getConversation(senderName, receiverName, beforeDate: beforeDate, limit: limit);
+    // await Future.delayed(Duration(seconds: 3));
     failureOrChat.fold(
       (Failure newFailure) {
         //chat = null;
         failure = newFailure;
+        hasMoreMessages = false;
+        _isLoadingOldMessages = false;
         notifyListeners();
       },
       (List<ChatMessageEntity> messages) {
-        chat = messages;
+        if (messages.isNotEmpty) {
+          chat.addAll(messages);
+        }
+        // Si le nombre de messages reçus est inférieur à la limite, on considère qu'il n'y en a plus à charger
+        _isLoadingOldMessages = false;
         failure = null;
+
         notifyListeners();
       },
     );

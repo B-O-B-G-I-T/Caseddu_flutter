@@ -40,10 +40,10 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<Either<Failure, List<ChatMessageModel>>> getConversation(String senderName, String receiverName) async {
+  Future<Either<Failure, List<ChatMessageModel>>> getConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20}) async {
     //if (await networkInfo.isConnected!) {
     try {
-      List<ChatMessageModel> listChatModel = await localDataSource.getConversation(senderName, receiverName);
+      List<ChatMessageModel> listChatModel = await localDataSource.getConversation(senderName, receiverName, beforeDate: beforeDate, limit: limit);
 
       return Right(listChatModel);
     } catch (e) {

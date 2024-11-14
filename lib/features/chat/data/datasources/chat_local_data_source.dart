@@ -10,7 +10,7 @@ import 'local_database/data_base_helper.dart';
 abstract class ChatLocalDataSource {
   Future<void> insertMessage({required ChatMessageModel chatMessageModel, required bool isSender});
   Future<List<ChatMessageModel>> getAllMessages();
-  Future<List<ChatMessageModel>> getConversation(String senderName, String receiverName);
+  Future<List<ChatMessageModel>> getConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20});
   Future<List<UserModel>> getAllConversation();
   Future<void> deleteMessage(ChatMessageEntity chatMessageEntity);
 
@@ -68,10 +68,10 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
   }
 
   @override
-  Future<List<ChatMessageModel>> getConversation(String senderName, String receiverName) async {
+  Future<List<ChatMessageModel>> getConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20}) async {
     final dbHelper = DatabaseHelper();
 
-    List<ChatMessageModel>? allChatMessages = await dbHelper.getConversation(senderName, receiverName);
+    List<ChatMessageModel>? allChatMessages = await dbHelper.getConversation(senderName, receiverName, beforeDate: beforeDate, limit: limit);
 
     return allChatMessages!;
   }

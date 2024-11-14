@@ -32,9 +32,8 @@ class ListTilePourUtilisateurConnu extends StatelessWidget {
       ),
       subtitle: Row(
         children: [
-          typeMessage == "Payload" ? Text(message.isNotEmpty ? message : AppLocalizations.of(context)!.no_old_messages) : const Icon(Icons.image),
-          const Text(" - "),
-          Text(Utils.depuisQuandCeMessageEstRecu(timeStamp: timestamp, context: context)),
+          typeMessage == "Payload" ? Text(message) : const Icon(Icons.image),
+          timestamp != "" ? Text(" - ${Utils.depuisQuandCeMessageEstRecu(timeStamp: timestamp, context: context)}") : const SizedBox(),
         ],
       ),
       trailing: const Icon(Icons.arrow_forward_ios_rounded),

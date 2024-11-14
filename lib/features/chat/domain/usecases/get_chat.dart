@@ -15,8 +15,8 @@ class GetChat {
     return await chatRepository.init();
   }
 
-  Future<Either<Failure, List<ChatMessageEntity>>> getConversation(String senderName, String receiverName) async {
-    return await chatRepository.getConversation( senderName,  receiverName);
+  Future<Either<Failure, List<ChatMessageEntity>>> getConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20}) async {
+    return await chatRepository.getConversation( senderName,  receiverName, beforeDate: beforeDate, limit: limit);
   }
 Future<Either<Failure, List<UserEntity>>> getAllConversations() async {
     return await chatRepository.getAllConversations();
