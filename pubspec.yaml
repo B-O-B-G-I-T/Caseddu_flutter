@@ -99,7 +99,6 @@ dependencies:
   # pour les langues
   flutter_localization: ^0.2.2
 
-
 dev_dependencies:
         
   flutter_test:
