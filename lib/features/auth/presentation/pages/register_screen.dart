@@ -7,7 +7,6 @@ import '../../../../core/errors/widgets/attente_widget.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
 import '../providers/authentification_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});

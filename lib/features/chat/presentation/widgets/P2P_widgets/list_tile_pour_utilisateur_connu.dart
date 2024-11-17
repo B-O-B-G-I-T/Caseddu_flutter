@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../../core/utils/p2p/fonctions.dart';
 import '../chat_widgets/circle_avatar.dart';
 

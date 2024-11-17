@@ -117,7 +117,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/theme/appainter_theme.json
-    - assets/images/
+    - assets/images/femmephoto.jpg
     - assets/
 
   fonts:

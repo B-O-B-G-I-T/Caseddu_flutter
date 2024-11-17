@@ -20,6 +20,7 @@ import '../../domain/usecases/get_chat.dart';
 import '../../data/datasources/chat_local_data_source.dart';
 import '../../data/datasources/chat_remote_data_source.dart';
 import '../../data/repositories/chat_repository_impl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChatProvider extends ChangeNotifier {
   String myName = '';
@@ -72,13 +73,60 @@ class ChatProvider extends ChangeNotifier {
 
         checkDevices(nearbyService);
         checkReceiveData(nearbyService);
+
         failure = null;
         notifyListeners();
       },
     );
   }
 
-  //--------------- Reception des connections
+  void setupInvitationHandler(BuildContext context) {
+    controlerDevice?.registerInvitationHandler((peerName) async {
+      try {
+        final result = await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            bool isProcessing = false;
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: Text(AppLocalizations.of(context)!.invitation_received),
+                  content: Text(AppLocalizations.of(context)!.wants_to_connect_with_you(peerName)),
+                  actionsAlignment: MainAxisAlignment.spaceEvenly,
+                  actions: [
+                    OutlinedButton(
+                      onPressed: isProcessing
+                          ? null
+                          : () async {
+                              setState(() => isProcessing = true);
+                              Navigator.of(context).pop(false);
+                            },
+                      child: Text(AppLocalizations.of(context)!.decline),
+                    ),
+                    ElevatedButton(
+                      onPressed: isProcessing
+                          ? null
+                          : () async {
+                              setState(() => isProcessing = true);
+                              Navigator.of(context).pop(true);
+                            },
+                      child: isProcessing ? const CircularProgressIndicator(color: Colors.white) : Text(AppLocalizations.of(context)!.accept),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        );
+        return result ?? false; // Retourne false si aucune action n'est prise
+      } catch (e) {
+        debugPrint("Error during invitation handling: $e");
+        return false;
+      }
+    });
+  }
+
+//--------------- Reception des connections
   StreamSubscription checkDevices(NearbyService nearbyService) {
     return nearbyService.stateChangedSubscription(callback: (devicesList) {
       for (var element in devicesList) {

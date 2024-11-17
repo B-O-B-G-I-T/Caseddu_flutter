@@ -27,6 +27,19 @@
     "enter_username": "Enter a username",
     "am_i_member": "Am I a member ? ",
     "connect": "Connect",
+    "decline": "Decline",
+    "accept": "Accept",
+    "invitation_received": "Invitation Received",
+    "wants_to_connect_with_you" : "{peerName} wants to connect with you.",
+    "@wants_to_connect_with_you": {
+    "description": "wants to connect with you.",
+    "placeholders": {
+        "peerName": {
+        "type": "String",
+        "example": "Bob"
+        }
+    }
+    },
     "all_chats_tab": "All Chats",
     "devices_tab": "Proximity",
     "no_nearby_users": "No nearby users with the app, spread the app to those who aren't familiar with it. Expand your circle.",
