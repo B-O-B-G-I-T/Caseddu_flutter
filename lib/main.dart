@@ -36,7 +36,7 @@ void main() async {
 
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  final chatProvider = ChatProvider(); // Initialisation manuelle
+  final chatProvider = await ChatProvider(); // Initialisation manuelle
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -84,9 +84,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    
     return MaterialApp.router(
-      
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: Routes().router,

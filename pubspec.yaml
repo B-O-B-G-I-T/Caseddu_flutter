@@ -41,7 +41,7 @@ dependencies:
   json_theme: ^6.5.0+1
   
   # pour la camera
-  camera: ^0.10.5+2
+  camera: ^0.11.0+2
 
   # pour la gestion des images 
   pro_image_editor: ^5.4.2
@@ -117,7 +117,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/theme/appainter_theme.json
-    - assets/images/femmephoto.jpg
+    - assets/images/
     - assets/
 
   fonts:
