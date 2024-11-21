@@ -24,6 +24,7 @@
     "enter_email": "Enter your email",
     "change_password": "Change password",
     "who_are_you": "Who are you ? ",
+    "write_your_message" : "Write your message",
     "enter_username": "Enter a username",
     "am_i_member": "Am I a member ? ",
     "connect": "Connect",
@@ -45,6 +46,7 @@
     "no_nearby_users": "No nearby users with the app, spread the app to those who aren't familiar with it. Expand your circle.",
     "no_conversations": "No conversations",
     "deleted": "Deleted",
+    "message_deleted": "Message deleted",
     "start_conversation": "Start conversation",
     "error_message": "Error: {snapshot}",
     "@error_message": {

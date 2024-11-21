@@ -24,6 +24,7 @@
     "enter_email": "Entre ton email",
     "change_password": "Change le mot de passe",
     "who_are_you": "Qui es-tu ? ",
+    "write_your_message" : "Écrivez votre message",
     "enter_username": "Entre un pseudo",
     "am_i_member": "Suis-je un membre ? ",
     "connect": "Connect",
@@ -45,6 +46,7 @@
     "no_nearby_users": "Personne à proximité avec l'app, fais diffuser l'app aux non initiés. Agrandi ton cercle.",
     "no_conversations": "Pas de conversation",
     "deleted": "Supprimé",
+    "message_deleted": "Message supprimé",
     "start_conversation": "Lancer la conversation",
     "error_message": "Erreur: {snapshot}",
     "@error_message": {

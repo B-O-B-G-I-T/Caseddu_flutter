@@ -59,8 +59,8 @@ class _MessagePanelState extends State<MessagePanel> {
                 child: TextField(
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.send, // Changer le bouton retour en bouton d'envoi
-                  decoration: const InputDecoration(
-                    hintText: 'Ecrivez votre message',
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context)!.write_your_message,
                   ),
                   focusNode: _focusNode,
                   maxLines: null,
