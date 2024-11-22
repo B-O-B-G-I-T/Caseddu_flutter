@@ -1,6 +1,5 @@
-
 import 'package:flutter/material.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../../../core/utils/p2p/fonctions.dart';
 
 @override
@@ -22,10 +21,11 @@ Widget laBarre(bool messageDeReceptionOuEnvoi) {
 @override
 Widget receptionOuEnvoi(
   String messageDeReceptionOuEnvoi,
+  BuildContext context,
   bool isMe,
 ) {
   return Text(
-    isMe == true ? messageDeReceptionOuEnvoi : "Moi",
+    isMe == true ? messageDeReceptionOuEnvoi : AppLocalizations.of(context)!.me,
     style: TextStyle(
       color: isMe == true ? Colors.red : Colors.blue,
     ),
@@ -33,10 +33,11 @@ Widget receptionOuEnvoi(
 }
 
 @override
-Widget dateDuMessage(String dateDeLaReception) {
+Widget dateDuMessage(String dateDeLaReception, BuildContext context) {
   return Text(
     Utils.dateFormatter(
       timeStamp: dateDeLaReception,
+      context: context,
     ),
     style: const TextStyle(fontSize: 10),
   );

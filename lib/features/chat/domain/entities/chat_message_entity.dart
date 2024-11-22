@@ -24,6 +24,7 @@ class ChatMessageEntity {
   set setImage(String newImages) {
     newImages = images;
   }
+
   ChatMessageParams toParamsAKC() {
     return ChatMessageParams(
       id: id,
@@ -33,6 +34,20 @@ class ChatMessageEntity {
       message: message,
       images: images,
       type: type,
+      sendOrReceived: 'Send',
+      ack: 1,
+    );
+  }
+
+  ChatMessageParams toParamsDelete() {
+    return ChatMessageParams(
+      id: id,
+      sender: sender,
+      receiver: receiver,
+      timestamp: timestamp,
+      message: "DELETE ",
+      images: "",
+      type: "DELETE",
       sendOrReceived: 'Send',
       ack: 1,
     );

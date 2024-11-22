@@ -7,6 +7,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   emoji_picker_flutter
   firebase_auth
   firebase_core
+  flutter_localization
   permission_handler_windows
 )
 

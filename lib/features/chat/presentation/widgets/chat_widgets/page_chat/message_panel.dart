@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io';
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/page_chat/image_picker.dart';
@@ -11,11 +13,10 @@ import '../../../../../../core/params/params.dart';
 import '../../../providers/chat_provider.dart';
 
 class MessagePanel extends StatefulWidget {
-  MessagePanel({super.key, required this.converser, required this.device, required this.longDistance});
+  MessagePanel({super.key, required this.converser, required this.device});
 
   final Device device;
   final String converser;
-  final bool longDistance;
   final List<File> pictures = [];
 
   @override
@@ -58,8 +59,8 @@ class _MessagePanelState extends State<MessagePanel> {
                 child: TextField(
                   keyboardType: TextInputType.multiline,
                   textInputAction: TextInputAction.send, // Changer le bouton retour en bouton d'envoi
-                  decoration: const InputDecoration(
-                    hintText: 'Ecrivez votre message',
+                  decoration: InputDecoration(
+                    hintText: AppLocalizations.of(context)!.write_your_message,
                   ),
                   focusNode: _focusNode,
                   maxLines: null,
@@ -68,7 +69,7 @@ class _MessagePanelState extends State<MessagePanel> {
                   }),
                   onChanged: (value) async {
                     _showGallery = false;
-                    if (widget.device.state == SessionState.notConnected && !widget.longDistance) {
+                    if (widget.device.state != SessionState.connected) {
                       await chatProvider.connectToDevice(widget.device);
                     }
                   },
@@ -102,8 +103,8 @@ class _MessagePanelState extends State<MessagePanel> {
           FocusScope.of(context).unfocus();
 
           permissionStatus = await PhotoManager.requestPermissionExtend();
-          if (permissionStatus == PermissionState.authorized && !widget.longDistance && context.mounted) {
-            if (widget.device.state == SessionState.notConnected) {
+          if (permissionStatus == PermissionState.authorized && widget.device.state != SessionState.tooFar) {
+            if (widget.device.state != SessionState.connected) {
               await chatProvider.connectToDevice(widget.device);
             }
             setState(() {
@@ -130,13 +131,22 @@ class _MessagePanelState extends State<MessagePanel> {
   }
 
   void sendMessage() async {
-    if (widget.longDistance && widget.device.state == SessionState.notConnected) {
+    if (widget.device.state == SessionState.tooFar) {
       Fluttertoast.showToast(
-          msg: 'hors de portée',
+          msg: AppLocalizations.of(context)!.out_of_range,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.TOP,
-          timeInSecForIosWeb: 10,
-          backgroundColor: Colors.grey,
+          timeInSecForIosWeb: 3,
+          backgroundColor: Colors.black,
+          fontSize: 16.0);
+    } else if (widget.device.state == SessionState.connecting) {
+      Fluttertoast.showToast(
+          msg: AppLocalizations.of(context)!.try_it_when_you_re_connected,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 3,
+          backgroundColor: Colors.yellow,
+          textColor: Colors.black,
           fontSize: 16.0);
     } else {
       if (myController.text != "") {
@@ -155,12 +165,13 @@ class _MessagePanelState extends State<MessagePanel> {
           timestamp: timestamp,
           ack: 0,
         );
-        if (widget.device.state == SessionState.notConnected && !widget.longDistance) {
+        if (widget.device.state != SessionState.connected) {
           await chatProvider.connectToDevice(widget.device);
         }
         chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
       }
     }
+    _focusNode.requestFocus();
     myController.clear();
   }
 }

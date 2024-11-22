@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 
 import '../../features/chat/data/models/chat_message_model.dart';
@@ -61,6 +60,7 @@ class ChatMessageParams {
     ack = value;
   }
 
+  // ignore: unnecessary_getters_setters
   NearbyService? get nearbyService => _nearbyService;
 
 

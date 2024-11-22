@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:caseddu/features/chat/data/models/chat_message_model.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
@@ -9,14 +9,14 @@ import 'package:caseddu/features/chat/presentation/providers/chat_provider.dart'
 import 'package:caseddu/features/chat/presentation/widgets/P2P_widgets/list_tile_pour_utilisateur_connu.dart';
 import 'package:caseddu/features/chat/presentation/widgets/P2P_widgets/search_widget.dart';
 
-class ListeDesChatsPage extends StatefulWidget {
-  const ListeDesChatsPage({Key? key}) : super(key: key);
+class ChatKnownListPage extends StatefulWidget {
+  const ChatKnownListPage({super.key});
 
   @override
-  State<ListeDesChatsPage> createState() => _ListeDesChatsPageState();
+  State<ChatKnownListPage> createState() => _ChatKnownListPageState();
 }
 
-class _ListeDesChatsPageState extends State<ListeDesChatsPage> {
+class _ChatKnownListPageState extends State<ChatKnownListPage> {
   final TextEditingController _searchController = TextEditingController();
   late ChatProvider chatProvider;
   List<UserEntity> allConversations = [];
@@ -62,8 +62,10 @@ class _ListeDesChatsPageState extends State<ListeDesChatsPage> {
             Expanded(
               // Affiche un message si aucune conversation n'est disponible
               child: filteredConversations.isEmpty
-                  ? const Center(
-                      child: Text("Pas de conversation"),
+                  ? Center(
+                      child: Text(
+                        AppLocalizations.of(context)!.no_conversations,
+                      ),
                     )
                   : ListView.builder(
                       itemCount: filteredConversations.length,
@@ -75,24 +77,24 @@ class _ListeDesChatsPageState extends State<ListeDesChatsPage> {
                           key: Key('${conversation.id}-${DateTime.now().millisecondsSinceEpoch}'),
                           direction: DismissDirection.endToStart,
                           onDismissed: (_) {
-                            provider.deleteConversation(conversation);
+                            provider.eitherFailureOrDeleteConversation(userEntity: conversation);
                           },
                           background: Container(
                             alignment: Alignment.centerRight,
                             color: Colors.red,
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
                               child: Text(
-                                "Supprimé",
-                                style: TextStyle(color: Colors.white),
+                                AppLocalizations.of(context)!.delete,
+                                style: const TextStyle(color: Colors.white),
                               ),
                             ),
                           ),
                           child: ListTilePourUtilisateurConnu(
                             deviceName: conversation.name,
-                            message: lastMessage?.message ?? "Aucun message",
+                            message: lastMessage?.message ?? AppLocalizations.of(context)!.no_old_messages,
                             timestamp: lastMessage?.timestamp.toString() ?? "",
-                            typeMessage: lastMessage?.type ?? "texte",
+                            typeMessage: lastMessage?.type ?? "Payload",
                             onTap: () {
                               context.push('/ChatPage/${conversation.name}');
                             },

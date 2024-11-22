@@ -5,19 +5,21 @@ import 'package:provider/provider.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
 import '../../../../core/utils/p2p/p2p_utils.dart';
 import '../providers/chat_provider.dart';
+import '../widgets/P2P_widgets/connection_button.dart';
 import '../widgets/P2P_widgets/search_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 enum DeviceType { advertiser, browser }
 
-class DevicesListPage extends StatefulWidget {
-  const DevicesListPage({Key? key, required this.deviceType}) : super(key: key);
+class ChatDeviceAroundList extends StatefulWidget {
+  const ChatDeviceAroundList({super.key, required this.deviceType});
   final DeviceType deviceType;
 
   @override
-  State<DevicesListPage> createState() => _DevicesListPage();
+  State<ChatDeviceAroundList> createState() => _ChatDeviceAroundList();
 }
 
-class _DevicesListPage extends State<DevicesListPage> {
+class _ChatDeviceAroundList extends State<ChatDeviceAroundList> {
   late ChatProvider chatProvider;
   final TextEditingController _searchController = TextEditingController();
   List<Device> deviceApproximite = [];
@@ -25,7 +27,6 @@ class _DevicesListPage extends State<DevicesListPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -52,18 +53,6 @@ class _DevicesListPage extends State<DevicesListPage> {
               },
               searchController: _searchController,
             ),
-            // user de test d'affichage
-            // MaterialButton(
-            //   onPressed: () {
-            //     // TODO : faire avec goRouter
-            //     Navigator.of(context).push(
-            //       MaterialPageRoute(
-            //         builder: (context) => const ChatPage(converser: "testChatPage"),
-            //       ),
-            //     );
-            //   },
-            //   child: const Text("test chatPage"),
-            // ),
             DevicesListWidget(
               devices: deviceApproximiteFilter,
               onDeviceTap: (device) {
@@ -82,18 +71,18 @@ class DevicesListWidget extends StatelessWidget {
   final Function(Device) onDeviceTap;
 
   const DevicesListWidget({
-    Key? key,
+    super.key,
     required this.devices,
     required this.onDeviceTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: devices.isEmpty
-          ? const Center(
+          ? Center(
               child: Text(
-                "Personne à proximité avec l'app,\nfait diffuser l'app aux non initiés.\n Agrandi ton cercle.",
+                AppLocalizations.of(context)!.no_nearby_users,
                 textAlign: TextAlign.center,
               ),
             )
@@ -109,25 +98,10 @@ class DevicesListWidget extends StatelessWidget {
                       ListTile(
                         title: Text(device.deviceName),
                         subtitle: Text(
-                          getStateName(device.state),
+                          getStateName(device.state, context),
                           style: TextStyle(color: getStateColor(device.state)),
                         ),
-                        trailing: GestureDetector(
-                          onTap: () => onDeviceTap(device),
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                            padding: const EdgeInsets.all(8.0),
-                            height: 35,
-                            width: 100,
-                            color: getButtonColor(device.state),
-                            child: Center(
-                              child: Text(
-                                getButtonStateName(device),
-                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                          ),
-                        ),
+                        trailing: ConnectionButton(device: device),
                         onTap: () {
                           context.push('/ChatPage/${device.deviceName}');
                         },

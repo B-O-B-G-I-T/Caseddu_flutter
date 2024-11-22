@@ -1,0 +1,139 @@
+{
+    "@@locale": "fr",
+    "enter_pseudo": "Entre ton pseudo",
+    "enter_a_number": "Entre un numero",
+    "enter_your_password": "Écris ton mot de passe",
+    "i_hope_you_haven_t_forgotten_it": "J'espère que tu l'as pas oublié",
+    "enter_a_valid_username": "Entre une pseudo valide",
+    "enter_a_valid_number": "Entre un numero valide",
+    "enter_a_valid_email": "Entre une email valide",
+    "creation": "Création",
+    "hey_you": "Salut !",
+    "forgot_password": "Mot de passe oublié ? ",
+    "login": "Connexion",
+    "not_a_member": "Pas membre ? ",
+    "sign_up": "Inscris-toi",
+    "waiting": "Veuillez patienter...",
+    "cancel": "Annuler",
+    "permission_required": "Permission requise",
+    "permission_access": "Cette application a besoin d'accès à vos photos pour fonctionner correctement. Veuillez activer les autorisations dans les paramètres de l'application.",
+    "permission_denied": "Permission refusée",
+    "open_parameters": "Ouvrir les paramètres",
+    "limited_access": "Accès limité",
+    "access_picture": "Vous avez accordé un accès limité aux photos. Cela peut restreindre certaines fonctionnalités de l'application. Pour une expérience complète, veuillez accorder un accès complet dans les paramètres de l'application.",
+    "enter_email": "Entre ton email",
+    "change_password": "Change le mot de passe",
+    "who_are_you": "Qui es-tu ? ",
+    "write_your_message" : "Écrivez votre message",
+    "enter_username": "Entre un pseudo",
+    "am_i_member": "Suis-je un membre ? ",
+    "connect": "Connect",
+    "decline": "Refuser",
+    "accept": "Accepter",
+    "invitation_received": "Une invitation a été reçue",
+    "wants_to_connect_with_you" : "{peerName} souhaite se connecter avec vous",
+    "@wants_to_connect_with_you": {
+    "description": "wants to connect with you.",
+    "placeholders": {
+        "peerName": {
+        "type": "String",
+        "example": "Bob"
+        }
+    }
+    },
+    "all_chats_tab": "Tous les Chats",
+    "devices_tab": "Approximité",
+    "no_nearby_users": "Personne à proximité avec l'app, fais diffuser l'app aux non initiés. Agrandi ton cercle.",
+    "no_conversations": "Pas de conversation",
+    "deleted": "Supprimé",
+    "message_deleted": "Message supprimé",
+    "start_conversation": "Lancer la conversation",
+    "error_message": "Erreur: {snapshot}",
+    "@error_message": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+        "snapshot": {
+        "type": "String",
+        "example": "Bob"
+        }
+    }
+    },
+    "no_camera_permission": "On n'a pas la permission de l'appareil photo",
+    "grant_permission": "Peux-tu nous l'accorder ? ",
+    "no_image_available": "Aucune image disponible",
+    "no_messages": "Pas de messages",
+    "no_more_messages": "Pas plus de messages",
+    "send_photo": "Envoyer une photo",
+    "connected": "Connecté",
+    "connecting": "En cours",
+    "too_far": "Trop loin",
+    "disconnected": "Déconnecté",
+    "known_pairs": "Les paires connues",
+    "approximate_pairs": "Les paires approximatives",
+    "no_devices_available": "Aucun appareil disponible",
+    "generation_time": "Temps de génération",
+    "image_size": "Taille de l'image",
+    "content_type": "Type de contenu",
+    "dimension": "Dimension",
+    "loading": "Chargement...",
+    "pixel_ratio": "Ratio des pixels",
+    "resend": "Renvoyer",
+    "copy": "Copier",
+    "delete": "Supprimer",
+    "message_copied": "Message copié",
+    "message_deleted": "Tu as supprimé le message",
+    "message_deleted_by_device": "Message supprimé par {deviceName}",
+    "@message_deleted_by_device": {
+    "description": "A message with a single message_deleted_by_device",
+    "placeholders": {
+        "deviceName": {
+        "type": "String",
+        "example": "Bob"
+        }
+    }
+    },
+    "device_not_available": "Le device n'est plus disponible à proximité.",
+    "search" : "Recherche...",
+    "search_again": "Rechercher à nouveau",
+    "me": "Moi",
+    "no_old_messages": "Pas d'ancien message",
+    "logout": "Déconnexion",
+    "edit_name": "Modifie le nom",
+    "result": "Résultat",
+    "image_successfully_saved_to_gallery": "Image enregistrée avec succès dans la galerie ✅",
+    "error_while_saving_the_image": "Erreur lors de l'enregistrement de l'image'",
+    "out_of_range": "hors de portée",
+    "try_it_when_you_re_connected": "Essaie-le lorsque tu es connecté",
+    "now": "Maintenant",
+    "nDay": "{count, plural,=1{1 jour} other{{count} jours}}",
+    "@nDay": {
+    "description": "A plural message",
+    "placeholders": {
+        "count": {
+        "type": "num",
+        "format": "compact"
+        }
+    }
+    },
+    "nHour": "{count, plural,=1{1 heure} other{{count} heures}}",
+    "@nHour": {
+    "description": "A plural message",
+    "placeholders": {
+        "count": {
+        "type": "num",
+        "format": "compact"
+        }
+    }
+    },
+    "nMinutes": "{count, plural,=1{1 minute} other{{count} minutes}}",
+    "@nMinutes": {
+    "description": "A plural message",
+    "placeholders": {
+        "count": {
+        "type": "num",
+        "format": "compact"
+        }
+    }
+    },
+    "template": "Modèle"
+}

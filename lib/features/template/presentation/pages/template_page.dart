@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class TemplatePage extends StatelessWidget {
-  const TemplatePage({Key? key}) : super(key: key);
+  const TemplatePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return  Scaffold(
       body: Center(
-        child: Text('Template'),
+        child: Text(AppLocalizations.of(context)!.template),
       ),
     );
   }

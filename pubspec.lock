@@ -90,18 +90,18 @@ packages:
     dependency: "direct main"
     description:
       name: camera
-      sha256: dfa8fc5a1adaeb95e7a54d86a5bd56f4bb0e035515354c8ac6d262e35cec2ec8
+      sha256: "26ff41045772153f222ffffecba711a206f670f5834d40ebf5eed3811692f167"
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.6"
-  camera_android:
+    version: "0.11.0+2"
+  camera_android_camerax:
     dependency: transitive
     description:
-      name: camera_android
-      sha256: "32f04948a284b71d938fe275616faf4957d07f9b3aab8021bfc8c418301a289e"
+      name: camera_android_camerax
+      sha256: e3627fdc2132d89212b8a8676679f5b07008c7e3d8ae00cea775c3397f9e742b
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.9+11"
+    version: "0.6.10"
   camera_avfoundation:
     dependency: transitive
     description:
@@ -395,13 +395,27 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
+  flutter_localization:
+    dependency: "direct main"
+    description:
+      name: flutter_localization
+      sha256: "9b3b8825146a3850297a0ec3686b326d618328dca4cd5178b764af9303a26379"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.2"
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_nearby_connections:
     dependency: "direct main"
     description:
-      name: flutter_nearby_connections
-      sha256: f2003fde3df5d99ce15693b1603de168f66a2e7c50b84786191236cc32e3afdc
-      url: "https://pub.dev"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "2f4747648a2fb6a4b6a9e171051988e77373ee4a"
+      url: "https://github.com/B-O-B-G-I-T/flutter_nearby_connections.git"
+    source: git
     version: "1.1.2"
   flutter_plugin_android_lifecycle:
     dependency: transitive

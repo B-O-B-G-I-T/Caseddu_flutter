@@ -8,12 +8,12 @@ class CircleAvatarWithTextOrImage extends StatelessWidget {
   final double radius;
 
   const CircleAvatarWithTextOrImage({
-    Key? key,
+    super.key,
     this.text,
     this.image,
     this.backgroundColor, // Ajout de la couleur de fond spécifiée par l'utilisateur
     this.radius = 24.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

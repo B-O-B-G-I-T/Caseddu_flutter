@@ -1,31 +1,32 @@
 // Get the state name of the connection
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-String getStateName(SessionState state) {
+String getStateName(SessionState state, BuildContext context) {
   switch (state) {
     case SessionState.connected:
-      return "Connected";
+      return AppLocalizations.of(context)!.connected;
     case SessionState.connecting:
-      return "Waiting";
+      return AppLocalizations.of(context)!.waiting;
     case SessionState.tooFar:
-      return "Too far";
+      return AppLocalizations.of(context)!.too_far;
     default:
-      return "Disconnected";
+      return AppLocalizations.of(context)!.disconnected;
   }
 }
 
 // Get the button state name of the connection
-String getButtonStateName(Device device) {
+String getButtonStateName(Device device, BuildContext context) {
   switch (device.state) {
     case SessionState.connected:
-      return "Disconnect";
+      return AppLocalizations.of(context)!.disconnected;
     case SessionState.connecting:
-      return "Connecting";
+      return AppLocalizations.of(context)!.connecting;
     case SessionState.tooFar:
-      return "Too far";
+      return AppLocalizations.of(context)!.too_far;
     default:
-      return "Connect";
+      return AppLocalizations.of(context)!.connect;
   }
 }
 
@@ -33,13 +34,25 @@ String getButtonStateName(Device device) {
 Widget getButtonStateIcon(SessionState state) {
   switch (state) {
     case SessionState.connected:
-      return const Icon(Icons.wifi_off_outlined);
+      return const Icon(
+        Icons.wifi_off_outlined,
+        color: Colors.black,
+      );
     case SessionState.connecting:
-      return const Icon(Icons.hourglass_top_rounded);
+      return const Icon(
+        Icons.hourglass_top_rounded,
+        color: Colors.black,
+      );
     case SessionState.tooFar:
-      return const Icon(Icons.phonelink_erase_rounded);
+      return const Icon(
+        Icons.phonelink_erase_rounded,
+        color: Colors.black,
+      );
     default:
-      return const Icon(Icons.connect_without_contact);
+      return const Icon(
+        Icons.connect_without_contact,
+        color: Colors.black,
+      );
   }
 }
 
@@ -53,7 +66,7 @@ Color getStateColor(SessionState state) {
     case SessionState.tooFar:
       return Colors.grey;
     default:
-      return Colors.black;
+      return Colors.red;
   }
 }
 

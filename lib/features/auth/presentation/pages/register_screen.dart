@@ -1,14 +1,12 @@
 //TODO: controler les mot de passe entré
-// ignore_for_file: use_build_context_synchronously
 
-// ignore_for_file: use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../core/errors/widgets/attente_widget.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
 import '../providers/authentification_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -51,16 +49,16 @@ class _RegisterPageState extends State<RegisterPage> {
                     Icons.handshake,
                     size: 200,
                   ),
-                  const Text(
-                    "Salut toi",
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.hey_you,
+                    style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const Text(
-                    "Qui es-tu ?",
-                    style: TextStyle(
+                  Text(
+                    AppLocalizations.of(context)!.who_are_you,
+                    style: const TextStyle(
                       fontSize: 14,
                     ),
                   ),
@@ -79,7 +77,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: TextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Entre un pseudo';
+                              return AppLocalizations.of(context)!.enter_pseudo;
                             }
                             // bool emailValid = RegExp(
                             //         r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
@@ -93,8 +91,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           controller: _pseudoController,
                           autofocus: true,
                           enableIMEPersonalizedLearning: true,
-                          decoration: const InputDecoration(
-                            hintText: "Entre une pseudo valide",
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.enter_a_valid_username,
                             //border: InputBorder.none,
                           ),
                         ),
@@ -119,7 +117,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           keyboardType: TextInputType.phone,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Entre un numero valide';
+                              return AppLocalizations.of(context)!.enter_a_valid_number;
                             }
 
                             return null;
@@ -127,8 +125,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           controller: _cellPhone,
                           autofocus: true,
                           enableIMEPersonalizedLearning: true,
-                          decoration: const InputDecoration(
-                            hintText: "Entre une numero",
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.enter_a_number,
                             //border: InputBorder.none,
                           ),
                         ),
@@ -153,11 +151,11 @@ class _RegisterPageState extends State<RegisterPage> {
                           keyboardType: TextInputType.emailAddress,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Entre une email';
+                              return AppLocalizations.of(context)!.enter_email;
                             }
                             bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value);
                             if (!emailValid) {
-                              return 'Entre une email valide';
+                              return AppLocalizations.of(context)!.enter_a_valid_email;
                             }
 
                             return null;
@@ -165,8 +163,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           controller: _emailController,
                           autofocus: true,
                           enableIMEPersonalizedLearning: true,
-                          decoration: const InputDecoration(
-                            hintText: "Entre une email valide",
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.enter_a_valid_email,
                             //border: InputBorder.none,
                           ),
                         ),
@@ -189,15 +187,15 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: TextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Écris ton mot de passe';
+                              return AppLocalizations.of(context)!.enter_your_password;
                             } else {
                               return null;
                             }
                           },
                           controller: _passwordController,
                           obscureText: true,
-                          decoration: const InputDecoration(
-                            hintText: "Écris ton mot de passe",
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.enter_your_password,  
                             //border: InputBorder.none,
                           ),
                         ),
@@ -220,15 +218,15 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: TextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Écris ton mot de passe';
+                              return AppLocalizations.of(context)!.enter_your_password;
                             } else {
                               return null;
                             }
                           },
                           controller: _confirmPasswordController,
                           obscureText: true,
-                          decoration: const InputDecoration(
-                            hintText: "J'espère que tu l'as pas oublié",
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.i_hope_you_haven_t_forgotten_it,
                             //border: InputBorder.none,
                           ),
                         ),
@@ -243,12 +241,12 @@ class _RegisterPageState extends State<RegisterPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
                     child: ElevatedButton(
-                      child: const SizedBox(
+                      child: SizedBox(
                         height: 50,
                         width: 150,
                         child: Center(
                           child: Text(
-                            "Création",
+                            AppLocalizations.of(context)!.creation,
                             //style: TextStyle(
                             //color: Colors.white,
                             //fontWeight: FontWeight.bold),
@@ -267,7 +265,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           attenteWidget(context);
 
                           await authentificationProvider.eitherFailureOrRegister(email, password, confirmPassword, "0", pseudo);
-
+                          if (!context.mounted) return;
                           context.pop(); // Ferme la boîte de dialogue
 
                           if (authentificationProvider.failure == null) {
@@ -288,13 +286,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Je suis un membre ? ",
+                        AppLocalizations.of(context)!.am_i_member,
                         style: Theme.of(context).textTheme.labelLarge,
                       ),
                       GestureDetector(
-                        child: const Text(
-                          "Connecte toi",
-                          style: TextStyle(color: Colors.blue),
+                        child: Text(
+                          AppLocalizations.of(context)!.connect,
+                          style: const TextStyle(color: Colors.blue),
                         ),
                         onTap: () {
                           context.push('/login');

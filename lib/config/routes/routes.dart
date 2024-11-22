@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/preview_picture/full_screen_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../features/auth/presentation/pages/connection_with.dart';
@@ -7,8 +10,8 @@ import '../../features/auth/presentation/pages/login_screen.dart';
 import '../../features/auth/presentation/pages/oubli_mot_de_passe.dart';
 import '../../features/auth/presentation/pages/register_screen.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
+import '../../features/chat/presentation/pages/photo_pages/2_prise_de_photo.dart';
 import '../../features/chat/presentation/pages/photo_pages/3_envoie_de_photo.dart';
-import '../../features/chat/presentation/pages/photo_pages/2_prise_photo.dart';
 import '../../features/parametre/presentation/pages/parameter_page.dart';
 import '../../premiere_page.dart';
 
@@ -28,6 +31,7 @@ class Routes {
     observers: [],
     // l'écarn de login
     initialLocation: '/firstPage/0',
+    navigatorKey: GlobalKey<NavigatorState>(), // Définir la clé globale
     //redige la ou l'on veut
     redirect: (context, state) {
       final user = Provider.of<User?>(context, listen: false);
@@ -111,10 +115,10 @@ class Routes {
         path: '/PrisePhoto/:filePath',
         name: 'PrisePhoto',
         pageBuilder: (context, state) {
-          String filePath = state.extra.toString(); // -> le casting est important
+          final Completer<String?> filePath = state.extra as Completer<String?>; // -> le casting est important
 
           return CustomTransitionPage(
-            child: PrisePhoto(lastImage: filePath),
+            child: PrisePhoto(lastImageCompleter: filePath),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               // Aucune transition, on retourne directement l'enfant
               return child;

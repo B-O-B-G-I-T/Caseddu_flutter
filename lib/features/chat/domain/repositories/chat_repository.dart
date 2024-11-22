@@ -7,7 +7,7 @@ import '../../../../../core/params/params.dart';
 
 abstract class ChatRepository {
   Future<Either<Failure, NearbyService>> init();
-  Future<Either<Failure, List<ChatMessageEntity>>> getConversation(String senderName, String receiverName);
+  Future<Either<Failure, List<ChatMessageEntity>>> getConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20});
   Future<Either<Failure, List<UserEntity>>> getAllConversations();
   Future<Either<Failure, ChatMessageEntity>> envoieMessage({
     required ChatMessageParams chatMessageParams,
@@ -15,6 +15,6 @@ abstract class ChatRepository {
   Future<Either<Failure, ChatMessageEntity>> enregistreMessage({
     required ChatMessageParams chatMessageParams,
   });
-  Future<Either<Failure, void>> deleteConversation(UserEntity userEntity);
-
+  Future<Either<Failure, void>> deleteConversation({required UserEntity userEntity});
+  Future<Either<Failure, void>> deleteMessage({required ChatMessageEntity chatMessageEntity});
 }

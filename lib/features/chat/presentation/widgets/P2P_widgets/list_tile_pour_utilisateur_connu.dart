@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
 import '../../../../../core/utils/p2p/fonctions.dart';
 import '../chat_widgets/circle_avatar.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ListTilePourUtilisateurConnu extends StatelessWidget {
   final String deviceName;
@@ -11,13 +11,13 @@ class ListTilePourUtilisateurConnu extends StatelessWidget {
   final VoidCallback onTap;
 
   const ListTilePourUtilisateurConnu({
-    Key? key,
+    super.key,
     required this.deviceName,
     required this.message,
     required this.timestamp,
     required this.typeMessage,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +32,12 @@ class ListTilePourUtilisateurConnu extends StatelessWidget {
       ),
       subtitle: Row(
         children: [
-          typeMessage == "Payload" ? Text(message.isNotEmpty ? message : "Pas d'ancien message") : const Icon(Icons.image),
-          const Text(" - "),
-          Text(Utils.depuisQuandCeMessageEstRecu(timeStamp: timestamp)),
+          typeMessage == "Payload"
+              ? Text(message)
+              : typeMessage == "DELETE"
+                  ? Text(AppLocalizations.of(context)!.message_deleted)
+                  : const Icon(Icons.image),
+          timestamp != "" ? Text(" - ${Utils.depuisQuandCeMessageEstRecu(timeStamp: timestamp, context: context)}") : const SizedBox(),
         ],
       ),
       trailing: const Icon(Icons.arrow_forward_ios_rounded),

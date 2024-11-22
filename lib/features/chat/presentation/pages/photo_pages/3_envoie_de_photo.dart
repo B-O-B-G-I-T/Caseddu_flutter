@@ -1,3 +1,4 @@
+// ignore_for_file: file_names
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:go_router/go_router.dart';
@@ -10,6 +11,7 @@ import '../../../data/models/chat_message_model.dart';
 import '../../providers/chat_provider.dart';
 import '../../widgets/P2P_widgets/connection_button.dart';
 import '../../widgets/P2P_widgets/search_widget.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EnvoieDePhotoPage extends StatefulWidget {
   const EnvoieDePhotoPage({super.key, required this.pictureTaken});
@@ -72,7 +74,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                 SliverAppBar(
                   floating: true,
                   snap: true,
-                  title: const Text("Envoie de photo"),
+                  title: Text(AppLocalizations.of(context)!.send_photo),
                   centerTitle: true,
                   leading: IconButton(
                     icon: const Icon(Icons.arrow_back),
@@ -98,8 +100,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                   // les paires connus
                   Padding(
                     padding: const EdgeInsets.all(8),
-                    child: Text(
-                      "Les paires connus",
+                    child: Text(AppLocalizations.of(context)!.known_pairs, 
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
@@ -116,8 +117,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
                   // liste des devices approximités
                   Padding(
                     padding: const EdgeInsets.all(8),
-                    child: Text(
-                      "Les paires approximités",
+                    child: Text(AppLocalizations.of(context)!.approximate_pairs,
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
@@ -145,16 +145,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
           setState(() async {
             await connectAll();
             for (var device in deviceSelectionne) {
-              // if (device.state == SessionState.notConnected) {
-              //   Fluttertoast.showToast(
-              //       msg: 'hors de portée',
-              //       toastLength: Toast.LENGTH_LONG,
-              //       gravity: ToastGravity.TOP,
-              //       timeInSecForIosWeb: 10,
-              //       backgroundColor: Colors.grey,
-              //       fontSize: 16.0);
-              // } else {
-
+              
               final String msgId = nanoid(21);
               final DateTime timestamp = DateTime.now();
               final String listImages = [widget.pictureTaken].join(',');
@@ -172,7 +163,7 @@ class _EnvoieDePhotoPageState extends State<EnvoieDePhotoPage> {
               );
               await chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
             }
-
+if (!context.mounted) return;
             context.go('/firstPage/1');
           });
         },
@@ -267,7 +258,7 @@ class DeviceListItem extends StatelessWidget {
         ListTile(
           title: Text(device.deviceName),
           subtitle: Text(
-            getStateName(device.state),
+            getStateName(device.state, context),
             style: TextStyle(color: getStateColor(device.state)),
           ),
           onTap: () async {
@@ -282,7 +273,6 @@ class DeviceListItem extends StatelessWidget {
               children: [
                 ConnectionButton(
                   device: device,
-                  longDistance: false,
                 ),
                 RoundCheckbox(
                   value: isSelected,
@@ -347,10 +337,10 @@ class NoDevice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(8.0),
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
       child: Text(
-        'Aucun appareil disponible',
+        AppLocalizations.of(context)!.no_devices_available,
       ),
     );
   }

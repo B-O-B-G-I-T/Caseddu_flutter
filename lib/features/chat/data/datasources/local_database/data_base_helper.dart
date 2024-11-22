@@ -1,3 +1,4 @@
+// ignore_for_file: unused_field
 import 'dart:async';
 import 'package:caseddu/dataBase/base_donnees_general.dart';
 import 'package:nanoid/nanoid.dart';
@@ -119,26 +120,34 @@ class DatabaseHelper {
   }
 // ------------------------ CONVERSATIONS ------------------------
 
-  Future<List<ChatMessageModel>?> getConversation(String senderName, String receiverName) async {
+  Future<List<ChatMessageModel>?> getConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20}) async {
     final db = await BaseDonneesGeneral.database;
 
+    // Récupérer l'ID de l'utilisateur
     UserModel? user = await controlUtilisateur(receiverName);
 
-    final List<Map<String, dynamic>> maps = await db.query('chat_messages',
-        where: '(sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?)', whereArgs: [senderName, user.id, user.id, senderName]);
+    // Construire la requête SQL avec des filtres de date et de limite
+    String whereClause = '((sender = ? AND receiver = ?) OR (sender = ? AND receiver = ?))';
+    List<dynamic> whereArgs = [senderName, user.id, user.id, senderName];
+
+    // Ajouter la condition pour limiter aux messages avant `beforeDate`, si elle est fournie
+    if (beforeDate != null) {
+      whereClause += ' AND datetime(timestamp) < datetime(?)';
+      whereArgs.add(beforeDate.toIso8601String());
+    }
+
+    // Exécuter la requête avec une limite
+    final List<Map<String, dynamic>> maps = await db.query(
+      'chat_messages',
+      where: whereClause,
+      whereArgs: whereArgs,
+      orderBy: 'timestamp DESC', // On trie du plus récent au plus ancien
+      limit: limit,
+    );
 
     if (maps.isNotEmpty) {
       return List.generate(maps.length, (index) {
-        return ChatMessageModel(
-          id: maps[index]['id'],
-          sender: maps[index]['sender'].toString(),
-          receiver: maps[index]['receiver'].toString(),
-          timestamp: DateTime.parse(maps[index]['timestamp']),
-          message: maps[index]['message'],
-          images: maps[index]['images'],
-          type: maps[index]['type'],
-          ack: maps[index]['ack'],
-        );
+        return ChatMessageModel.fromJson(json: maps[index]);
       });
     } else {
       return null; // Retourner null si aucune conversation n'est trouvée
@@ -157,6 +166,11 @@ class DatabaseHelper {
     } else {
       return null; // Retourner null si aucune conversation n'est trouvée
     }
+  }
+
+  Future<void> deleteMessage(String messsageId) async {
+    final db = await BaseDonneesGeneral.database;
+    await db.delete('chat_messages', where: 'id = ?', whereArgs: [messsageId]);
   }
 
   Future<void> deleteConversation(String userId) async {

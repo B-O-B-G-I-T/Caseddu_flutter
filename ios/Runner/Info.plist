@@ -1,150 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Caseddu</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>flutter_application_1</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(FLUTTER_BUILD_NAME)</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.162499372255-otuhmaoutrtndu385c2n4rdb8vpmc9oo</string>
+				<string>com.forcompagnie.caseddu</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>CADisableMinimumFrameDurationOnPhone</key>
-		<true/>
-		<key>CFBundleDevelopmentRegion</key>
-		<string>$(DEVELOPMENT_LANGUAGE)</string>
-		<key>CFBundleDisplayName</key>
-		<string>Caseddu</string>
-		<key>CFBundleExecutable</key>
-		<string>$(EXECUTABLE_NAME)</string>
-		<key>CFBundleIdentifier</key>
-		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
-		<key>CFBundleInfoDictionaryVersion</key>
-		<string>6.0</string>
-		<key>CFBundleName</key>
-		<string>flutter_application_1</string>
-		<key>CFBundlePackageType</key>
-		<string>APPL</string>
-		<key>CFBundleShortVersionString</key>
-		<string>$(FLUTTER_BUILD_NAME)</string>
-		<key>CFBundleSignature</key>
-		<string>????</string>
-		<key>CFBundleVersion</key>
-		<string>$(FLUTTER_BUILD_NUMBER)</string>
-		<key>LSRequiresIPhoneOS</key>
-		<true/>
-		<key>NSCameraUsageDescription</key>
-		<string>L'application nécessite l'accès à la caméra pour permettre la prise de photos et l'enregistrement de vidéos.</string>
-
-		<key>NSMicrophoneUsageDescription</key>
-		<string>L'application nécessite l'accès au microphone pour enregistrer des messages vocaux et des commentaires audio.</string>
-
-		<key>NSPhotoLibraryUsageDescription</key>
-		<string>L'application nécessite l'accès à la bibliothèque de photos pour permettre l'importation et la gestion de photos dans l'application.</string>
-
-		<key>NSBonjourServices</key>
-		<array>
-			<string>_mp-connection._tcp</string>
-			<string>_mp-connection._udp</string>
-		</array>
-		<key>UIRequiresPersistentWiFi</key>
-		<true/>
-
-		<key>NSLocalNetworkUsageDescription</key>
-		<string>Utilisation du réseau local pour la découverte de services.</string>
-
-		<key>NSBluetoothAlwaysUsageDescription</key>
-		<string>L'application nécessite l'accès Bluetooth pour permettre la connexion à des périphériques audio Bluetooth.</string>
-
-		<key>NSBluetoothPeripheralUsageDescription</key>
-		<string>L'application nécessite l'accès Bluetooth pour permettre la connexion à des accessoires et périphériques compatibles Bluetooth.</string>
-
-		<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-		<string>L'application nécessite l'accès à votre emplacement pour fournir des recommandations personnalisées basées sur votre position.</string>
-
-		<key>NSLocationAlwaysUsageDescription</key>
-		<string>L'application nécessite l'accès à votre emplacement pour suivre votre position en arrière-plan et fournir des alertes géolocalisées.</string>
-
-		<key>NSLocationWhenInUseUsageDescription</key>
-		<string>L'application nécessite l'accès à votre emplacement pour afficher des informations locales pertinentes lorsque vous utilisez l'application.</string>
-
-		<key>NSCalendarsUsageDescription</key>
-		<string>L'application nécessite l'accès à vos calendriers pour planifier et synchroniser des événements avec votre agenda.</string>
-
-		<key>NSContactsUsageDescription</key>
-		<string>L'application nécessite l'accès à vos contacts pour faciliter le partage de contenu et l'inviter vos amis à rejoindre l'application.</string>
-
-		<key>NSAppleMusicUsageDescription</key>
-		<string>L'application nécessite l'accès à votre bibliothèque musicale Apple pour permettre la lecture de musique et la création de listes de lecture personnalisées.</string>
-
-		<key>NSSpeechRecognitionUsageDescription</key>
-		<string>L'application nécessite l'accès à la reconnaissance vocale pour permettre la dictée vocale et les commandes vocales dans l'application.</string>
-
-		<key>NSMotionUsageDescription</key>
-		<string>L'application nécessite l'accès aux données de mouvement pour détecter les gestes et les mouvements de l'utilisateur pour une expérience utilisateur améliorée.</string>
-
-		<!-- Google et apple Sign-in Section -->
-		<key>CFBundleURLTypes</key>
-		<array>
-			<dict>
-				<key>CFBundleTypeRole</key>
-				<string>Editor</string>
-				<key>CFBundleURLSchemes</key>
-				<array>
-					<string>com.googleusercontent.apps.162499372255-otuhmaoutrtndu385c2n4rdb8vpmc9oo</string>
-					<string>com.forcompagnie.flutterApplication1</string>
-				</array>
-			</dict>
-		</array>
-		<!-- Fin de la section Google Sign-in -->
-
-		
-		<key>aps-environment</key>
-		<string>development</string>
-
-		<!-- <key>aps-environment</key>
-    <string>production</string> -->
-
-		<key>NSSiriUsageDescription</key>
-		<string>Votre application utilise Siri pour effectuer des tâches vocales lorsqu'elle est en cours d'exécution en arrière-plan.</string>
-
-		<key>NSPrivacyAccessedAPITypes</key>
-		<dict>
-			<key>NSPrivacyAccessedAPICategoryFileTimestamp</key>
-			<array>
-				<string>Utilisation des timestamps pour synchroniser les données.</string>
-			</array>
-			<key>NSPrivacyAccessedAPICategoryUserDefaults</key>
-			<array>
-				<string>Accès aux UserDefaults pour sauvegarder les préférences de l'utilisateur.</string>
-			</array>
-		</dict>
-
-		<key>UILaunchStoryboardName</key>
-		<string>LaunchScreen</string>
-		<key>UIMainStoryboardFile</key>
-		<string>Main</string>
-		<key>UISupportedInterfaceOrientations</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationLandscapeLeft</string>
-			<string>UIInterfaceOrientationLandscapeRight</string>
-		</array>
-		<key>UISupportedInterfaceOrientations~ipad</key>
-		<array>
-			<string>UIInterfaceOrientationPortrait</string>
-			<string>UIInterfaceOrientationPortraitUpsideDown</string>
-			<string>UIInterfaceOrientationLandscapeLeft</string>
-			<string>UIInterfaceOrientationLandscapeRight</string>
-		</array>
-		<key>UIViewControllerBasedStatusBarAppearance</key>
-		<false/>
-		<key>NSPhotoLibraryUsageDescription</key>
-		<string>Nous souhaitons avoir accès à ta bibliothèque de photos</string>
-		<key>NSMotionUsageDescription</key>
-		<string>Motion usage description</string>
-		<key>NSPhotoLibraryUsageDescription</key>
-		<string>We need Photos access to allow you to update Profile Picture.</string>
-		<key>NSAppTransportSecurity</key>
-		<dict>
-			<key>NSAllowsArbitraryLoads</key>
-			<true/>
-		</dict>
-		<key>UIApplicationSupportsIndirectInputEvents</key>
+		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-
+	<key>NSAppleMusicUsageDescription</key>
+	<string>L'application nécessite l'accès à votre bibliothèque musicale Apple pour permettre la lecture de musique et la création de listes de lecture personnalisées.</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>L'application nécessite l'accès Bluetooth pour permettre la connexion à des périphériques audio Bluetooth.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>L'application nécessite l'accès Bluetooth pour permettre la connexion à des accessoires et périphériques compatibles Bluetooth.</string>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_mp-connection._tcp</string>
+		<string>_mp-connection._udp</string>
+	</array>
+	<key>NSCalendarsUsageDescription</key>
+	<string>L'application nécessite l'accès à vos calendriers pour planifier et synchroniser des événements avec votre agenda.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>L'application nécessite l'accès à la caméra pour permettre la prise de photos et l'enregistrement de vidéos.</string>
+	<key>NSContactsUsageDescription</key>
+	<string>L'application nécessite l'accès à vos contacts pour faciliter le partage de contenu et l'inviter vos amis à rejoindre l'application.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Utilisation du réseau local pour la découverte de services.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>L'application nécessite l'accès à votre emplacement pour fournir des recommandations personnalisées basées sur votre position.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>L'application nécessite l'accès à votre emplacement pour suivre votre position en arrière-plan et fournir des alertes géolocalisées.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>L'application nécessite l'accès à votre emplacement pour afficher des informations locales pertinentes lorsque vous utilisez l'application.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>L'application nécessite l'accès au microphone pour enregistrer des messages vocaux et des commentaires audio.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Motion usage description</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need Photos access to allow you to update Profile Picture.</string>
+	<key>NSPrivacyAccessedAPITypes</key>
+	<dict>
+		<key>NSPrivacyAccessedAPICategoryFileTimestamp</key>
+		<array>
+			<string>Utilisation des timestamps pour synchroniser les données.</string>
+		</array>
+		<key>NSPrivacyAccessedAPICategoryUserDefaults</key>
+		<array>
+			<string>Accès aux UserDefaults pour sauvegarder les préférences de l'utilisateur.</string>
+		</array>
+	</dict>
+	<key>NSSiriUsageDescription</key>
+	<string>Votre application utilise Siri pour effectuer des tâches vocales lorsqu'elle est en cours d'exécution en arrière-plan.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>L'application nécessite l'accès à la reconnaissance vocale pour permettre la dictée vocale et les commandes vocales dans l'application.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIRequiresPersistentWiFi</key>
+	<true/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>aps-environment</key>
+	<string>development</string>
+</dict>
 </plist>

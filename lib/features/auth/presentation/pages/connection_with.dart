@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
 import '../providers/authentification_provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ConnectionWithPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
@@ -13,7 +14,7 @@ class ConnectionWithPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Entrez le pseudo'),
+        title: Text(AppLocalizations.of(context)!.enter_pseudo),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -38,10 +39,10 @@ class ConnectionWithPage extends StatelessWidget {
                   //attenteWidget(context);
                   if (typeOfConnection == "google") {
                     await authentificationProvider.eitherFailureOrAuthentificationWithGoogle(username);
-                  }else if (typeOfConnection == "apple") {
+                  } else if (typeOfConnection == "apple") {
                     await authentificationProvider.eitherFailureOrAuthentificationWithApple(username);
                   }
-
+                  if (!context.mounted) return;
                   context.pop(); // Ferme la boîte de dialogue
 
                   if (authentificationProvider.authentification != null) {
@@ -52,7 +53,7 @@ class ConnectionWithPage extends StatelessWidget {
                   }
                 }
               },
-              child: const Text('Création'),
+              child: Text(AppLocalizations.of(context)!.creation),
             ),
           ],
         ),

@@ -1,6 +1,8 @@
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
+
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:caseddu/core/params/params.dart';
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/presentation/providers/chat_provider.dart';
@@ -48,6 +50,7 @@ class _ImagePickerState extends State<MyImagePicker> {
     } else if (result.hasAccess) {
       // Accès limité accordé
       await _loadAndDisplayLimitedImages();
+
       Utils.showLimitedAccessDialog(context: context);
     } else {
       // Permission refusée ou non demandée
@@ -157,7 +160,7 @@ class _ImagePickerState extends State<MyImagePicker> {
   Future<void> sendMessage() async {
     if (widget.device.state == SessionState.notConnected) {
       Fluttertoast.showToast(
-          msg: 'hors de portée',
+          msg: AppLocalizations.of(context)!.out_of_range,
           toastLength: Toast.LENGTH_LONG,
           gravity: ToastGravity.TOP,
           timeInSecForIosWeb: 10,

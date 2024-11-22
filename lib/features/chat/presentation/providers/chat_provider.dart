@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
-import 'dart:math';
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:data_connection_checker_tv/data_connection_checker.dart';
@@ -20,6 +20,7 @@ import '../../domain/usecases/get_chat.dart';
 import '../../data/datasources/chat_local_data_source.dart';
 import '../../data/datasources/chat_remote_data_source.dart';
 import '../../data/repositories/chat_repository_impl.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ChatProvider extends ChangeNotifier {
   String myName = '';
@@ -30,6 +31,20 @@ class ChatProvider extends ChangeNotifier {
   List<Device> devices = [];
   List<Device> connectedDevices = [];
   List<UserEntity> users = [];
+
+  bool _isLoadingOldMessages = false;
+  bool hasMoreMessages = true;
+  bool get isLoadingOldMessages => _isLoadingOldMessages;
+
+  // Stream pour les nouveaux messages reçus
+  final StreamController<void> _newMessageController = StreamController<void>.broadcast();
+
+  Stream<void> get newMessageStream => _newMessageController.stream;
+
+    // Stream pour les initialisations des invitations
+  final StreamController<void> _invitationController = StreamController<void>.broadcast();
+
+  Stream<void> get invitationController => _invitationController.stream;
 
   ChatProvider({
     this.failure,
@@ -60,15 +75,65 @@ class ChatProvider extends ChangeNotifier {
       },
       (NearbyService nearbyService) {
         controlerDevice = nearbyService;
+
         checkDevices(nearbyService);
         checkReceiveData(nearbyService);
+
         failure = null;
+         // Diffuse le nouveau message via le Stream
+        _invitationController.sink.add(null);
         notifyListeners();
       },
     );
   }
 
-  //--------------- Reception des connections
+  void setupInvitationHandler(BuildContext context) {
+    controlerDevice?.registerInvitationHandler((peerName) async {
+      try {
+        final result = await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            bool isProcessing = false;
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: Text(AppLocalizations.of(context)!.invitation_received),
+                  content: Text(AppLocalizations.of(context)!.wants_to_connect_with_you(peerName)),
+                  actionsAlignment: MainAxisAlignment.spaceEvenly,
+                  actions: [
+                    OutlinedButton(
+                      onPressed: isProcessing
+                          ? null
+                          : () async {
+                              setState(() => isProcessing = true);
+                              Navigator.of(context).pop(false);
+                            },
+                      child: Text(AppLocalizations.of(context)!.decline),
+                    ),
+                    ElevatedButton(
+                      onPressed: isProcessing
+                          ? null
+                          : () async {
+                              setState(() => isProcessing = true);
+                              Navigator.of(context).pop(true);
+                            },
+                      child: isProcessing ? const CircularProgressIndicator(color: Colors.white) : Text(AppLocalizations.of(context)!.accept),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        );
+        return result ?? false; // Retourne false si aucune action n'est prise
+      } catch (e) {
+        debugPrint("Error during invitation handling: $e");
+        return false;
+      }
+    });
+  }
+
+//--------------- Reception des connections
   StreamSubscription checkDevices(NearbyService nearbyService) {
     return nearbyService.stateChangedSubscription(callback: (devicesList) {
       for (var element in devicesList) {
@@ -83,8 +148,6 @@ class ChatProvider extends ChangeNotifier {
 
       updateDevices(devicesList);
       updateConnectedDevices(devicesList.where((d) => d.state == SessionState.connected).toList());
-
-      // print(devicesList.map((device) => {'deviceId': device.deviceId, 'deviceName': device.deviceName, 'state': device.state}).toList());
       notifyListeners();
     });
   }
@@ -97,37 +160,38 @@ class ChatProvider extends ChangeNotifier {
         if (data['message'].startsWith("ACK ")) {
           // Enregistre le message dans la base de données
           final String messageId = data['message'].substring(4);
-            final ChatMessageEntity messageACK = chat.firstWhere(
+          final ChatMessageEntity messageACK = chat.firstWhere(
             (element) => element.id == messageId,
-            );
-            messageACK.ack = 1;
+          );
+          messageACK.ack = 1;
 
           await eitherFailureOrEnregistreMessage(
             chatMessageParams: messageACK.toParamsAKC(),
           );
-
-          // sert à mettre à jour les conversations
-          //await eitherFailureOrConversation(messageACK.sender, messageACK.receiver);
-        } else {
-          await receiveMessage(data, nearbyService);
+          return;
         }
-        notifyListeners();
+// passse les data en JSON
+        ChatMessageModel chatMessageModel = await manageDataReceivedToJson(data);
+
+        if (chatMessageModel.type == 'DELETE') {
+          // Enregistre le message supprimé dans la base de données
+          await eitherFailureOrDeleteMessage(chatMessageEntity: chatMessageModel);
+
+          await eitherFailureOrEnregistreMessage(chatMessageParams: chatMessageModel.toChatMessageParams());
+        } else {
+// enregistre le message dans la base de données et envoie ack
+          await receiveMessage(chatMessageModel: chatMessageModel, nearbyService: nearbyService);
+        }
+        // Diffuse le nouveau message via le Stream
+        _newMessageController.sink.add(null);
+        //notifyListeners();
       } catch (e) {
-        print('Erreur lors de la conversion des données JSON : $e');
+        log('Erreur lors de la conversion des données JSON : $e', name: 'ChatProvider');
       }
     });
   }
 
-  Future<ChatMessageModel> receiveMessage(data, NearbyService nearbyService) async {
-    var jsonData = jsonDecode(data['message']);
-
-    ChatMessageModel chatMessageModel = ChatMessageModel.fromJson(json: jsonData);
-    String imagesEncode = chatMessageModel.images;
-    if (imagesEncode != "") {
-      List<String> imageListPaths = await Utils.base64StringToListImage(imagesEncode);
-      imagesEncode = imageListPaths.join(',');
-    }
-    chatMessageModel.images = imagesEncode;
+  Future<ChatMessageModel> receiveMessage({required ChatMessageModel chatMessageModel, required NearbyService nearbyService}) async {
     //chatMessageModel.ACK = true;
     Fluttertoast.showToast(
       msg: '''Sender: ${chatMessageModel.sender} Receiver: ${chatMessageModel.receiver}  Type: ${chatMessageModel.type}
@@ -145,6 +209,19 @@ class ChatProvider extends ChangeNotifier {
     await eitherFailureOrEnregistreMessage(
       chatMessageParams: chatMessageModel.toChatMessageParams(),
     );
+    return chatMessageModel;
+  }
+
+  Future<ChatMessageModel> manageDataReceivedToJson(data) async {
+    var jsonData = jsonDecode(data['message']);
+
+    ChatMessageModel chatMessageModel = ChatMessageModel.fromJson(json: jsonData);
+    String imagesEncode = chatMessageModel.images;
+    if (imagesEncode != "") {
+      List<String> imageListPaths = await Utils.base64StringToListImage(imagesEncode);
+      imagesEncode = imageListPaths.join(',');
+    }
+    chatMessageModel.images = imagesEncode;
     return chatMessageModel;
   }
 
@@ -168,6 +245,12 @@ class ChatProvider extends ChangeNotifier {
           deviceID: device.deviceId,
           deviceName: device.deviceName,
         );
+        devices = devices.map((d) {
+          if (d.deviceId == device.deviceId) {
+            d.state = SessionState.connecting;
+          }
+          return d;
+        }).toList();
         //log("Want to connect");
         break;
       case SessionState.connected:
@@ -245,12 +328,13 @@ class ChatProvider extends ChangeNotifier {
           chat.add(chatMessageModel);
         }
         failure = null;
+
         notifyListeners();
       },
     );
   }
 
-  Future<void> eitherFailureOrConversation(String senderName, String receiverName) async {
+  Future<void> eitherFailureOrConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20}) async {
     ChatRepositoryImpl repository = ChatRepositoryImpl(
       remoteDataSource: ChatRemoteDataSourceImpl(),
       localDataSource: ChatLocalDataSourceImpl(
@@ -260,18 +344,29 @@ class ChatProvider extends ChangeNotifier {
         DataConnectionChecker(),
       ),
     );
-    chat = [];
-    final failureOrChat = await GetChat(chatRepository: repository).getConversation(senderName, receiverName);
+    if (_isLoadingOldMessages || !hasMoreMessages) return;
 
+    _isLoadingOldMessages = true;
+    notifyListeners();
+    //chat = [];
+    final failureOrChat = await GetChat(chatRepository: repository).getConversation(senderName, receiverName, beforeDate: beforeDate, limit: limit);
+    // await Future.delayed(Duration(seconds: 3));
     failureOrChat.fold(
       (Failure newFailure) {
         //chat = null;
         failure = newFailure;
+        hasMoreMessages = false;
+        _isLoadingOldMessages = false;
         notifyListeners();
       },
       (List<ChatMessageEntity> messages) {
-        chat = messages;
+        if (messages.isNotEmpty) {
+          chat.addAll(messages);
+        }
+        // Si le nombre de messages reçus est inférieur à la limite, on considère qu'il n'y en a plus à charger
+        _isLoadingOldMessages = false;
         failure = null;
+
         notifyListeners();
       },
     );
@@ -304,7 +399,38 @@ class ChatProvider extends ChangeNotifier {
     );
   }
 
-  Future<void> deleteConversation(UserEntity userEntity) async {
+  Future<void> eitherFailureOrDeleteMessage({required ChatMessageEntity chatMessageEntity}) async {
+    //chatMessageParams.sender = Global.myName;
+    //Global.cache[chatMessageParams.id] = chatMessageParams;
+    // insertIntoMessageTable(chatMessageParams);
+
+    ChatRepositoryImpl repository = ChatRepositoryImpl(
+      remoteDataSource: ChatRemoteDataSourceImpl(),
+      localDataSource: ChatLocalDataSourceImpl(
+        sharedPreferences: await SharedPreferences.getInstance(),
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
+      ),
+    );
+
+    final failureOrChat = await GetChat(chatRepository: repository).deleteMessage(chatMessageEntity);
+
+    failureOrChat.fold(
+      (Failure newFailure) {
+        //chat = null;
+        failure = newFailure;
+        notifyListeners();
+      },
+      (void messages) {
+        chat.removeWhere((element) => element.id == chatMessageEntity.id);
+        failure = null;
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> eitherFailureOrDeleteConversation({required UserEntity userEntity}) async {
     //chatMessageParams.sender = Global.myName;
     //Global.cache[chatMessageParams.id] = chatMessageParams;
     // insertIntoMessageTable(chatMessageParams);

@@ -15,8 +15,8 @@ class GetChat {
     return await chatRepository.init();
   }
 
-  Future<Either<Failure, List<ChatMessageEntity>>> getConversation(String senderName, String receiverName) async {
-    return await chatRepository.getConversation( senderName,  receiverName);
+  Future<Either<Failure, List<ChatMessageEntity>>> getConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20}) async {
+    return await chatRepository.getConversation( senderName,  receiverName, beforeDate: beforeDate, limit: limit);
   }
 Future<Either<Failure, List<UserEntity>>> getAllConversations() async {
     return await chatRepository.getAllConversations();
@@ -30,8 +30,12 @@ Future<Either<Failure, List<UserEntity>>> getAllConversations() async {
     return await chatRepository.enregistreMessage(chatMessageParams: chatMessageParams);
   }
 
+  Future<Either<Failure, void>> deleteMessage(ChatMessageEntity chatMessageEntity ) async {
+    return await chatRepository.deleteMessage(chatMessageEntity: chatMessageEntity);
+  }
+
   Future<Either<Failure, void>> deleteConversation(UserEntity userEntity) async {
-    return await chatRepository.deleteConversation( userEntity);
+    return await chatRepository.deleteConversation(  userEntity: userEntity);
   }
 
 }

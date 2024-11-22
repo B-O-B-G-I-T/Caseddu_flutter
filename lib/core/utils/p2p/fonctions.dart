@@ -1,4 +1,6 @@
+// ignore_for_file: unnecessary_import, depend_on_referenced_packages, use_build_context_synchronously
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ import 'package:path/path.dart' show join;
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Utils {
   static String toDateTime(DateTime dateTime) {
@@ -26,16 +29,28 @@ class Utils {
     return time;
   }
 
-  // Function to format the date in viewable form
-  static String dateFormatter({required String timeStamp}) {
-    // From timestamp to readable date and hour minutes
+// Function to format the date in viewable form
+  static String dateFormatter({required String timeStamp, BuildContext? context, String? locale}) {
+    // Si la locale n'est pas fournie, on utilise celle du contexte (si le contexte est non nul)
+    locale ??= context != null ? Localizations.localeOf(context).toString() : 'en_US'; // Valeur par défaut si pas de contexte
+
     DateTime dateTime = DateTime.parse(timeStamp);
-    String formattedDate = DateFormat('dd/MM/yyyy').format(dateTime);
-    String formattedTime = DateFormat('hh:mm aa').format(dateTime);
-    return "$formattedDate $formattedTime";
+
+    // Créez un format de date en fonction de la locale
+    String formattedTime;
+
+    if (locale == 'fr') {
+      formattedTime = DateFormat('HH:mm', locale).format(dateTime); // Format français 24h
+    } else if (locale == 'en') {
+      formattedTime = DateFormat('hh:mm a', locale).format(dateTime); // Format anglais AM/PM
+    } else {
+      formattedTime = DateFormat('hh:mm a', locale).format(dateTime); // Format anglais AM/PM
+    }
+
+    return formattedTime;
   }
 
-  static String depuisQuandCeMessageEstRecu({required String timeStamp}) {
+  static String depuisQuandCeMessageEstRecu({required String timeStamp, required BuildContext context}) {
     DateTime dateTime = DateTime.parse(timeStamp);
     DateTime dateTimeNow = DateTime.now();
     Duration diff = dateTimeNow.difference(dateTime);
@@ -44,13 +59,13 @@ class Utils {
     int hours = diff.inHours.remainder(24); // Le nombre d'heures restantes
     int minutes = diff.inMinutes.remainder(60); // Le nombre de minutes restantes
     if (days > 0) {
-      return '$days jour${days > 1 ? 's' : ''}';
+      return AppLocalizations.of(context)!.nDay(days);
     } else if (hours > 0) {
-      return '$hours heure${hours > 1 ? 's' : ''}';
+      return AppLocalizations.of(context)!.nHour(hours);
     } else if (minutes > 0) {
-      return '$minutes minute${minutes > 1 ? 's' : ''}';
+      return AppLocalizations.of(context)!.nMinutes(minutes);
     } else {
-      return 'maintenant';
+      return AppLocalizations.of(context)!.now;
     }
   }
 
@@ -78,7 +93,7 @@ class Utils {
         final bytes = imageFile.readAsBytesSync();
         base64Strings.add(base64Encode(bytes));
       } else {
-        print('Image not found');
+        log('Image not found', name: 'Utils');
       }
     }
     return base64Strings.join(',');
@@ -108,7 +123,7 @@ class Utils {
           (await getApplicationDocumentsDirectory()).path,
           '$uniqueId.jpg',
         );
-        print(cheminVersImage);
+        debugPrint(cheminVersImage);
         File imageFile = File(cheminVersImage);
         await imageFile.writeAsBytes(bytes);
         imageFiles.add(imageFile.path);
@@ -129,19 +144,19 @@ class Utils {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Accès limité'),
-          content: const Text(
-            'Vous avez accordé un accès limité aux photos. Cela peut restreindre certaines fonctionnalités de l\'application. Pour une expérience complète, veuillez accorder un accès complet dans les paramètres de l\'application.',
+          title: Text(AppLocalizations.of(context)!.limited_access),
+          content: Text(
+            AppLocalizations.of(context)!.limited_access,
           ),
           actions: <Widget>[
             TextButton(
-              child: const Text('Annuler'),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: const Text('Ouvrir les paramètres'),
+              child: Text(AppLocalizations.of(context)!.open_parameters),
               onPressed: () {
                 Navigator.of(context).pop();
                 PhotoManager.openSetting();
@@ -158,13 +173,11 @@ class Utils {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Permission requise'),
-          content: const Text(
-            'Cette application a besoin d\'accès à vos photos pour fonctionner correctement. Veuillez activer les autorisations dans les paramètres de l\'application.',
-          ),
+          title: Text(AppLocalizations.of(context)!.permission_required),
+          content: Text(AppLocalizations.of(context)!.permission_required),
           actions: <Widget>[
             TextButton(
-              child: const Text('Ouvrir les paramètres'),
+              child: Text(AppLocalizations.of(context)!.open_parameters),
               onPressed: () {
                 Navigator.of(context).pop();
                 // Ouvrir les paramètres de l'application
@@ -172,7 +185,7 @@ class Utils {
               },
             ),
             TextButton(
-              child: const Text('Annuler'),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -182,8 +195,6 @@ class Utils {
       },
     );
   }
-
-
 
 // Fonction pour télécharger l'image et l'enregistrer dans la galerie
   static Future<void> saveImageToGallery(String imageUrl, BuildContext context) async {
@@ -202,7 +213,7 @@ class Utils {
         if (assetEntity != null) {
           // Affichage d'un message de succès avec Fluttertoast
           Fluttertoast.showToast(
-            msg: 'Image enregistrée avec succès dans la galerie ✅',
+            msg: AppLocalizations.of(context)!.image_successfully_saved_to_gallery,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             backgroundColor: Colors.black,
@@ -210,7 +221,7 @@ class Utils {
           );
         } else {
           Fluttertoast.showToast(
-            msg: 'Erreur lors de l\'enregistrement de l\'image',
+            msg: AppLocalizations.of(context)!.error_while_saving_the_image,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             backgroundColor: Colors.red,
@@ -220,7 +231,7 @@ class Utils {
       } catch (e) {
         // Gestion des erreurs
         Fluttertoast.showToast(
-          msg: 'Erreur : $e',
+          msg: 'Error : $e',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           backgroundColor: Colors.red,
@@ -230,7 +241,7 @@ class Utils {
     } else {
       // Permission refusée
       Fluttertoast.showToast(
-        msg: 'Permission refusée',
+        msg: AppLocalizations.of(context)!.permission_denied,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         backgroundColor: Colors.red,
@@ -238,37 +249,4 @@ class Utils {
       );
     }
   }
-
-  
-  // static void envoieDeMessage(
-  //     {required String destinataire, required String message, context}) {
-  //   var msgId = nanoid(21);
-
-  //   var payload = Payload(msgId, Global.myName, destinataire, message,
-  //       DateTime.now().toUtc().toString(), "Payload");
-
-  //   Global.cache[msgId] = payload;
-  //   //insertIntoMessageTable(payload);
-  //   Provider.of<Global>(context, listen: false).sentToConversations(
-  //     Msg(message, "sent", payload.timestamp, "Payload", msgId),
-  //     destinataire,
-  //   );
-  // }
-
-  // static void envoieDePhoto(
-  //     {required String destinataire, required String chemin, context}) {
-  //   var msgId = nanoid(21);
-  //   File file = File(chemin);
-  //   var imageTo64String = Utils.imageToBase64String(file);
-  //   var payload = Payload(msgId, Global.myName, destinataire, chemin,
-  //       DateTime.now().toUtc().toString(), "Image");
-
-  //   Global.cache[msgId] = payload;
-  //   //insertIntoMessageTable(payload);
-
-  //   Provider.of<Global>(context, listen: false).sentToConversations(
-  //       Msg(imageTo64String, "sent", payload.timestamp, "Image", msgId),
-  //       destinataire,
-  //       isImage: chemin);
-  // }
 }

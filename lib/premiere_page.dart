@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'features/chat/presentation/pages/chat_home_page.dart';
 import 'features/chat/presentation/pages/photo_pages/1_camera_page.dart';
+import 'features/chat/presentation/providers/chat_provider.dart';
 import 'main.dart';
 
 class PremierePage extends StatefulWidget {
@@ -18,10 +20,19 @@ class _PremierePageState extends State<PremierePage> {
   int _selectedIndex = 0;
 
   final User _utilisateur = FirebaseAuth.instance.currentUser!;
+
+  late ChatProvider chatProvider;
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.selectedIndex;
+
+    chatProvider = Provider.of<ChatProvider>(context, listen: false);
+    // Écoute des nouveaux messages pour faire défiler vers le bas
+    chatProvider.invitationController.listen((newMessage) {
+
+    chatProvider.setupInvitationHandler(context);
+    });
   }
 
 // dictionnaire des pages /////////////////////////////
@@ -31,18 +42,6 @@ class _PremierePageState extends State<PremierePage> {
     ),
     const ChatHomeScreen(),
   ];
-
-// fonction pour selectionner la page /////////////////////////////
-  Widget _pageSelectionne() {
-    switch (_selectedIndex) {
-      case 0:
-        return CameraPage(
-          cameras: cameras,
-        );
-      default:
-        return const ChatHomeScreen();
-    }
-  }
 
 // fonction qui met à jour l'index de la page
   void _onItemTapped(int index) {
