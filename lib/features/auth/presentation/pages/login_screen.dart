@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/errors/widgets/attente_widget.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
+import '../../../chat/presentation/providers/chat_provider.dart';
 import '../providers/authentification_provider.dart';
 import '../widgets/sign_in_button_widget.dart';
 
@@ -75,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                           }
                           bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value);
                           if (!emailValid) {
-                            return 'Entre ton email valide';
+                            return AppLocalizations.of(context)!.enter_your_valid_email;
                           }
 
                           return null;
@@ -84,8 +85,8 @@ class _LoginPageState extends State<LoginPage> {
                         autofocus: true,
                         keyboardType: TextInputType.emailAddress,
                         enableIMEPersonalizedLearning: true,
-                        decoration: const InputDecoration(
-                          hintText: "Entre ton email",
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(context)!.enter_email,
                           //border: InputBorder.none,
                         ),
                       ),
@@ -105,15 +106,15 @@ class _LoginPageState extends State<LoginPage> {
                       child: TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "J'espère que tu l'as pas oublié";
+                            return AppLocalizations.of(context)!.i_hope_you_haven_t_forgotten_it;
                           } else {
                             return null;
                           }
                         },
                         controller: _passwordController,
                         obscureText: true,
-                        decoration: const InputDecoration(
-                          hintText: "Écris ton mot de passe",
+                        decoration: InputDecoration(
+                          hintText: AppLocalizations.of(context)!.enter_your_password,
                           //border: InputBorder.none,
                         ),
                       ),
@@ -146,11 +147,12 @@ class _LoginPageState extends State<LoginPage> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
                     child: ElevatedButton(
-                      child:  SizedBox(
+                      child: SizedBox(
                         height: 50,
                         width: 150,
                         child: Center(
-                          child: Text(AppLocalizations.of(context)!.login,
+                          child: Text(
+                            AppLocalizations.of(context)!.login,
                             //style: TextStyle(
                             //color: Colors.white,
                             //fontWeight: FontWeight.bold),
@@ -171,6 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                           context.pop(); // Ferme la boîte de dialogue
 
                           if (authentificationProvider.authentification != null) {
+                            Provider.of<ChatProvider>(context, listen: false).eitherFailureOrInit();
                             context.push('/firstPage/0');
                           } else if (authentificationProvider.failure?.errorMessage != null) {
                             fireBaseError(context, "Error", authentificationProvider.failure!.errorMessage);
@@ -188,19 +191,19 @@ class _LoginPageState extends State<LoginPage> {
                       onTap: () {
                         context.push('/connectionWith/', extra: 'apple');
                       },
-                      text: "Connexion avec Apple",
+                      text: AppLocalizations.of(context)!.connect_with_apple,
                     ),
                   ),
                   const SizedBox(
                     height: 10,
                   ),
-                  
+
                   SignInButton(
                     imagePath: 'assets/icons/google_icon.png',
                     onTap: () {
                       context.push('/connectionWith/', extra: 'google');
                     },
-                    text: "Connexion avec Google",
+                    text: AppLocalizations.of(context)!.connect_with_google,
                   ),
                   const SizedBox(
                     height: 20,
@@ -210,11 +213,13 @@ class _LoginPageState extends State<LoginPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(AppLocalizations.of(context)!.not_a_member,
+                      Text(
+                        AppLocalizations.of(context)!.not_a_member,
                         style: Theme.of(context).textTheme.labelLarge,
                       ),
                       GestureDetector(
-                        child: Text(AppLocalizations.of(context)!.sign_up,
+                        child: Text(
+                          AppLocalizations.of(context)!.sign_up,
                           style: const TextStyle(color: Colors.blue),
                         ),
                         onTap: () {
