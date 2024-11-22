@@ -41,7 +41,7 @@ class ChatProvider extends ChangeNotifier {
 
   Stream<void> get newMessageStream => _newMessageController.stream;
 
-    // Stream pour les initialisations des invitations
+  // Stream pour les initialisations des invitations
   final StreamController<void> _invitationController = StreamController<void>.broadcast();
 
   Stream<void> get invitationController => _invitationController.stream;
@@ -80,11 +80,15 @@ class ChatProvider extends ChangeNotifier {
         checkReceiveData(nearbyService);
 
         failure = null;
-         // Diffuse le nouveau message via le Stream
+        // Diffuse le nouveau message via le Stream
         _invitationController.sink.add(null);
         notifyListeners();
       },
     );
+  }
+
+  void disabledNearbyService() {
+    controlerDevice = null;
   }
 
   void setupInvitationHandler(BuildContext context) {

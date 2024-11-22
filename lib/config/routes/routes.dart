@@ -12,6 +12,7 @@ import '../../features/auth/presentation/pages/register_screen.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../features/chat/presentation/pages/photo_pages/2_prise_de_photo.dart';
 import '../../features/chat/presentation/pages/photo_pages/3_envoie_de_photo.dart';
+import '../../features/chat/presentation/providers/chat_provider.dart';
 import '../../features/parametre/presentation/pages/parameter_page.dart';
 import '../../premiere_page.dart';
 
@@ -38,8 +39,10 @@ class Routes {
 
       // ignore: unnecessary_null_comparison
       if (user == null && !routesName.contains(state.matchedLocation)) {
+        Provider.of<ChatProvider>(context, listen: false).disabledNearbyService();
         return '/login';
       } else {
+        
         return null;
       }
     },
