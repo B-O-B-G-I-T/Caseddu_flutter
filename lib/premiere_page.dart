@@ -30,8 +30,7 @@ class _PremierePageState extends State<PremierePage> {
     chatProvider = Provider.of<ChatProvider>(context, listen: false);
     // Écoute des nouveaux messages pour faire défiler vers le bas
     chatProvider.invitationController.listen((newMessage) {
-
-    chatProvider.setupInvitationHandler(context);
+      chatProvider.setupInvitationHandler(context);
     });
   }
 
