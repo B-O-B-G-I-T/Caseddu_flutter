@@ -9,9 +9,9 @@
     "enter_a_valid_email": "Entre une email valide",
     "creation": "Création",
     "hey_you": "Salut !",
-    "forgot_password": "Mot de passe oublié",
+    "forgot_password": "Mot de passe oublié ? ",
     "login": "Connexion",
-    "not_a_member": "Pas membre ?",
+    "not_a_member": "Pas membre ? ",
     "sign_up": "Inscris-toi",
     "waiting": "Veuillez patienter...",
     "cancel": "Annuler",
@@ -23,15 +23,30 @@
     "access_picture": "Vous avez accordé un accès limité aux photos. Cela peut restreindre certaines fonctionnalités de l'application. Pour une expérience complète, veuillez accorder un accès complet dans les paramètres de l'application.",
     "enter_email": "Entre ton email",
     "change_password": "Change le mot de passe",
-    "who_are_you": "Qui es-tu ?",
+    "who_are_you": "Qui es-tu ? ",
+    "write_your_message" : "Écrivez votre message",
     "enter_username": "Entre un pseudo",
-    "am_i_member": "Suis-je un membre ?",
+    "am_i_member": "Suis-je un membre ? ",
     "connect": "Connect",
+    "decline": "Refuser",
+    "accept": "Accepter",
+    "invitation_received": "Une invitation a été reçue",
+    "wants_to_connect_with_you" : "{peerName} souhaite se connecter avec vous",
+    "@wants_to_connect_with_you": {
+    "description": "wants to connect with you.",
+    "placeholders": {
+        "peerName": {
+        "type": "String",
+        "example": "Bob"
+        }
+    }
+    },
     "all_chats_tab": "Tous les Chats",
     "devices_tab": "Approximité",
     "no_nearby_users": "Personne à proximité avec l'app, fais diffuser l'app aux non initiés. Agrandi ton cercle.",
     "no_conversations": "Pas de conversation",
     "deleted": "Supprimé",
+    "message_deleted": "Message supprimé",
     "start_conversation": "Lancer la conversation",
     "error_message": "Erreur: {snapshot}",
     "@error_message": {
@@ -44,7 +59,7 @@
     }
     },
     "no_camera_permission": "On n'a pas la permission de l'appareil photo",
-    "grant_permission": "Peux-tu nous l'accorder",
+    "grant_permission": "Peux-tu nous l'accorder ? ",
     "no_image_available": "Aucune image disponible",
     "no_messages": "Pas de messages",
     "no_more_messages": "Pas plus de messages",

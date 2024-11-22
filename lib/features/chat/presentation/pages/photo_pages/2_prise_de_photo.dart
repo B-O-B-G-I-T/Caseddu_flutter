@@ -72,6 +72,7 @@ class _PrisePhotoState extends State<PrisePhoto> {
                     width: double.infinity,
                     height: double.infinity,
                     color: Colors.black,
+                    // ici on affiche l'image
                     child: ModifierPictureWidget(
                       pathImage: croppedImagePath,
                     ),

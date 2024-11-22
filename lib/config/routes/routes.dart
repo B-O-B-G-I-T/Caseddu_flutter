@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/preview_picture/full_screen_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../features/auth/presentation/pages/connection_with.dart';
@@ -30,6 +31,7 @@ class Routes {
     observers: [],
     // l'écarn de login
     initialLocation: '/firstPage/0',
+    navigatorKey: GlobalKey<NavigatorState>(), // Définir la clé globale
     //redige la ou l'on veut
     redirect: (context, state) {
       final user = Provider.of<User?>(context, listen: false);

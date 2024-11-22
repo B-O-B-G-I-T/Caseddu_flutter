@@ -34,16 +34,25 @@ String getButtonStateName(Device device, BuildContext context) {
 Widget getButtonStateIcon(SessionState state) {
   switch (state) {
     case SessionState.connected:
-      return const Icon(Icons.wifi_off_outlined);
+      return const Icon(
+        Icons.wifi_off_outlined,
+        color: Colors.black,
+      );
     case SessionState.connecting:
       return const Icon(
         Icons.hourglass_top_rounded,
         color: Colors.black,
       );
     case SessionState.tooFar:
-      return const Icon(Icons.phonelink_erase_rounded);
+      return const Icon(
+        Icons.phonelink_erase_rounded,
+        color: Colors.black,
+      );
     default:
-      return const Icon(Icons.connect_without_contact);
+      return const Icon(
+        Icons.connect_without_contact,
+        color: Colors.black,
+      );
   }
 }
 

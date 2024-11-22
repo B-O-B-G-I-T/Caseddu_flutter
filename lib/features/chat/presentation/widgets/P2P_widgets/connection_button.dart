@@ -16,8 +16,11 @@ class ConnectionButton extends StatelessWidget {
     return GestureDetector(
       // to connect/disconnect with any device
       onTap: () async {
-        if (aditionalFunction != null) aditionalFunction!();
-        await chatProvider.connectToDevice(device);
+        if (aditionalFunction != null) {
+          aditionalFunction!();
+          return;
+        }
+        chatProvider.connectToDevice(device);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
@@ -33,6 +36,4 @@ class ConnectionButton extends StatelessWidget {
       ),
     );
   }
-
-
 }

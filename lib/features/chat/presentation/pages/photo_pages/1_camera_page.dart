@@ -408,7 +408,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
           widget.cameras.isEmpty
               ? SizedBox.expand(
                   child: Image.file(
-                    File('/Users/bobsmac/Desktop/Caseddu_flutter/assets/images/femmephoto.jpg'),
+                    File('/Users/bobsmac/Desktop/caseddu_flutter/assets/images/femmephoto.jpg'),
                     fit: BoxFit.cover, // L'image couvrira tout l'écran
                   ),
                 )
@@ -576,7 +576,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
                 if (widget.cameras.isEmpty) {
                   // ignore: use_build_context_synchronously
-                  XFile file = XFile('/Users/bobsmac/Desktop/Caseddu_flutter/assets/images/femmephoto.jpg');
+                  XFile file = XFile('/Users/bobsmac/Desktop/caseddu_flutter/assets/images/femmephoto.jpg');
 
                   cropImageToScreenSizeInIsolate(file, context);
                 } else {

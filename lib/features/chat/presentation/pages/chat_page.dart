@@ -37,7 +37,7 @@ class _ChatPageState extends State<ChatPage> {
     myName = chatProvider.myName;
     device = chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser, orElse: () => Device("", "", SessionState.tooFar));
     chatProvider.eitherFailureOrConversation(myName, widget.converser, limit: 20);
-
+  
     // Écoute des nouveaux messages pour faire défiler vers le bas
     chatProvider.newMessageStream.listen((newMessage) {
       _scrollToBottomOnNewMessage();
@@ -181,7 +181,6 @@ class _ChatPageState extends State<ChatPage> {
                     child: MessagePanel(
                       converser: widget.converser,
                       device: device!,
-                      
                     ),
                   ),
                 ],
@@ -247,7 +246,7 @@ class TimeAgoIndicator extends StatelessWidget {
 class DateSeparator extends StatelessWidget {
   final DateTime date;
 
-  const DateSeparator({Key? key, required this.date}) : super(key: key);
+  const DateSeparator({super.key, required this.date});
 
   @override
   Widget build(BuildContext context) {

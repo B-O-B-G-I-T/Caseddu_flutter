@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../providers/chat_provider.dart';
 import 'chat_device_around_list_page.dart';
 import 'chat_known_list_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -24,11 +22,9 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> with SingleTickerProvid
     setState(() => isLoading = false);
   }
 
-  late ChatProvider chatProvider;
   @override
   void initState() {
     super.initState();
-    chatProvider = Provider.of<ChatProvider>(context, listen: false);
   }
 
   @override
