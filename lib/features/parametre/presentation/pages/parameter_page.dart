@@ -20,43 +20,39 @@ class _ParametrePageState extends State<ParametrePage> {
     return Scaffold(
       appBar: AppBar(),
       body: SafeArea(
-        child: Center(
-          child: Column(children: [
-            // Bouton de deconnexion
-            ElevatedButton(
-                onPressed: () {
-                  ParametreProvider provider = Provider.of<ParametreProvider>(context, listen: false);
-                  provider.eitherFailureOrParametre();
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Center(
+            child: Column(children: [
+              // image de profile
+              // Bouton de deconnexion
+              ElevatedButton(
+                  onPressed: () {
+                    ParametreProvider provider = Provider.of<ParametreProvider>(context, listen: false);
+                    provider.eitherFailureOrParametre();
 
-                  if (provider.failure == null) {
-                    GoRouter.of(context).push('/login');
+                    if (provider.failure == null) {
+                      GoRouter.of(context).push('/login');
 
-                    context.push('/login');
-                  } else {
-                    fireBaseError(context, 'Error', provider.failure!.errorMessage);
-                  }
+                      context.push('/login');
+                    } else {
+                      fireBaseError(context, 'Error', provider.failure!.errorMessage);
+                    }
+                  },
+                  child: Text(AppLocalizations.of(context)!.logout)),
 
-                  //   // Navigator.of(context).push(
-                  //   //   MaterialPageRoute(
-                  //   //     builder: (context) => loginPage(),
-                  //   //   ),
-                  //   // );
-                  //   // context.push('/login');
-                  //   // print(context.mounted);
-                },
-                child:  Text(AppLocalizations.of(context)!.logout)),
-
-// modifie le nom a supprime en prod
-            TextField(
-              controller: _txt,
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  User? user = FirebaseAuth.instance.currentUser;
-                  user?.updateDisplayName(_txt.text.trim());
-                },
-                child: Text(AppLocalizations.of(context)!.edit_name)),
-          ]),
+              // modifie le nom a supprime en prod
+              TextField(
+                controller: _txt,
+              ),
+              ElevatedButton(
+                  onPressed: () {
+                    User? user = FirebaseAuth.instance.currentUser;
+                    user?.updateDisplayName(_txt.text.trim());
+                  },
+                  child: Text(AppLocalizations.of(context)!.edit_name)),
+            ]),
+          ),
         ),
       ),
     );
