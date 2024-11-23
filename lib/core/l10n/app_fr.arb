@@ -49,7 +49,6 @@
     "no_nearby_users": "Personne à proximité avec l'app, fais diffuser l'app aux non initiés. Agrandi ton cercle.",
     "no_conversations": "Pas de conversation",
     "deleted": "Supprimé",
-    "message_deleted": "Message supprimé",
     "start_conversation": "Lancer la conversation",
     "error_message": "Erreur: {snapshot}",
     "@error_message": {
@@ -100,8 +99,6 @@
     "search_again": "Rechercher à nouveau",
     "me": "Moi",
     "no_old_messages": "Pas d'ancien message",
-    "logout": "Déconnexion",
-    "edit_name": "Modifie le nom",
     "result": "Résultat",
     "image_successfully_saved_to_gallery": "Image enregistrée avec succès dans la galerie ✅",
     "error_while_saving_the_image": "Erreur lors de l'enregistrement de l'image'",
@@ -138,5 +135,15 @@
         }
     }
     },
+    "settings": "Paramètres",
+    "edit_name": "Modifier le nom",
+    "edit_email": "Modifier l'email",
+    "edit_password": "Modifier le mot de passe",
+    "logout": "Déconnexion",
+    "save_changes": "Enregistrer les modifications",
+    "notifications": "Notifications",
+    "language": "Langue",
+    "name_updated": "Nom mis à jour avec succès",
+    "profile_updated": "Profil mis à jour avec succès",
     "template": "Modèle"
 }

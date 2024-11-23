@@ -5,13 +5,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../core/connection/network_info.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
-import '../../data/datasources/parametre_local_data_source.dart';
-import '../../data/datasources/parametre_remote_data_source.dart';
-import '../../data/repositories/parametre_repository_impl.dart';
-import '../../domain/entities/parametre_entity.dart';
-import '../../domain/usecases/parametre_template.dart';
+import '../../data/datasources/parameter_local_data_source.dart';
+import '../../data/datasources/parameter_remote_data_source.dart';
+import '../../data/repositories/parameter_repository_impl.dart';
+import '../../domain/entities/parameter_entity.dart';
+import '../../domain/usecases/get_parameter.dart';
 
 class ParametreProvider extends ChangeNotifier {
+
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   ParametreEntity? parametre;
   Failure? failure;
 
@@ -50,4 +53,6 @@ class ParametreProvider extends ChangeNotifier {
       },
     );
   }
+
+  
 }

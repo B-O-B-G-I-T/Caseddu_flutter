@@ -4,9 +4,9 @@ import '../../../../../core/connection/network_info.dart';
 import '../../../../core/errors/firebase_exceptions.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
-import '../../domain/repositories/parametre_repository.dart';
-import '../datasources/parametre_local_data_source.dart';
-import '../datasources/parametre_remote_data_source.dart';
+import '../../domain/repositories/parameter_repository.dart';
+import '../datasources/parameter_local_data_source.dart';
+import '../datasources/parameter_remote_data_source.dart';
 
 class ParametreRepositoryImpl implements ParametreRepository {
   final ParametreRemoteDataSource remoteDataSource;

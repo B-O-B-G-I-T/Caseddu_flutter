@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/utils/p2p/fonctions.dart';
-import '../chat_widgets/circle_avatar.dart';
+import '../chat_widgets/circle_avatar_with_text_or_image.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ListTilePourUtilisateurConnu extends StatelessWidget {

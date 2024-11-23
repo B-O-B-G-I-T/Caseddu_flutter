@@ -1,6 +1,6 @@
 
 import '../../../../core/constants/constants.dart';
-import '../../domain/entities/parametre_entity.dart';
+import '../../domain/entities/parameter_entity.dart';
 
 class ParametreModel extends ParametreEntity {
   const ParametreModel({

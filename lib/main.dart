@@ -11,7 +11,7 @@ import 'config/routes/routes.dart';
 import 'features/auth/data/datasources/authentification_remote_data_source.dart';
 import 'features/auth/presentation/providers/authentification_provider.dart';
 import 'features/chat/presentation/providers/chat_provider.dart';
-import 'features/parametre/presentation/providers/parametre_provider.dart';
+import 'features/parametre/presentation/providers/parameter_provider.dart';
 import 'firebase_options.dart';
 
 late List<CameraDescription> cameras;

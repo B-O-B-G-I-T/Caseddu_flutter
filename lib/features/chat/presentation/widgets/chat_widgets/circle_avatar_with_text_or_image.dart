@@ -6,6 +6,7 @@ class CircleAvatarWithTextOrImage extends StatelessWidget {
   final ImageProvider? image;
   final Color? backgroundColor; // Couleur spécifiée par l'utilisateur
   final double radius;
+  final Function? customImage;
 
   const CircleAvatarWithTextOrImage({
     super.key,
@@ -13,16 +14,24 @@ class CircleAvatarWithTextOrImage extends StatelessWidget {
     this.image,
     this.backgroundColor, // Ajout de la couleur de fond spécifiée par l'utilisateur
     this.radius = 24.0,
+    this.customImage,
   });
 
   @override
   Widget build(BuildContext context) {
     final Color effectiveBackgroundColor = backgroundColor ??
         generateColorFromName(text ?? ''); //generateColor('jea,'); // Utilisation de la couleur spécifiée ou génération d'une couleur aléatoire
-    return CircleAvatar(
-      radius: radius,
-      backgroundColor: effectiveBackgroundColor,
-      child: _buildContent(),
+    return GestureDetector(
+      onTap: () {
+        if (customImage != null) {
+          customImage!();
+        }
+      },
+      child: CircleAvatar(
+        radius: radius,
+        backgroundColor: effectiveBackgroundColor,
+        child: _buildContent(),
+      ),
     );
   }
 
@@ -43,6 +52,4 @@ class CircleAvatarWithTextOrImage extends StatelessWidget {
       );
     }
   }
-
-  
 }

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/errors/firebase_exceptions.dart';
-import '../models/parametre_model.dart';
+import '../models/parameter_model.dart';
 
 
 abstract class ParametreLocalDataSource {
