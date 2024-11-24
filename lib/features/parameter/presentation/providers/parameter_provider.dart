@@ -11,19 +11,21 @@ import '../../data/repositories/parameter_repository_impl.dart';
 import '../../domain/entities/parameter_entity.dart';
 import '../../domain/usecases/get_parameter.dart';
 
-class ParametreProvider extends ChangeNotifier {
-
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  ParametreEntity? parametre;
+class ParameterProvider extends ChangeNotifier {
+  ParameterEntity? parameter;
   Failure? failure;
 
-  ParametreProvider({
-    this.parametre,
+  ParameterProvider({
+    this.parameter,
     this.failure,
   });
 
-  void eitherFailureOrParametre() async {
+  Future<void> init() async {
+    final User user = FirebaseAuth.instance.currentUser!;
+    parameter = ParameterEntity.fromUser(user);
+  }
+
+  void eitherFailureOrLogout() async {
     ParametreRepositoryImpl repository = ParametreRepositoryImpl(
       remoteDataSource: ParametreRemoteDataSourceImpl(
         firebaseAuth: FirebaseAuth.instance,
@@ -36,23 +38,49 @@ class ParametreProvider extends ChangeNotifier {
       ),
     );
 
-    final failureOrParametre = await GetParametre(parametreRepository: repository).call(
-      parametreParams: ParametreParams(),
-    );
+    final failureOrParametre = await GetParametre(parametreRepository: repository).call();
 
     failureOrParametre.fold(
       (Failure newFailure) {
-        parametre = null;
+        parameter = null;
         failure = newFailure;
         notifyListeners();
       },
       (void d) {
-
         failure = null;
         notifyListeners();
       },
     );
   }
 
-  
+  void eitherFailureOrUpdate({required ParameterParams parameterParams}) async {
+    ParametreRepositoryImpl repository = ParametreRepositoryImpl(
+      remoteDataSource: ParametreRemoteDataSourceImpl(
+        firebaseAuth: FirebaseAuth.instance,
+      ),
+      localDataSource: ParametreLocalDataSourceImpl(
+        sharedPreferences: await SharedPreferences.getInstance(),
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
+      ),
+    );
+
+    final failureOrParametre = await GetParametre(parametreRepository: repository).update(
+      parametreParams: parameterParams,
+    );
+
+    failureOrParametre.fold(
+      (Failure newFailure) {
+        parameter = null;
+        failure = newFailure;
+        notifyListeners();
+      },
+      (ParameterEntity parameterEntity) {
+        failure = null;
+        parameter = parameterEntity;
+        notifyListeners();
+      },
+    );
+  }
 }

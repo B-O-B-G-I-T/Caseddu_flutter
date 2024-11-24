@@ -22,7 +22,14 @@ class AuthentificationParams {
   AuthentificationParams({required this.email, this.password, this.confirmPassword, this.numero, this.pseudo});
 }
 
-class ParametreParams {}
+class ParameterParams {
+  final String email;
+  final String? displayName;
+  final String? password;
+  final String? confirmPassword;
+  final String? numero;
+  ParameterParams( {required this.email, this.password, this.confirmPassword, this.numero, this.displayName});
+}
 
 class MenuParams {}
 

@@ -1,3 +1,4 @@
+import 'package:caseddu/features/parameter/domain/entities/parameter_entity.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../../core/connection/network_info.dart';
@@ -20,12 +21,27 @@ class ParametreRepositoryImpl implements ParametreRepository {
   });
 // TODO faire une deconnexion qui fonctionne hors réseaux 
   @override
-  Future<Either<Failure, void>> deconnexion({required ParametreParams parametreParams}) async {
+  Future<Either<Failure, void>> deconnexion() async {
     if (await networkInfo.isConnected!) {
       try {
-        await remoteDataSource.deconnexion(parametreParams: parametreParams);
+        await remoteDataSource.deconnexion();
 
         return const Right(null);
+      } on FireBaseException catch (e) {
+        return Left(ServerFailure(errorMessage: e.errMessage));
+      }
+    } else {
+      return Left(ServerFailure(errorMessage: "Connecte toi à l'internet"));
+    }
+  }
+  
+  @override
+  Future<Either<Failure, ParameterEntity>> update({required ParameterParams parametreParams}) async {
+    if (await networkInfo.isConnected!) {
+      try {
+        final ParameterEntity parameterEntity = await remoteDataSource.update(parametreParams: parametreParams);
+
+        return Right(parameterEntity);
       } on FireBaseException catch (e) {
         return Left(ServerFailure(errorMessage: e.errMessage));
       }

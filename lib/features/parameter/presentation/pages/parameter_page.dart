@@ -1,35 +1,39 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:caseddu/features/parametre/presentation/widgets/custom_circle_avatar.dart';
+import 'package:caseddu/features/parameter/presentation/widgets/custom_circle_avatar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
+import '../../../../core/params/params.dart';
 import '../providers/parameter_provider.dart';
 
-class ParametrePage extends StatefulWidget {
-  const ParametrePage({super.key});
+class ParameterPage extends StatefulWidget {
+  const ParameterPage({super.key});
 
   @override
-  State<ParametrePage> createState() => _ParametrePageState();
+  State<ParameterPage> createState() => _ParameterPageState();
 }
 
-class _ParametrePageState extends State<ParametrePage> {
+class _ParameterPageState extends State<ParameterPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _notificationsEnabled = true;
   String _selectedLanguage = 'en'; // Default language
+  late ParameterProvider provider;
 
   @override
   void initState() {
     super.initState();
+    provider = Provider.of<ParameterProvider>(context, listen: false);
     // Préremplir les champs avec les informations actuelles
-    final user = FirebaseAuth.instance.currentUser;
-    _nameController.text = user?.displayName ?? '';
-    _emailController.text = user?.email ?? '';
+    provider.init();
+    debugPrint('ParameterPage: initState');
+    _nameController.text = provider.parameter!.displayName;
+    _emailController.text = provider.parameter!.email;
   }
 
   @override
@@ -38,41 +42,6 @@ class _ParametrePageState extends State<ParametrePage> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-
-  void _logout(BuildContext context) async {
-    ParametreProvider provider = Provider.of<ParametreProvider>(context, listen: false);
-    provider.eitherFailureOrParametre();
-
-    if (provider.failure == null) {
-      await FirebaseAuth.instance.signOut();
-      GoRouter.of(context).go('/login');
-    } else {
-      fireBaseError(context, 'Error', provider.failure!.errorMessage);
-    }
-  }
-
-  void _updateProfile() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        if (_nameController.text.trim().isNotEmpty) {
-          await user.updateDisplayName(_nameController.text.trim());
-        }
-        if (_emailController.text.trim().isNotEmpty && _emailController.text.trim() != user.email) {
-          await user.updateEmail(_emailController.text.trim());
-        }
-        if (_passwordController.text.trim().isNotEmpty) {
-          await user.updatePassword(_passwordController.text.trim());
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context)!.profile_updated)),
-        );
-        setState(() {});
-      }
-    } catch (error) {
-      fireBaseError(context, 'Error', error.toString());
-    }
   }
 
   @override
@@ -157,7 +126,22 @@ class _ParametrePageState extends State<ParametrePage> {
                 // Sauvegarder les modifications
                 Center(
                   child: ElevatedButton(
-                    onPressed: _updateProfile,
+                    onPressed: () {
+                      try {
+                        final parameter = ParameterParams(
+                          email: _emailController.text.trim(),
+                          password: _passwordController.text.trim(),
+                          displayName: _nameController.text.trim(),
+                        );
+                        provider.eitherFailureOrUpdate(parameterParams: parameter);
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(AppLocalizations.of(context)!.profile_updated)),
+                        );
+                      } on Exception catch (e) {
+                        fireBaseError(context, 'Error', e.toString());
+                      }
+                    },
                     child: Text(AppLocalizations.of(context)!.save_changes),
                   ),
                 ),
@@ -169,7 +153,7 @@ class _ParametrePageState extends State<ParametrePage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                     ),
-                    onPressed: () => _logout(context),
+                    onPressed: () => provider.eitherFailureOrLogout(),
                     child: Text(AppLocalizations.of(context)!.logout),
                   ),
                 ),

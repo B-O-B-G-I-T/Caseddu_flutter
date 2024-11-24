@@ -5,8 +5,8 @@ import '../models/parameter_model.dart';
 
 
 abstract class ParametreLocalDataSource {
-  Future<void> cacheParametre({required ParametreModel? parametreToCache});
-  Future<ParametreModel> getLastParametre();
+  Future<void> cacheParametre({required ParameterModel? parametreToCache});
+  Future<ParameterModel> getLastParametre();
 }
 
 const cachedParametre = 'CACHED_TEMPLATE';
@@ -17,18 +17,18 @@ class ParametreLocalDataSourceImpl implements ParametreLocalDataSource {
   ParametreLocalDataSourceImpl({required this.sharedPreferences});
 
   @override
-  Future<ParametreModel> getLastParametre() {
+  Future<ParameterModel> getLastParametre() {
     final jsonString = sharedPreferences.getString(cachedParametre);
 
     if (jsonString != null) {
-      return Future.value(ParametreModel.fromJson(json: json.decode(jsonString)));
+      return Future.value(ParameterModel.fromJson(json: json.decode(jsonString)));
     } else {
       throw CacheException();
     }
   }
 
   @override
-  Future<void> cacheParametre({required ParametreModel? parametreToCache}) async {
+  Future<void> cacheParametre({required ParameterModel? parametreToCache}) async {
     if (parametreToCache != null) {
       sharedPreferences.setString(
         cachedParametre,

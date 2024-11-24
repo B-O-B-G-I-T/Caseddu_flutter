@@ -7,6 +7,7 @@
     "enter_a_valid_username": "Entre une pseudo valide",
     "enter_a_valid_number": "Entre un numero valide",
     "enter_a_valid_email": "Entre une email valide",
+    "enter_your_valid_email": "Entre ton email valide",
     "enter_your_email": "Enter your email",
     "creation": "Création",
     "connect_with_apple" : "Connecte-toi avec Apple",
@@ -146,4 +147,5 @@
     "name_updated": "Nom mis à jour avec succès",
     "profile_updated": "Profil mis à jour avec succès",
     "template": "Modèle"
+
 }

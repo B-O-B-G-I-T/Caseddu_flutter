@@ -46,9 +46,10 @@ class CircleAvatarWithTextOrImage extends StatelessWidget {
         ),
       );
     } else {
+      double fontSize = radius * 1;
       return Text(
         text != null && text!.isNotEmpty ? text![0].toUpperCase() : '',
-        style: const TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: fontSize),
       );
     }
   }
