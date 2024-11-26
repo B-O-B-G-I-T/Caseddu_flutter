@@ -1,6 +1,8 @@
+import 'package:caseddu/core/utils/images/utils_image.dart';
 import 'package:data_connection_checker_tv/data_connection_checker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../core/connection/network_info.dart';
 import '../../../../../core/errors/failure.dart';
@@ -13,16 +15,73 @@ import '../../domain/usecases/get_parameter.dart';
 
 class ParameterProvider extends ChangeNotifier {
   ParameterEntity? parameter;
+
+  // gestion des images du data picker
+  List<AssetEntity> images = [];
+  List<AssetEntity> selectedImages = [];
+
   Failure? failure;
 
   ParameterProvider({
     this.parameter,
     this.failure,
   });
-
   Future<void> init() async {
     final User user = FirebaseAuth.instance.currentUser!;
     parameter = ParameterEntity.fromUser(user);
+
+    //notifyListeners();
+  }
+
+  Future<void> loadImageParams(BuildContext context) async {
+    final User user = FirebaseAuth.instance.currentUser!;
+    parameter = ParameterEntity.fromUser(user);
+
+    images = await loadImages(context);
+    notifyListeners();
+  }
+
+  void toggleSelection(AssetEntity image) {
+    final currentSelection = selectedImages;
+    if (currentSelection.contains(image)) {
+      currentSelection.remove(image);
+    } else if (currentSelection.isNotEmpty) {
+      currentSelection.clear();
+      currentSelection.add(image);
+    } else {
+      currentSelection.add(image);
+    }
+    selectedImages = currentSelection;
+    notifyListeners();
+  }
+
+
+  void eitherFailureOrSelectedImageProfile() async {
+    ParametreRepositoryImpl repository = ParametreRepositoryImpl(
+      remoteDataSource: ParametreRemoteDataSourceImpl(
+        firebaseAuth: FirebaseAuth.instance,
+      ),
+      localDataSource: ParametreLocalDataSourceImpl(
+        sharedPreferences: await SharedPreferences.getInstance(),
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
+      ),
+    );
+
+    final failureOrParametre = await GetParametre(parametreRepository: repository).call();
+
+    failureOrParametre.fold(
+      (Failure newFailure) {
+        parameter = null;
+        failure = newFailure;
+        notifyListeners();
+      },
+      (void d) {
+        failure = null;
+        notifyListeners();
+      },
+    );
   }
 
   void eitherFailureOrLogout() async {

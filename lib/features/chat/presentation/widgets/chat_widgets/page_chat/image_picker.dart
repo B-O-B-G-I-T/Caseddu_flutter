@@ -1,101 +1,27 @@
-// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
+// ignore_for_file: use_build_context_synchronously
 
-import 'dart:io';
 import 'dart:typed_data';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:caseddu/core/params/params.dart';
-import 'package:caseddu/core/utils/p2p/fonctions.dart';
-import 'package:caseddu/features/chat/presentation/providers/chat_provider.dart';
+import 'package:caseddu/features/parameter/presentation/providers/parameter_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:nanoid/nanoid.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:provider/provider.dart';
 
-class MyImagePicker extends StatefulWidget {
-  const MyImagePicker({super.key, required this.chatProvider, required this.device, required this.converser});
-  final ChatProvider chatProvider;
-  final Device device;
-  final String converser;
+class ImagePicker extends StatefulWidget {
+  const ImagePicker(
+      {super.key, required this.toggleSelection, this.sendMessage, this.icon = Icons.send, required this.images, required this.selectedImages});
+  final Function toggleSelection;
+  final Function? sendMessage;
+  final List<AssetEntity> images;
+  final List<AssetEntity> selectedImages;
+  final IconData icon;
   @override
-  State<MyImagePicker> createState() => _ImagePickerState();
+  State<ImagePicker> createState() => _ImagePickerState();
 }
 
-class _ImagePickerState extends State<MyImagePicker> {
-  List<AssetEntity> images = [];
-  List<AssetEntity> selectedImages = [];
-
+class _ImagePickerState extends State<ImagePicker> {
   @override
   void initState() {
     super.initState();
-    loadImages();
-  }
-
-  Future<void> loadImages() async {
-    // Demander la permission
-    final result = await PhotoManager.requestPermissionExtend();
-    if (result.isAuth) {
-      // Permission accordée, on charge les images
-      List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
-        type: RequestType.image,
-        onlyAll: true,
-      );
-      List<AssetEntity> recentImages = await albums[0].getAssetListPaged(
-        page: 0,
-        size: await albums[0].assetCountAsync,
-      );
-      setState(() {
-        images = recentImages;
-      });
-    } else if (result.hasAccess) {
-      // Accès limité accordé
-      await _loadAndDisplayLimitedImages();
-
-      Utils.showLimitedAccessDialog(context: context);
-    } else {
-      // Permission refusée ou non demandée
-      Utils.showPermissionDeniedDialog(context: context);
-    }
-  }
-
-  void toggleSelection(AssetEntity image) {
-    setState(() {
-      if (selectedImages.contains(image)) {
-        selectedImages.remove(image);
-      } else {
-        selectedImages.add(image);
-      }
-    });
-  }
-
-  Future<void> _loadAndDisplayLimitedImages() async {
-    // Récupérez la liste des albums avec accès limité
-    List<AssetPathEntity> albums = await PhotoManager.getAssetPathList(
-      type: RequestType.image,
-      onlyAll: true,
-    );
-
-    // Si aucun album n'est trouvé, gérer le cas ici
-    if (albums.isEmpty) {
-      setState(() {
-        images = []; // Aucun image disponible
-      });
-      return;
-    }
-
-    // Accédez à l'album le plus récent (ou au premier album disponible)
-    AssetPathEntity limitedAlbum = albums[0];
-
-    // Chargez les images accessibles dans cet album
-    List<AssetEntity> limitedImages = await limitedAlbum.getAssetListPaged(
-      page: 0,
-      size: await limitedAlbum.assetCountAsync,
-    );
-
-    // Mettez à jour l'état avec les images limitées disponibles
-    setState(() {
-      images = limitedImages;
-    });
   }
 
   @override
@@ -112,26 +38,29 @@ class _ImagePickerState extends State<MyImagePicker> {
                   crossAxisSpacing: 4,
                   mainAxisSpacing: 4,
                 ),
-                itemCount: images.length,
+                itemCount: widget.images.length,
                 itemBuilder: (context, index) {
-                  return FutureBuilder<Uint8List?>(
-                    future: images[index].thumbnailDataWithSize(const ThumbnailSize(500, 700)), // Taille des miniatures
-                    builder: (context, snapshot) {
-                      final bytes = snapshot.data;
-                      if (bytes == null) return const Center(child: FittedBox(fit: BoxFit.contain, child: CircularProgressIndicator()));
-
-                      return ImageItem(
-                        image: images[index],
-                        isSelected: selectedImages.contains(images[index]),
-                        onSelect: () {
-                          toggleSelection(images[index]);
-                        },
-                      );
-                    },
-                  );
+                  return Selector<ParameterProvider, bool>(
+                      selector: (context, provider) => provider.selectedImages.contains(widget.images[index]),
+                      builder: (context, isSelected, child) {
+                        return FutureBuilder<Uint8List?>(
+                          future: widget.images[index].thumbnailDataWithSize(const ThumbnailSize(500, 700)), // Taille des miniatures
+                          builder: (context, snapshot) {
+                            final bytes = snapshot.data;
+                            if (bytes == null) return const Center(child: FittedBox(fit: BoxFit.contain, child: CircularProgressIndicator()));
+                            return ImageItem(
+                              image: widget.images[index],
+                              isSelected: widget.selectedImages.contains(widget.images[index]),
+                              onSelect: () {
+                                widget.toggleSelection(widget.images[index]);
+                              },
+                            );
+                          },
+                        );
+                      });
                 }),
           ),
-          if (selectedImages.isNotEmpty)
+          if (widget.selectedImages.isNotEmpty && widget.sendMessage != null)
             Positioned(
               height: 50,
               bottom: 0,
@@ -145,9 +74,9 @@ class _ImagePickerState extends State<MyImagePicker> {
                   children: [
                     IconButton(
                         onPressed: () {
-                          sendMessage();
+                          widget.sendMessage!();
                         },
-                        icon: const Icon(Icons.send)),
+                        icon: Icon(widget.icon)),
                   ],
                 ),
               ),
@@ -155,52 +84,6 @@ class _ImagePickerState extends State<MyImagePicker> {
         ],
       ),
     );
-  }
-
-  Future<void> sendMessage() async {
-    if (widget.device.state == SessionState.notConnected) {
-      Fluttertoast.showToast(
-          msg: AppLocalizations.of(context)!.out_of_range,
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.TOP,
-          timeInSecForIosWeb: 10,
-          backgroundColor: Colors.grey,
-          fontSize: 16.0);
-    } else {
-      if (selectedImages.isNotEmpty) {
-        var msgId = nanoid(21);
-        var timestamp = DateTime.now();
-
-        // Récupérer les paths des images sélectionnées
-        List<String> imagePaths = [];
-        for (var asset in selectedImages) {
-          File? file = await asset.file; // Obtenir le fichier associé
-          if (file != null) {
-            imagePaths.add(file.path); // Ajouter le chemin du fichier à la liste
-          }
-        }
-
-        var listImages = imagePaths.join(',');
-        // print(listImages);
-
-        ChatMessageParams chatMessageParams = ChatMessageParams(
-          id: msgId,
-          sender: 'bob',
-          receiver: widget.converser,
-          message: '',
-          images: listImages,
-          type: 'image',
-          sendOrReceived: 'Send',
-          timestamp: timestamp,
-          ack: 0,
-        );
-        if (widget.device.state == SessionState.notConnected) {
-          await widget.chatProvider.connectToDevice(widget.device);
-        }
-        widget.chatProvider.eitherFailureOrEnvoieDeMessage(chatMessageParams: chatMessageParams);
-      }
-    }
-    selectedImages.clear();
   }
 }
 
@@ -232,7 +115,9 @@ class _ImageItemState extends State<ImageItem> {
         }
 
         return GestureDetector(
-          onTap: widget.onSelect,
+          onTap: () {
+            widget.onSelect();
+          },
           child: Stack(
             children: [
               SizedBox.expand(

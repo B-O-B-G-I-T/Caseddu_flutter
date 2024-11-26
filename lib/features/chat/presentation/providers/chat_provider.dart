@@ -10,10 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../core/connection/network_info.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
+import '../../../../core/utils/images/utils_image.dart';
 import '../../data/models/chat_message_model.dart';
 import '../../domain/entities/chat_message_entity.dart';
 import '../../domain/usecases/get_chat.dart';
@@ -31,6 +33,10 @@ class ChatProvider extends ChangeNotifier {
   List<Device> devices = [];
   List<Device> connectedDevices = [];
   List<UserEntity> users = [];
+
+  // gestion des images du data picker
+  List<AssetEntity> images = [];
+  List<AssetEntity> selectedImages = [];
 
   bool _isLoadingOldMessages = false;
   bool hasMoreMessages = true;
@@ -89,6 +95,12 @@ class ChatProvider extends ChangeNotifier {
 
   void disabledNearbyService() {
     controlerDevice = null;
+  }
+
+    Future<void> loadImageChat(BuildContext context) async {
+
+    images = await loadImages(context);
+    notifyListeners();
   }
 
   void setupInvitationHandler(BuildContext context) {
