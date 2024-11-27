@@ -15,7 +15,7 @@ class _ImagePickerForParamsState extends State<ImagePickerForParams> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).primaryColor,
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -34,7 +34,6 @@ class _ImagePickerForParamsState extends State<ImagePickerForParams> {
                   color: Colors.white,
                   icon: const Icon(Icons.save),
                   onPressed: () {
-                    
                     widget.parameterProvider.eitherFailureOrSelectedImageProfile(widget.parameterProvider.selectedImages.first);
                     closeGallery(context);
                   },
@@ -52,7 +51,6 @@ class _ImagePickerForParamsState extends State<ImagePickerForParams> {
                     images: widget.parameterProvider.images,
                     selectedImages: widget.parameterProvider.selectedImages,
                     toggleSelection: widget.parameterProvider.toggleSelection,
-                    sendMessage: widget.parameterProvider.eitherFailureOrSelectedImageProfile,
                   ),
                 ),
               ),

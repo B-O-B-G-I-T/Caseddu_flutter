@@ -116,7 +116,7 @@ class _PremierePageState extends State<PremierePage> {
                   ),
 
                   Text(
-                    _utilisateur.displayName ?? "",
+                    parameterProvider.parameter!.displayName,
                     style: const TextStyle(color: Colors.black),
                   )
                 ],
