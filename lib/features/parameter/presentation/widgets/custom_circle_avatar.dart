@@ -4,19 +4,20 @@ import 'package:flutter/material.dart';
 import '../../../chat/presentation/widgets/chat_widgets/circle_avatar_with_text_or_image.dart';
 
 class CustomCircleAvatar extends StatelessWidget {
-  const CustomCircleAvatar({super.key, this.ontap, this.image});
+  const CustomCircleAvatar({super.key, this.ontap, this.image, this.radius = 50});
   final Function? ontap;
   final String? image;
+  final double radius;
   @override
   Widget build(BuildContext context) {
     return // Image de profil ou texte
-                Center(
-                  child: CircleAvatarWithTextOrImage(
-                    text: FirebaseAuth.instance.currentUser?.displayName ?? '',
-                    radius: 50,
-                    customImage: ontap,
-                    image: image,
-                  ),
-                );
+        Center(
+      child: CircleAvatarWithTextOrImage(
+        text: FirebaseAuth.instance.currentUser?.displayName ?? '',
+        radius: radius,
+        customImage: ontap,
+        image: image,
+      ),
+    );
   }
 }
