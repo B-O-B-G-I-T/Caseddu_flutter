@@ -26,17 +26,15 @@ class ParameterProvider extends ChangeNotifier {
     this.parameter,
     this.failure,
   });
+
   Future<void> init() async {
     final User user = FirebaseAuth.instance.currentUser!;
     parameter = ParameterEntity.fromUser(user);
-
+    eitherFailureOrGetSavedProfileImage();
     //notifyListeners();
   }
 
   Future<void> loadImageParams(BuildContext context) async {
-    final User user = FirebaseAuth.instance.currentUser!;
-    parameter = ParameterEntity.fromUser(user);
-
     images = await loadImages(context);
     notifyListeners();
   }
@@ -55,8 +53,7 @@ class ParameterProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
-  void eitherFailureOrSelectedImageProfile() async {
+  void eitherFailureOrSelectedImageProfile(AssetEntity image) async {
     ParametreRepositoryImpl repository = ParametreRepositoryImpl(
       remoteDataSource: ParametreRemoteDataSourceImpl(
         firebaseAuth: FirebaseAuth.instance,
@@ -69,7 +66,7 @@ class ParameterProvider extends ChangeNotifier {
       ),
     );
 
-    final failureOrParametre = await GetParametre(parametreRepository: repository).call();
+    final failureOrParametre = await GetParametre(parametreRepository: repository).selectedImageProfile(image);
 
     failureOrParametre.fold(
       (Failure newFailure) {
@@ -77,8 +74,38 @@ class ParameterProvider extends ChangeNotifier {
         failure = newFailure;
         notifyListeners();
       },
-      (void d) {
+      (String imagePath) {
         failure = null;
+        parameter?.setImage(imagePath);
+        notifyListeners();
+      },
+    );
+  }
+
+  void eitherFailureOrGetSavedProfileImage() async {
+    ParametreRepositoryImpl repository = ParametreRepositoryImpl(
+      remoteDataSource: ParametreRemoteDataSourceImpl(
+        firebaseAuth: FirebaseAuth.instance,
+      ),
+      localDataSource: ParametreLocalDataSourceImpl(
+        sharedPreferences: await SharedPreferences.getInstance(),
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
+      ),
+    );
+
+    final failureOrParametre = await GetParametre(parametreRepository: repository).getSavedProfileImage();
+
+    failureOrParametre.fold(
+      (Failure newFailure) {
+        parameter = null;
+        failure = newFailure;
+        notifyListeners();
+      },
+      (String? imagePath) {
+        failure = null;
+        parameter?.setImage(imagePath);
         notifyListeners();
       },
     );

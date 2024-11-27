@@ -1,6 +1,6 @@
 import 'package:caseddu/features/parameter/domain/entities/parameter_entity.dart';
 import 'package:dartz/dartz.dart';
-
+import 'package:photo_manager/photo_manager.dart';
 import '../../../../../core/connection/network_info.dart';
 import '../../../../core/errors/firebase_exceptions.dart';
 import '../../../../../core/errors/failure.dart';
@@ -19,7 +19,7 @@ class ParametreRepositoryImpl implements ParametreRepository {
     required this.localDataSource,
     required this.networkInfo,
   });
-// TODO faire une deconnexion qui fonctionne hors réseaux 
+// TODO faire une deconnexion qui fonctionne hors réseaux
   @override
   Future<Either<Failure, void>> deconnexion() async {
     if (await networkInfo.isConnected!) {
@@ -34,7 +34,7 @@ class ParametreRepositoryImpl implements ParametreRepository {
       return Left(ServerFailure(errorMessage: "Connecte toi à l'internet"));
     }
   }
-  
+
   @override
   Future<Either<Failure, ParameterEntity>> update({required ParameterParams parametreParams}) async {
     if (await networkInfo.isConnected!) {
@@ -49,4 +49,32 @@ class ParametreRepositoryImpl implements ParametreRepository {
       return Left(ServerFailure(errorMessage: "Connecte toi à l'internet"));
     }
   }
+
+  @override
+  Future<Either<Failure, String>> selectedImageProfile(AssetEntity image) async {
+    if (await networkInfo.isConnected!) {
+      try {
+        String path = await localDataSource.saveImageProfile(image);
+
+        return Right(path);
+      } on FireBaseException catch (e) {
+        return Left(ServerFailure(errorMessage: e.errMessage));
+      }
+    } else {
+      return Left(ServerFailure(errorMessage: "Connecte toi à l'internet"));
+    }
+  }
+  
+  @override
+  Future<Either<Failure, String?>> getSavedProfileImage() async {
+
+      try {
+        String? path = await localDataSource.getSavedProfileImage();
+
+        return Right(path);
+      } on FireBaseException catch (e) {
+        return Left(ServerFailure(errorMessage: e.errMessage));
+      }
+    } 
+  
 }

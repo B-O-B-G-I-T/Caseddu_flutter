@@ -33,7 +33,11 @@ class _ImagePickerForParamsState extends State<ImagePickerForParams> {
                 IconButton(
                   color: Colors.white,
                   icon: const Icon(Icons.save),
-                  onPressed: () => closeGallery(context),
+                  onPressed: () {
+                    
+                    widget.parameterProvider.eitherFailureOrSelectedImageProfile(widget.parameterProvider.selectedImages.first);
+                    closeGallery(context);
+                  },
                 ),
               ],
             ),
@@ -62,5 +66,4 @@ class _ImagePickerForParamsState extends State<ImagePickerForParams> {
   void closeGallery(BuildContext context) {
     Navigator.pop(context);
   }
-
 }

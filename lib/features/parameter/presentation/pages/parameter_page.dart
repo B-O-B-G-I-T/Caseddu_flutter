@@ -74,6 +74,7 @@ class _ParameterPageState extends State<ParameterPage> {
                   children: [
                     // Image de profil ou texte
                     CustomCircleAvatar(
+                      image: provider.parameter!.photoUrl,
                       ontap: () async {
                         //FocusScope.of(context).unfocus();
 

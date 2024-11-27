@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import '../../../../../core/utils/widget_utils.dart';
 
 class CircleAvatarWithTextOrImage extends StatelessWidget {
   final String? text;
-  final ImageProvider? image;
+  final String? image;
   final Color? backgroundColor; // Couleur spécifiée par l'utilisateur
   final double radius;
   final Function? customImage;
@@ -38,8 +40,8 @@ class CircleAvatarWithTextOrImage extends StatelessWidget {
   Widget _buildContent() {
     if (image != null) {
       return ClipOval(
-        child: Image(
-          image: image!,
+        child: Image.file(
+          File(image!),
           fit: BoxFit.cover,
           width: radius * 2,
           height: radius * 2,
