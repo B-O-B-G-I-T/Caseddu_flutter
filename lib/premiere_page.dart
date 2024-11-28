@@ -21,8 +21,6 @@ class PremierePage extends StatefulWidget {
 class _PremierePageState extends State<PremierePage> {
   int _selectedIndex = 0;
 
-  final User _utilisateur = FirebaseAuth.instance.currentUser!;
-
   late ChatProvider chatProvider;
   late ParameterProvider parameterProvider;
   @override
