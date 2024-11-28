@@ -1,5 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:caseddu/features/parameter/presentation/providers/parameter_provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +38,6 @@ class _PremierePageState extends State<PremierePage> {
     });
 
     parameterProvider = Provider.of<ParameterProvider>(context, listen: false);
-    parameterProvider.init();
   }
 
 // dictionnaire des pages /////////////////////////////

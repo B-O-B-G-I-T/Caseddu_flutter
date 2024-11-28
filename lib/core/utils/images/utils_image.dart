@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import '../p2p/fonctions.dart';

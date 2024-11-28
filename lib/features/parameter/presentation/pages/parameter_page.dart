@@ -27,13 +27,13 @@ class _ParameterPageState extends State<ParameterPage> {
   late ParameterProvider provider;
 
   late PermissionState permissionStatus = PermissionState.notDetermined;
-  bool _showGallery = false;
+  final bool _showGallery = false;
 
   @override
   void initState() {
     super.initState();
     provider = Provider.of<ParameterProvider>(context, listen: false);
-    provider.init();
+
     // Préremplir les champs avec les informations actuelles
     debugPrint('ParameterPage: initState');
     _nameController.text = provider.parameter!.displayName;
