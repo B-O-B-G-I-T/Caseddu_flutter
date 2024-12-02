@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../../../core/utils/p2p/circle_avatar_with_text_or_image.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
 import '../../../../core/utils/p2p/p2p_utils.dart';
 import '../providers/chat_provider.dart';
@@ -96,6 +97,12 @@ class DevicesListWidget extends StatelessWidget {
                   child: Column(
                     children: [
                       ListTile(
+                        leading: CircleAvatarWithTextOrImage(
+                          text: device.deviceName.isNotEmpty
+                              ? device.deviceName[0].toUpperCase()
+                              : "?", // Utilisez le premier caractère du nom comme texte
+                          radius: 24.0, // Rayon du cercle
+                        ),
                         title: Text(device.deviceName),
                         subtitle: Text(
                           getStateName(device.state, context),

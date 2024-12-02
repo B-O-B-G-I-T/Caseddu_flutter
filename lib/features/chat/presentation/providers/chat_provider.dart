@@ -168,6 +168,17 @@ class ChatProvider extends ChangeNotifier {
     });
   }
 
+  void updateDevices(List<Device> devices) {
+    this.devices = devices;
+    notifyListeners();
+  }
+
+  void updateConnectedDevices(List<Device> devices) {
+    connectedDevices = devices;
+    notifyListeners();
+  }
+
+
 //--------------- Reception des messages
   StreamSubscription checkReceiveData(NearbyService nearbyService) {
     return nearbyService.dataReceivedSubscription(callback: (data) async {
@@ -239,16 +250,6 @@ class ChatProvider extends ChangeNotifier {
     }
     chatMessageModel.images = imagesEncode;
     return chatMessageModel;
-  }
-
-  void updateDevices(List<Device> devices) {
-    this.devices = devices;
-    notifyListeners();
-  }
-
-  void updateConnectedDevices(List<Device> devices) {
-    connectedDevices = devices;
-    notifyListeners();
   }
 
   // Function to connect to a device
@@ -476,4 +477,5 @@ class ChatProvider extends ChangeNotifier {
       },
     );
   }
+
 }

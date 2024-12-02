@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import '../../../../../core/utils/widget_utils.dart';
+import '../widget_utils.dart';
 
 class CircleAvatarWithTextOrImage extends StatelessWidget {
   final String? text;
