@@ -52,6 +52,15 @@ class DatabaseHelper {
     return user;
   }
 
+
+  Future<UserModel> updateUserImage(UserModel userModel, String image, String startEncodeImage) async {
+    final db = BaseDonneesGeneral.database;
+    await db.then((value) {
+      value.update('users', {'pathImageProfile': image, 'startEncodeImage': startEncodeImage}, where: 'id = ?', whereArgs: [userModel.id]);
+    });
+    return UserModel(id: userModel.id, name: userModel.name, pathImageProfile: image, startEncodeImage: startEncodeImage);
+  }
+
   Future<void> deleteUser(String userId) async {
     final db = await BaseDonneesGeneral.database;
     await db.delete('users', where: 'id = ?', whereArgs: [userId]);
@@ -193,4 +202,5 @@ class DatabaseHelper {
     Database dbClient = await BaseDonneesGeneral.database;
     return await dbClient.delete(table, where: where, whereArgs: whereArgs);
   }
+
 }

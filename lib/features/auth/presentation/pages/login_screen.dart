@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/errors/widgets/attente_widget.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
 import '../../../chat/presentation/providers/chat_provider.dart';
+import '../../../parameter/presentation/providers/parameter_provider.dart';
 import '../providers/authentification_provider.dart';
 import '../widgets/sign_in_button_widget.dart';
 
@@ -173,7 +174,9 @@ class _LoginPageState extends State<LoginPage> {
                           context.pop(); // Ferme la boîte de dialogue
 
                           if (authentificationProvider.authentification != null) {
-                            await Provider.of<ChatProvider>(context, listen: false).eitherFailureOrInit();
+                            final parameterProvider = Provider.of<ParameterProvider>(context, listen: false);
+                            parameterProvider.init();
+                            await Provider.of<ChatProvider>(context, listen: false).eitherFailureOrInit(parameterProvider);
                             context.push('/firstPage/0');
                           } else if (authentificationProvider.failure?.errorMessage != null) {
                             fireBaseError(context, "Error", authentificationProvider.failure!.errorMessage);

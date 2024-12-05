@@ -9,6 +9,8 @@ import 'package:caseddu/features/chat/presentation/providers/chat_provider.dart'
 import 'package:caseddu/features/chat/presentation/widgets/P2P_widgets/list_tile_pour_utilisateur_connu.dart';
 import 'package:caseddu/features/chat/presentation/widgets/P2P_widgets/search_widget.dart';
 
+import '../../data/models/chat_user_model.dart';
+
 class ChatKnownListPage extends StatefulWidget {
   const ChatKnownListPage({super.key});
 
@@ -73,6 +75,8 @@ class _ChatKnownListPageState extends State<ChatKnownListPage> {
                         final conversation = filteredConversations[index];
                         final lastMessage = lastMessages[index];
 
+                final user = chatProvider.users
+                    .firstWhere((element) => element.name ==  conversation.name, orElse: () => UserModel(id:  conversation.id, name:  conversation.name));
                         return Dismissible(
                           key: Key('${conversation.id}-${DateTime.now().millisecondsSinceEpoch}'),
                           direction: DismissDirection.endToStart,
@@ -95,6 +99,7 @@ class _ChatKnownListPageState extends State<ChatKnownListPage> {
                             message: lastMessage?.message ?? AppLocalizations.of(context)!.no_old_messages,
                             timestamp: lastMessage?.timestamp.toString() ?? "",
                             typeMessage: lastMessage?.type ?? "Payload",
+                            userEntity: user,
                             onTap: () {
                               context.push('/ChatPage/${conversation.name}');
                             },

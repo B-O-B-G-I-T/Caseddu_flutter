@@ -120,6 +120,27 @@ class ChatMessageParams {
 
 }
 
+class UserParams{
+  final String id;
+  final String name;
+  final ChatMessageModel? dernierMessage;
+  String? pathImageProfile;
+  String? startEncodeImage;
+
+  UserParams({required this.id, required this.name, this.dernierMessage, this.pathImageProfile, this.startEncodeImage});
+  
+  factory UserParams.fromSender(Map<String, dynamic> json) {
+    return UserParams(
+      id: json['senderDeviceId'],
+      name: json['senderDeviceId'],
+      //dernierMessage: json['dernierMessage'] != null ? ChatMessageModel.fromJson(json['dernierMessage']) : null,
+      pathImageProfile: json['message'].substring(14) ?? '',
+      startEncodeImage: json['message'].substring(14, 24) ?? '',
+    );
+  }
+
+}
+
 // class EventParams {
 //   final String title;
 //   final String description;

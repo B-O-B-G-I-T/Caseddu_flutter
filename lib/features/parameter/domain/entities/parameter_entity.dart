@@ -21,7 +21,7 @@ class ParameterEntity {
       email: user.email!,
       displayName: user.displayName!,
       numero: user.phoneNumber,
-      photoUrl: "user.photoURL",
+      photoUrl: null,
     );
   }
 }

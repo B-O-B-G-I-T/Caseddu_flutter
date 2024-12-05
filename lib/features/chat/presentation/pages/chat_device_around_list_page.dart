@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/utils/p2p/circle_avatar_with_text_or_image.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
 import '../../../../core/utils/p2p/p2p_utils.dart';
+import '../../data/models/chat_user_model.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/P2P_widgets/connection_button.dart';
 import '../widgets/P2P_widgets/search_widget.dart';
@@ -92,6 +93,9 @@ class DevicesListWidget extends StatelessWidget {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 final device = devices[index];
+                final chatProvider = context.read<ChatProvider>();
+                final user = chatProvider.users
+                    .firstWhere((element) => element.name == device.deviceName, orElse: () => UserModel(id: device.deviceId, name: device.deviceName));
                 return Container(
                   margin: const EdgeInsets.all(8.0),
                   child: Column(
@@ -102,8 +106,10 @@ class DevicesListWidget extends StatelessWidget {
                               ? device.deviceName[0].toUpperCase()
                               : "?", // Utilisez le premier caractère du nom comme texte
                           radius: 24.0, // Rayon du cercle
+                          customImage: () {},
+                          image: user.pathImageProfile,
                         ),
-                        title: Text(device.deviceName),
+                        title: Text("${device.deviceName}, ${device.deviceDescription}"),
                         subtitle: Text(
                           getStateName(device.state, context),
                           style: TextStyle(color: getStateColor(device.state)),

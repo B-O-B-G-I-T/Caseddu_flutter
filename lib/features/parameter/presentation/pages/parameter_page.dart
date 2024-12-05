@@ -2,7 +2,9 @@
 
 import 'package:caseddu/features/parameter/presentation/widgets/custom_circle_avatar.dart';
 import 'package:caseddu/features/parameter/presentation/widgets/image_picker_for_params.dart';
+import 'package:caseddu/premiere_page.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -186,7 +188,11 @@ class _ParameterPageState extends State<ParameterPage> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
                         ),
-                        onPressed: () => provider.eitherFailureOrLogout(),
+                        onPressed: () {
+                          provider.eitherFailureOrLogout();
+                          provider.dispose();
+                          context.push('/login');
+                        },
                         child: Text(AppLocalizations.of(context)!.logout),
                       ),
                     ),

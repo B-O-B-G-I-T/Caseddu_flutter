@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
+import 'package:caseddu/features/chat/data/models/chat_user_model.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
+import 'package:caseddu/features/parameter/presentation/providers/parameter_provider.dart';
 import 'package:data_connection_checker_tv/data_connection_checker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +13,7 @@ import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../core/connection/network_info.dart';
 import '../../../../../core/errors/failure.dart';
@@ -42,6 +45,8 @@ class ChatProvider extends ChangeNotifier {
   bool hasMoreMessages = true;
   bool get isLoadingOldMessages => _isLoadingOldMessages;
 
+  ParameterProvider? parameterProvider;
+
   // Stream pour les nouveaux messages reçus
   final StreamController<void> _newMessageController = StreamController<void>.broadcast();
 
@@ -53,13 +58,14 @@ class ChatProvider extends ChangeNotifier {
   Stream<void> get invitationController => _invitationController.stream;
 
   ChatProvider({
+    required ParameterProvider parameterProvider,
     this.failure,
   }) {
-    eitherFailureOrInit();
+    eitherFailureOrInit(parameterProvider);
     eitherFailureOrAllConversations();
   }
 
-  Future<void> eitherFailureOrInit() async {
+  Future<void> eitherFailureOrInit(ParameterProvider parameterProvider) async {
     ChatRepositoryImpl repository = ChatRepositoryImpl(
       remoteDataSource: ChatRemoteDataSourceImpl(),
       localDataSource: ChatLocalDataSourceImpl(
@@ -82,9 +88,10 @@ class ChatProvider extends ChangeNotifier {
       (NearbyService nearbyService) {
         controlerDevice = nearbyService;
 
-        checkDevices(nearbyService);
-        checkReceiveData(nearbyService);
+        checkDevices(controlerDevice!);
+        checkReceiveData(controlerDevice!);
 
+        this.parameterProvider = parameterProvider;
         failure = null;
         // Diffuse le nouveau message via le Stream
         _invitationController.sink.add(null);
@@ -97,8 +104,7 @@ class ChatProvider extends ChangeNotifier {
     controlerDevice = null;
   }
 
-    Future<void> loadImageChat(BuildContext context) async {
-
+  Future<void> loadImageChat(BuildContext context) async {
     images = await loadImages(context);
     notifyListeners();
   }
@@ -151,13 +157,25 @@ class ChatProvider extends ChangeNotifier {
 
 //--------------- Reception des connections
   StreamSubscription checkDevices(NearbyService nearbyService) {
-    return nearbyService.stateChangedSubscription(callback: (devicesList) {
+    return nearbyService.stateChangedSubscription(callback: (devicesList) async {
       for (var element in devicesList) {
         if (Platform.isAndroid) {
           if (element.state == SessionState.connected) {
             nearbyService.stopBrowsingForPeers();
           } else {
             nearbyService.startBrowsingForPeers();
+          }
+        }
+
+        // envoie de l'image de profile lors de la connection si elle existe
+        if (element.state == SessionState.connected) {
+          if (parameterProvider!.parameter != null) {
+            if (parameterProvider!.parameter!.photoUrl != null) {
+              final String path = parameterProvider!.parameter!.photoUrl!;
+              final String imagesEncode = await Utils.convertFilePathToString(path);
+
+              nearbyService.sendMessage(element.deviceId, "PROFILE IMAGE $imagesEncode");
+            }
           }
         }
       }
@@ -170,6 +188,7 @@ class ChatProvider extends ChangeNotifier {
 
   void updateDevices(List<Device> devices) {
     this.devices = devices;
+
     notifyListeners();
   }
 
@@ -177,7 +196,6 @@ class ChatProvider extends ChangeNotifier {
     connectedDevices = devices;
     notifyListeners();
   }
-
 
 //--------------- Reception des messages
   StreamSubscription checkReceiveData(NearbyService nearbyService) {
@@ -195,6 +213,30 @@ class ChatProvider extends ChangeNotifier {
           await eitherFailureOrEnregistreMessage(
             chatMessageParams: messageACK.toParamsAKC(),
           );
+          return;
+        }
+
+        if (data['message'].startsWith("PROFILE IMAGE ")) {
+          if (data['message'].substring(14).isNotEmpty) {
+            final dataMessage = data['message'].substring(14);
+
+            final UserParams userParams = UserParams(
+                id: data["senderDeviceId"],
+                name: data["senderDeviceId"],
+                pathImageProfile: dataMessage,
+                startEncodeImage: dataMessage.substring(100, 110));
+            debugPrint("statement $userParams");
+
+            final existingUser = users.firstWhere(
+              (user) => user.name == userParams.name,
+              orElse: () => UserModel(id: '', name: '', pathImageProfile: ''),
+            );
+
+            if (existingUser.startEncodeImage != userParams.startEncodeImage) {
+              await eitherFailureOrSaveSendedImageProfile(userParams: userParams);
+            }
+          }
+          notifyListeners();
           return;
         }
 // passse les data en JSON
@@ -219,7 +261,6 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<ChatMessageModel> receiveMessage({required ChatMessageModel chatMessageModel, required NearbyService nearbyService}) async {
-    //chatMessageModel.ACK = true;
     Fluttertoast.showToast(
       msg: '''Sender: ${chatMessageModel.sender} Receiver: ${chatMessageModel.receiver}  Type: ${chatMessageModel.type}
             Timestamp: ${DateFormat('HH:mm:ss').format(chatMessageModel.timestamp)} 
@@ -473,6 +514,41 @@ class ChatProvider extends ChangeNotifier {
       (void messages) {
         users.remove(userEntity);
         failure = null;
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> eitherFailureOrSaveSendedImageProfile({required UserParams userParams}) async {
+    ChatRepositoryImpl repository = ChatRepositoryImpl(
+      remoteDataSource: ChatRemoteDataSourceImpl(),
+      localDataSource: ChatLocalDataSourceImpl(
+        sharedPreferences: await SharedPreferences.getInstance(),
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
+      ),
+    );
+//print(chatMessageParams.images);
+
+    final failureOrChat = await GetChat(chatRepository: repository).saveSendedImageProfile(
+      userParams: userParams,
+    );
+
+    failureOrChat.fold(
+      (Failure newFailure) {
+        //chat = null;
+        failure = newFailure;
+        notifyListeners();
+      },
+      (UserEntity user) {
+        failure = null;
+        final index = users.indexWhere((u) => u.id == user.id);
+        if (index != -1) {
+          users[index] = user;
+        } else {
+          users.add(user);
+        }
         notifyListeners();
       },
     );

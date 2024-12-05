@@ -17,4 +17,8 @@ abstract class ChatRepository {
   });
   Future<Either<Failure, void>> deleteConversation({required UserEntity userEntity});
   Future<Either<Failure, void>> deleteMessage({required ChatMessageEntity chatMessageEntity});
+
+  Future<Either<Failure, UserEntity>> saveSendedImageProfile({
+    required UserParams userParams,
+  });
 }

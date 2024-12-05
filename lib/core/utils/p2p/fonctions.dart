@@ -84,6 +84,19 @@ class Utils {
     return base64Encode(bytes);
   }
 
+  static Future<String> convertFilePathToString(String filePath) async {
+    // Créer un objet File en utilisant le chemin
+    final file = File(filePath);
+
+    // Lire le fichier et le convertir en Uint8List (asynchrone)
+    Uint8List bytes = await file.readAsBytes();
+
+    // Encoder les données en base64 pour l'envoi
+    String base64Image = base64Encode(bytes);
+    // Retourner les données du fichier sous forme de Uint8List
+    return base64Image;
+  }
+
   static String listImagesPathToBase64Strings(String imagePaths) {
     List<String> base64Strings = [];
 

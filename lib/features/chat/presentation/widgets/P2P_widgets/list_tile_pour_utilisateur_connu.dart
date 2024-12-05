@@ -1,13 +1,17 @@
+import 'package:caseddu/features/chat/data/models/chat_user_model.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/utils/p2p/fonctions.dart';
 import '../../../../../core/utils/p2p/circle_avatar_with_text_or_image.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../../../domain/entities/chat_user_entity.dart';
 
 class ListTilePourUtilisateurConnu extends StatelessWidget {
   final String deviceName;
   final String message;
   final String timestamp;
   final String typeMessage;
+  final UserEntity userEntity;
   final VoidCallback onTap;
 
   const ListTilePourUtilisateurConnu({
@@ -17,6 +21,7 @@ class ListTilePourUtilisateurConnu extends StatelessWidget {
     required this.timestamp,
     required this.typeMessage,
     required this.onTap,
+    required this.userEntity,
   });
 
   @override
@@ -25,6 +30,7 @@ class ListTilePourUtilisateurConnu extends StatelessWidget {
       leading: CircleAvatarWithTextOrImage(
         text: deviceName.isNotEmpty ? deviceName[0].toUpperCase() : "?", // Utilisez le premier caractère du nom comme texte
         radius: 24.0, // Rayon du cercle
+        image: userEntity.pathImageProfile,
       ),
       title: Text(
         deviceName.isNotEmpty ? deviceName : "?",

@@ -114,9 +114,12 @@ class _PremierePageState extends State<PremierePage> {
                     },
                   ),
 
-                  Text(
-                    parameterProvider.parameter!.displayName,
-                    style: const TextStyle(color: Colors.black),
+                  Expanded(
+                    child: Text(
+                      parameterProvider.parameter!.displayName,
+                      style: const TextStyle(color: Colors.black),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   )
                 ],
               ),

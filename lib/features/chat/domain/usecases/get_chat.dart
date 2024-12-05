@@ -38,4 +38,9 @@ Future<Either<Failure, List<UserEntity>>> getAllConversations() async {
     return await chatRepository.deleteConversation(  userEntity: userEntity);
   }
 
+Future<Either<Failure, UserEntity>> saveSendedImageProfile({required UserParams userParams}) async {
+    return await chatRepository.saveSendedImageProfile(userParams: userParams);
+  }
+
+
 }

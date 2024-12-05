@@ -3,6 +3,7 @@ import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../core/params/params.dart';
 import '../models/chat_message_model.dart';
 import '../models/chat_user_model.dart';
 import 'local_database/data_base_helper.dart';
@@ -13,8 +14,9 @@ abstract class ChatLocalDataSource {
   Future<List<ChatMessageModel>> getConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20});
   Future<List<UserModel>> getAllConversation();
   Future<void> deleteMessage(ChatMessageEntity chatMessageEntity);
-
   Future<void> deleteConversation(UserEntity userEntity);
+  Future<UserModel> saveSendedImageProfile(UserParams userParams);
+
 }
 
 const cachedChat = 'CACHED_TEMPLATE';
@@ -47,6 +49,15 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
       userModel = user;
       debugPrint('User already exists');
     }
+
+    return userModel;
+  }
+
+  @override
+  Future<UserModel> saveSendedImageProfile(UserParams userParams) async {
+    final dbHelper = DatabaseHelper();
+    UserModel userModel = await dbHelper.controlUtilisateur(userParams.name);
+    userModel = await dbHelper.updateUserImage(userModel, userParams.pathImageProfile!, userParams.startEncodeImage!);
 
     return userModel;
   }
@@ -98,8 +109,6 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
   Future<void> deleteMessage(ChatMessageEntity chatMessageEntity) async {
     final dbHelper = DatabaseHelper();
     dbHelper.deleteMessage(chatMessageEntity.id);
-    
-
   }
 
   @override
