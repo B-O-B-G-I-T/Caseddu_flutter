@@ -15,6 +15,7 @@ class BaseDonneesGeneral {
   static Future<Database> initDb() async {
     String databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'messsageTables.db');
+
     debugPrint(path);
     // Delete the database if it already exists
     // deleteDatabase(path);
@@ -28,6 +29,7 @@ class BaseDonneesGeneral {
     );
     return db;
   }
+
 
   static Future<Database> get database async {
     //if (_database.isOpen) return _database;
@@ -43,7 +45,7 @@ class BaseDonneesGeneral {
           id TEXT PRIMARY KEY,
           name TEXT,
           pathImageProfile TEXT,
-          startEncodeImage TEXT
+          myLastStartEncodeImage TEXT
         )
     ''');
 

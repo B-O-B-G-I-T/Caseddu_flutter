@@ -14,7 +14,7 @@ import '../../domain/entities/parameter_entity.dart';
 import '../../domain/usecases/get_parameter.dart';
 
 class ParameterProvider extends ChangeNotifier {
-  ParameterEntity? parameter;
+  late ParameterEntity parameter;
 
   // gestion des images du data picker
   List<AssetEntity> images = [];
@@ -23,7 +23,7 @@ class ParameterProvider extends ChangeNotifier {
   Failure? failure;
 
   ParameterProvider({
-    this.parameter,
+
     this.failure,
   });
 
@@ -70,13 +70,13 @@ class ParameterProvider extends ChangeNotifier {
 
     failureOrParametre.fold(
       (Failure newFailure) {
-        parameter = null;
+
         failure = newFailure;
         notifyListeners();
       },
       (String imagePath) {
         failure = null;
-        parameter?.setImage(imagePath);
+        parameter.setImage(imagePath);
         notifyListeners();
       },
     );
@@ -99,13 +99,13 @@ class ParameterProvider extends ChangeNotifier {
 
     failureOrParametre.fold(
       (Failure newFailure) {
-        parameter = null;
+
         failure = newFailure;
         notifyListeners();
       },
       (String? imagePath) {
         failure = null;
-        parameter?.setImage(imagePath);
+        parameter.setImage(imagePath);
         notifyListeners();
       },
     );
@@ -128,7 +128,7 @@ class ParameterProvider extends ChangeNotifier {
 
     failureOrParametre.fold(
       (Failure newFailure) {
-        parameter = null;
+
         failure = newFailure;
         notifyListeners();
       },
@@ -159,7 +159,7 @@ class ParameterProvider extends ChangeNotifier {
 
     failureOrParametre.fold(
       (Failure newFailure) {
-        parameter = null;
+
         failure = newFailure;
         notifyListeners();
       },

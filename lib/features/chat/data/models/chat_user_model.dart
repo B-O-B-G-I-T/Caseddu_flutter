@@ -1,19 +1,18 @@
 import 'package:caseddu/features/chat/data/models/chat_message_model.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
-
 import '../../../../core/params/params.dart';
 
 class UserModel extends UserEntity {
-  UserModel({required super.id, required super.name, super.dernierMessage, super.pathImageProfile, super.startEncodeImage});
+  UserModel({required super.id, required super.name, super.dernierMessage, super.pathImageProfile, super.myLastStartEncodeImage});
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'],
       name: json['name'],
       dernierMessage: json['dernierMessage'] != null ? ChatMessageModel.fromJson(json: json['dernierMessage']) : null,
-      pathImageProfile: json['pathImageProfile'] ?? '',
-      startEncodeImage: json['startEncodeImage'] ?? '',
+      pathImageProfile: json['pathImageProfile'] ,
+      myLastStartEncodeImage: json['myLastStartEncodeImage'] ,
     );
   }
 
@@ -34,7 +33,7 @@ class UserModel extends UserEntity {
       name: params.name,
       dernierMessage: params.dernierMessage,
       pathImageProfile: params.pathImageProfile,
-      startEncodeImage: params.startEncodeImage,
+      myLastStartEncodeImage: params.myLastStartEncodeImage,
     );
   }
 }

@@ -13,6 +13,7 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Utils {
+
   static String toDateTime(DateTime dateTime) {
     final date = DateFormat.yMMMEd().format(dateTime);
     final time = DateFormat.Hm().format(dateTime);
@@ -85,6 +86,7 @@ class Utils {
   }
 
   static Future<String> convertFilePathToString(String filePath) async {
+ 
     // Créer un objet File en utilisant le chemin
     final file = File(filePath);
 
@@ -152,6 +154,9 @@ class Utils {
     // return imageFiles.isNotEmpty ? imageFiles.first : null;
   }
 
+  static String imagesEncode (String image){
+    return image.substring(100, 200);
+  }
   static void showLimitedAccessDialog({required BuildContext context}) {
     showDialog(
       context: context,

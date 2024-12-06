@@ -13,7 +13,6 @@ import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../core/connection/network_info.dart';
 import '../../../../../core/errors/failure.dart';
@@ -169,13 +168,56 @@ class ChatProvider extends ChangeNotifier {
 
         // envoie de l'image de profile lors de la connection si elle existe
         if (element.state == SessionState.connected) {
-          if (parameterProvider!.parameter != null) {
-            if (parameterProvider!.parameter!.photoUrl != null) {
-              final String path = parameterProvider!.parameter!.photoUrl!;
-              final String imagesEncode = await Utils.convertFilePathToString(path);
+          // Ce code gère l'assignation ou la mise à jour des informations d'un utilisateur dans une liste d'utilisateurs existants.
+          // Si une photo est associée à l'utilisateur, elle est encodée et comparée à l'image précédente pour décider d'envoyer ou non une mise à jour.
+          // Si l'utilisateur n'existe pas dans la liste, il est ajouté avec ses paramètres.
 
-              nearbyService.sendMessage(element.deviceId, "PROFILE IMAGE $imagesEncode");
+          final existingUser = users.firstWhere(
+            // Recherche de l'utilisateur correspondant dans la liste existante par nom.
+            (user) => user.name == element.deviceName,
+            // Si aucun utilisateur correspondant n'est trouvé, on retourne un utilisateur par défaut.
+            orElse: () => UserModel(id: '', name: ''),
+          );
+
+          final String? path = parameterProvider?.parameter.photoUrl; // Récupération du chemin de l'image associée, si disponible.
+          final String? myLastStartEncodeImage; // Variable pour stocker l'image encodée (si elle existe).
+
+          if (path != null) {
+            // Si un chemin pour l'image est fourni, on l'encode.
+            final String imagesEncode = await Utils.convertFilePathToString(path); // Conversion du fichier d'image en chaîne.
+            myLastStartEncodeImage = Utils.imagesEncode(imagesEncode); // Encodage final de l'image.
+
+            if (existingUser.myLastStartEncodeImage != myLastStartEncodeImage) {
+              // Si l'image encodée ne correspond pas à celle enregistrée pour cet utilisateur.
+              nearbyService.sendMessage(element.deviceId, "PROFILE IMAGE $imagesEncode"); // Envoi de l'image encodée via le service.
+
+              final userParams = UserParams(
+                // Création des paramètres de l'utilisateur (ID, nom et image encodée si disponible).
+                id: element.deviceId,
+                name: element.deviceName,
+                myLastStartEncodeImage: myLastStartEncodeImage,
+              );
+
+              // Si l'utilisateur n'existe pas dans la liste (ID vide), on l'ajoute.
+              await eitherFailureOrSetUser(userParams: userParams); // Appel pour sauvegarder ou mettre à jour l'utilisateur.
+              return;
             }
+          } else {
+            // Si aucun chemin d'image n'est fourni, aucune image encodée n'est associée.
+            myLastStartEncodeImage = null;
+          }
+
+          if (existingUser.id.isEmpty) 
+          {
+          final userParams = UserParams(
+            // Création des paramètres de l'utilisateur (ID, nom et image encodée si disponible).
+            id: element.deviceId,
+            name: element.deviceName,
+            myLastStartEncodeImage: myLastStartEncodeImage,
+          );
+
+            // Si l'utilisateur n'existe pas dans la liste (ID vide), on l'ajoute.
+            await eitherFailureOrSetUser(userParams: userParams); // Appel pour sauvegarder ou mettre à jour l'utilisateur.
           }
         }
       }
@@ -195,6 +237,76 @@ class ChatProvider extends ChangeNotifier {
   void updateConnectedDevices(List<Device> devices) {
     connectedDevices = devices;
     notifyListeners();
+  }
+
+  Future<void> eitherFailureOrSetUser({required UserParams userParams}) async {
+    ChatRepositoryImpl repository = ChatRepositoryImpl(
+      remoteDataSource: ChatRemoteDataSourceImpl(),
+      localDataSource: ChatLocalDataSourceImpl(
+        sharedPreferences: await SharedPreferences.getInstance(),
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
+      ),
+    );
+//print(chatMessageParams.images);
+
+    final failureOrChat = await GetChat(chatRepository: repository).setUser(
+      userParams: userParams,
+    );
+
+    failureOrChat.fold(
+      (Failure newFailure) {
+        //chat = null;
+        failure = newFailure;
+        notifyListeners();
+      },
+      (UserEntity user) {
+        failure = null;
+        final index = users.indexWhere((u) => u.id == user.id);
+        if (index != -1) {
+          users[index] = user;
+        } else {
+          users.add(user);
+        }
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> eitherFailureOrSaveSendedImageProfile({required UserParams userParams}) async {
+    ChatRepositoryImpl repository = ChatRepositoryImpl(
+      remoteDataSource: ChatRemoteDataSourceImpl(),
+      localDataSource: ChatLocalDataSourceImpl(
+        sharedPreferences: await SharedPreferences.getInstance(),
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
+      ),
+    );
+//print(chatMessageParams.images);
+
+    final failureOrChat = await GetChat(chatRepository: repository).saveSendedImageProfile(
+      userParams: userParams,
+    );
+
+    failureOrChat.fold(
+      (Failure newFailure) {
+        //chat = null;
+        failure = newFailure;
+        notifyListeners();
+      },
+      (UserEntity user) {
+        failure = null;
+        final index = users.indexWhere((u) => u.id == user.id);
+        if (index != -1) {
+          users[index] = user;
+        } else {
+          users.add(user);
+        }
+        notifyListeners();
+      },
+    );
   }
 
 //--------------- Reception des messages
@@ -219,20 +331,24 @@ class ChatProvider extends ChangeNotifier {
         if (data['message'].startsWith("PROFILE IMAGE ")) {
           if (data['message'].substring(14).isNotEmpty) {
             final dataMessage = data['message'].substring(14);
+            final String imagesEncodeStart = Utils.imagesEncode(dataMessage);
 
             final UserParams userParams = UserParams(
-                id: data["senderDeviceId"],
-                name: data["senderDeviceId"],
-                pathImageProfile: dataMessage,
-                startEncodeImage: dataMessage.substring(100, 110));
-            debugPrint("statement $userParams");
+              id: data["senderDeviceId"],
+              name: data["senderDeviceId"],
+              pathImageProfile: dataMessage,
+            );
+            //debugPrint("statement $userParams");
 
             final existingUser = users.firstWhere(
               (user) => user.name == userParams.name,
-              orElse: () => UserModel(id: '', name: '', pathImageProfile: ''),
+              orElse: () => UserModel(
+                id: '',
+                name: '',
+              ),
             );
 
-            if (existingUser.startEncodeImage != userParams.startEncodeImage) {
+            if (existingUser.myLastStartEncodeImage != imagesEncodeStart) {
               await eitherFailureOrSaveSendedImageProfile(userParams: userParams);
             }
           }
@@ -457,6 +573,21 @@ class ChatProvider extends ChangeNotifier {
     );
   }
 
+  Future<void> sendImageProfileForAllConnected() async {
+    // Retrieve the image path from the provider, if available.
+    final String? path = parameterProvider?.parameter.photoUrl;
+
+    if (path != null) {
+      // Encode the image only once.
+      final String imagesEncode = await Utils.convertFilePathToString(path);
+
+      // Send the encoded image to all connected devices.
+      for (final device in connectedDevices) {
+        controlerDevice?.sendMessage(device.deviceId, "PROFILE IMAGE $imagesEncode");
+      }
+    }
+  }
+
   Future<void> eitherFailureOrDeleteMessage({required ChatMessageEntity chatMessageEntity}) async {
     //chatMessageParams.sender = Global.myName;
     //Global.cache[chatMessageParams.id] = chatMessageParams;
@@ -518,40 +649,4 @@ class ChatProvider extends ChangeNotifier {
       },
     );
   }
-
-  Future<void> eitherFailureOrSaveSendedImageProfile({required UserParams userParams}) async {
-    ChatRepositoryImpl repository = ChatRepositoryImpl(
-      remoteDataSource: ChatRemoteDataSourceImpl(),
-      localDataSource: ChatLocalDataSourceImpl(
-        sharedPreferences: await SharedPreferences.getInstance(),
-      ),
-      networkInfo: NetworkInfoImpl(
-        DataConnectionChecker(),
-      ),
-    );
-//print(chatMessageParams.images);
-
-    final failureOrChat = await GetChat(chatRepository: repository).saveSendedImageProfile(
-      userParams: userParams,
-    );
-
-    failureOrChat.fold(
-      (Failure newFailure) {
-        //chat = null;
-        failure = newFailure;
-        notifyListeners();
-      },
-      (UserEntity user) {
-        failure = null;
-        final index = users.indexWhere((u) => u.id == user.id);
-        if (index != -1) {
-          users[index] = user;
-        } else {
-          users.add(user);
-        }
-        notifyListeners();
-      },
-    );
-  }
-
 }

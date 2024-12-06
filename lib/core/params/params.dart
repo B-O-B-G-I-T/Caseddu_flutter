@@ -125,9 +125,9 @@ class UserParams{
   final String name;
   final ChatMessageModel? dernierMessage;
   String? pathImageProfile;
-  String? startEncodeImage;
+  String? myLastStartEncodeImage;
 
-  UserParams({required this.id, required this.name, this.dernierMessage, this.pathImageProfile, this.startEncodeImage});
+  UserParams({required this.id, required this.name, this.dernierMessage, this.pathImageProfile, this.myLastStartEncodeImage});
   
   factory UserParams.fromSender(Map<String, dynamic> json) {
     return UserParams(
@@ -135,7 +135,7 @@ class UserParams{
       name: json['senderDeviceId'],
       //dernierMessage: json['dernierMessage'] != null ? ChatMessageModel.fromJson(json['dernierMessage']) : null,
       pathImageProfile: json['message'].substring(14) ?? '',
-      startEncodeImage: json['message'].substring(14, 24) ?? '',
+      myLastStartEncodeImage: json['message'].substring(14, 24) ?? '',
     );
   }
 

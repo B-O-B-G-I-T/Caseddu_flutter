@@ -69,10 +69,23 @@ class ChatRepositoryImpl implements ChatRepository {
     try {
       final File imageProfile = await Utils.base64StringToImage(userParams.pathImageProfile!);
       userParams.pathImageProfile = imageProfile.path;
-      final fileGenered = await localDataSource.saveSendedImageProfile(userParams);
+      final UserModel fileGenered = await localDataSource.saveSendedImageProfile(userParams);
       return Right(fileGenered);
     } catch (e) {
       return Left(ImageFailure(errorMessage: e.toString()));
+    }
+  }
+
+    
+  @override
+  Future<Either<Failure, UserEntity>> setUser({required UserParams userParams}) async {
+    try {
+      
+      final UserModel userModel = await  localDataSource.saveSendedImageProfile( userParams);
+
+      return Right(userModel);
+    } catch (e) {
+      return Left(ServerFailure(errorMessage: e.toString()));
     }
   }
 
@@ -141,6 +154,7 @@ class ChatRepositoryImpl implements ChatRepository {
       return Left(ServerFailure(errorMessage: e.toString()));
     }
   }
+
 
 
 }

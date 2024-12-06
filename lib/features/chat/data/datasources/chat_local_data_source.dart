@@ -9,6 +9,7 @@ import '../models/chat_user_model.dart';
 import 'local_database/data_base_helper.dart';
 
 abstract class ChatLocalDataSource {
+  Future<UserModel> getUserName(UserParams userParams);
   Future<void> insertMessage({required ChatMessageModel chatMessageModel, required bool isSender});
   Future<List<ChatMessageModel>> getAllMessages();
   Future<List<ChatMessageModel>> getConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20});
@@ -16,7 +17,6 @@ abstract class ChatLocalDataSource {
   Future<void> deleteMessage(ChatMessageEntity chatMessageEntity);
   Future<void> deleteConversation(UserEntity userEntity);
   Future<UserModel> saveSendedImageProfile(UserParams userParams);
-
 }
 
 const cachedChat = 'CACHED_TEMPLATE';
@@ -36,14 +36,19 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
   }
 
 // ------------------------------ FOR USER ------------------------------
-  Future<UserModel> getUserName(String name) async {
+  @override
+  Future<UserModel> getUserName(UserParams userParams) async {
     final dbHelper = DatabaseHelper();
-    final UserModel? user = await dbHelper.getUserByName(name);
+    final UserModel? user = await dbHelper.getUserByName(userParams.name);
     final UserModel userModel;
 
     if (user == null) {
       final String userId = nanoid(21);
-      userModel = UserModel(id: userId, name: name);
+      userModel = UserModel(
+          id: userId,
+          name: userParams.name,
+          pathImageProfile: userParams.pathImageProfile,
+          myLastStartEncodeImage: userParams.myLastStartEncodeImage);
       dbHelper.insertUser(userModel);
     } else {
       userModel = user;
@@ -57,7 +62,7 @@ class ChatLocalDataSourceImpl implements ChatLocalDataSource {
   Future<UserModel> saveSendedImageProfile(UserParams userParams) async {
     final dbHelper = DatabaseHelper();
     UserModel userModel = await dbHelper.controlUtilisateur(userParams.name);
-    userModel = await dbHelper.updateUserImage(userModel, userParams.pathImageProfile!, userParams.startEncodeImage!);
+    userModel = await dbHelper.updateUserImage(userModel, userParams.pathImageProfile, userParams.myLastStartEncodeImage);
 
     return userModel;
   }

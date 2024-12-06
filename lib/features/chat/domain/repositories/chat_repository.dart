@@ -21,4 +21,8 @@ abstract class ChatRepository {
   Future<Either<Failure, UserEntity>> saveSendedImageProfile({
     required UserParams userParams,
   });
+
+  Future<Either<Failure, UserEntity>> setUser({
+    required UserParams userParams,
+  });
 }

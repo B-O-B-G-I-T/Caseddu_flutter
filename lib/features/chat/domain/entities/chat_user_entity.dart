@@ -5,13 +5,13 @@ class UserEntity {
   final String name;
   ChatMessageModel? dernierMessage;
   final String? pathImageProfile;
-  final String? startEncodeImage;
+  final String? myLastStartEncodeImage;
 
   UserEntity(  {
     required this.id,
     required this.name,
     this.dernierMessage,
     this.pathImageProfile,
-    this.startEncodeImage,
+    this.myLastStartEncodeImage,
   });
 }

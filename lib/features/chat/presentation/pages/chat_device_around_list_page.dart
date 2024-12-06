@@ -1,3 +1,4 @@
+import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:go_router/go_router.dart';
@@ -94,7 +95,7 @@ class DevicesListWidget extends StatelessWidget {
               itemBuilder: (context, index) {
                 final device = devices[index];
                 final chatProvider = context.read<ChatProvider>();
-                final user = chatProvider.users
+                final UserEntity user = chatProvider.users
                     .firstWhere((element) => element.name == device.deviceName, orElse: () => UserModel(id: device.deviceId, name: device.deviceName));
                 return Container(
                   margin: const EdgeInsets.all(8.0),
