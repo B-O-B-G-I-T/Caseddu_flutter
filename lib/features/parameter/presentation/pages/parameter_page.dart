@@ -38,8 +38,8 @@ class _ParameterPageState extends State<ParameterPage> {
 
     // Préremplir les champs avec les informations actuelles
     debugPrint('ParameterPage: initState');
-    _nameController.text = provider.parameter!.displayName;
-    _emailController.text = provider.parameter!.email;
+    _nameController.text = provider.parameter.displayName;
+    _emailController.text = provider.parameter.email;
   }
 
   void _showBottomSheet() {
@@ -76,7 +76,7 @@ class _ParameterPageState extends State<ParameterPage> {
                   children: [
                     // Image de profil ou texte
                     CustomCircleAvatar(
-                      image: provider.parameter!.photoUrl,
+                      image: provider.parameter.photoUrl,
                       ontap: () async {
                         //FocusScope.of(context).unfocus();
 

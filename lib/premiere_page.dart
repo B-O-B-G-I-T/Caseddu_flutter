@@ -106,7 +106,7 @@ class _PremierePageState extends State<PremierePage> {
                   // Image de profil ou texte
                   CustomCircleAvatar(
                     radius: 20,
-                    image: parameterProvider.parameter!.photoUrl,
+                    image: parameterProvider.parameter.photoUrl,
                     ontap: () async {
                       // Obtenir une référence à l'instance de GoRouter
                       final router = GoRouter.of(context);
@@ -117,7 +117,7 @@ class _PremierePageState extends State<PremierePage> {
 
                   Expanded(
                     child: Text(
-                      parameterProvider.parameter!.displayName,
+                      parameterProvider.parameter.displayName,
                       style: const TextStyle(color: Colors.black),
                       overflow: TextOverflow.ellipsis,
                     ),
