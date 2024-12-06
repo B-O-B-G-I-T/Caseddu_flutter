@@ -207,14 +207,13 @@ class ChatProvider extends ChangeNotifier {
             myLastStartEncodeImage = null;
           }
 
-          if (existingUser.id.isEmpty) 
-          {
-          final userParams = UserParams(
-            // Création des paramètres de l'utilisateur (ID, nom et image encodée si disponible).
-            id: element.deviceId,
-            name: element.deviceName,
-            myLastStartEncodeImage: myLastStartEncodeImage,
-          );
+          if (existingUser.id.isEmpty) {
+            final userParams = UserParams(
+              // Création des paramètres de l'utilisateur (ID, nom et image encodée si disponible).
+              id: element.deviceId,
+              name: element.deviceName,
+              myLastStartEncodeImage: myLastStartEncodeImage,
+            );
 
             // Si l'utilisateur n'existe pas dans la liste (ID vide), on l'ajoute.
             await eitherFailureOrSetUser(userParams: userParams); // Appel pour sauvegarder ou mettre à jour l'utilisateur.
@@ -331,7 +330,6 @@ class ChatProvider extends ChangeNotifier {
         if (data['message'].startsWith("PROFILE IMAGE ")) {
           if (data['message'].substring(14).isNotEmpty) {
             final dataMessage = data['message'].substring(14);
-            final String imagesEncodeStart = Utils.imagesEncode(dataMessage);
 
             final UserParams userParams = UserParams(
               id: data["senderDeviceId"],
@@ -340,17 +338,8 @@ class ChatProvider extends ChangeNotifier {
             );
             //debugPrint("statement $userParams");
 
-            final existingUser = users.firstWhere(
-              (user) => user.name == userParams.name,
-              orElse: () => UserModel(
-                id: '',
-                name: '',
-              ),
-            );
-
-            if (existingUser.myLastStartEncodeImage != imagesEncodeStart) {
               await eitherFailureOrSaveSendedImageProfile(userParams: userParams);
-            }
+
           }
           notifyListeners();
           return;
@@ -583,7 +572,7 @@ class ChatProvider extends ChangeNotifier {
 
       // Send the encoded image to all connected devices.
       for (final device in connectedDevices) {
-        controlerDevice?.sendMessage(device.deviceId, "PROFILE IMAGE $imagesEncode");
+        await controlerDevice?.sendMessage(device.deviceId, "PROFILE IMAGE $imagesEncode");
       }
     }
   }

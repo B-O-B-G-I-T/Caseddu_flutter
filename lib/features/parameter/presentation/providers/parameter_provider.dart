@@ -1,4 +1,5 @@
 import 'package:caseddu/core/utils/images/utils_image.dart';
+import 'package:caseddu/features/chat/presentation/providers/chat_provider.dart';
 import 'package:data_connection_checker_tv/data_connection_checker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -53,7 +54,7 @@ class ParameterProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void eitherFailureOrSelectedImageProfile(AssetEntity image) async {
+  Future<void> eitherFailureOrSelectedImageProfile(AssetEntity image) async {
     ParametreRepositoryImpl repository = ParametreRepositoryImpl(
       remoteDataSource: ParametreRemoteDataSourceImpl(
         firebaseAuth: FirebaseAuth.instance,
@@ -77,6 +78,7 @@ class ParameterProvider extends ChangeNotifier {
       (String imagePath) {
         failure = null;
         parameter.setImage(imagePath);
+
         notifyListeners();
       },
     );

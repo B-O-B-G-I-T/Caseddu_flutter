@@ -1,5 +1,7 @@
+import 'package:caseddu/features/chat/presentation/providers/chat_provider.dart';
 import 'package:caseddu/features/parameter/presentation/providers/parameter_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../chat/presentation/widgets/chat_widgets/page_chat/image_picker.dart';
 
 class ImagePickerForParams extends StatefulWidget {
@@ -33,8 +35,10 @@ class _ImagePickerForParamsState extends State<ImagePickerForParams> {
                 IconButton(
                   color: Colors.white,
                   icon: const Icon(Icons.save),
-                  onPressed: () {
-                    widget.parameterProvider.eitherFailureOrSelectedImageProfile(widget.parameterProvider.selectedImages.first);
+                  onPressed: () async {
+                    await widget.parameterProvider.eitherFailureOrSelectedImageProfile(widget.parameterProvider.selectedImages.first);
+                    final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
+                    await chatProvider.sendImageProfileForAllConnected();
                     closeGallery(context);
                   },
                 ),
