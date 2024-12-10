@@ -142,6 +142,7 @@ class ChatProvider extends ChangeNotifier {
                               setState(() => isProcessing = true);
                               notifyListeners();
                               Navigator.of(context).pop(true);
+                              
                             },
                       child: isProcessing ? const CircularProgressIndicator(color: Colors.white) : Text(AppLocalizations.of(context)!.accept),
                     ),

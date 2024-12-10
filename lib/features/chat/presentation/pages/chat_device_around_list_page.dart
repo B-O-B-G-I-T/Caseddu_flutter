@@ -99,14 +99,36 @@ class DevicesListWidget extends StatelessWidget {
                   child: Column(
                     children: [
                       ListTile(
-                        leading: ChatCircleAvatar(
-                          text: device.deviceName, // Utilisez le premier caractère du nom comme texte
-                          context: context,
+                        leading: Stack(
+                          children: [
+                            ChatCircleAvatar(
+                              text: device.deviceName, // Utilisez le premier caractère du nom comme texte
+                              context: context,
+                            ),
+                            // je pense innutilecar redondant pour l'utilisateur
+                            // Positioned(
+                            //   bottom: 0,
+                            //   right: 0,
+                            //   child: Container(
+                            //     padding: const EdgeInsets.all(2),
+                            //     decoration: BoxDecoration(
+                            //       color: getStateColor(device.state),
+                            //       shape: BoxShape.circle,
+                            //     ),
+                            //     child: Text(
+                            //       getStateName(device.state, context)[0],
+                            //       style: const TextStyle(
+                            //         fontSize: 10,
+                            //         color: Colors.white,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                          ],
                         ),
-                        title: Text("${device.deviceName}, ${device.deviceDescription}"),
+                        title: Text(device.deviceName),
                         subtitle: Text(
-                          getStateName(device.state, context),
-                          style: TextStyle(color: getStateColor(device.state)),
+                          device.deviceDescription?.isEmpty ?? true ? "" : device.deviceDescription!,
                         ),
                         trailing: ConnectionButton(device: device),
                         onTap: () {
