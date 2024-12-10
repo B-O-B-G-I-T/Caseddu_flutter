@@ -21,8 +21,8 @@ class CircleAvatarWithTextOrImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color effectiveBackgroundColor = backgroundColor ??
-        generateColorFromName(text ?? ''); //generateColor('jea,'); // Utilisation de la couleur spécifiée ou génération d'une couleur aléatoire
+    final Color effectiveBackgroundColor =
+        backgroundColor ?? generateColorFromName(text ?? ''); // Utilisation de la couleur spécifiée ou génération d'une couleur aléatoire
     return GestureDetector(
       onTap: () {
         if (customImage != null) {
@@ -38,7 +38,7 @@ class CircleAvatarWithTextOrImage extends StatelessWidget {
   }
 
   Widget _buildContent() {
-    if (image != null) {
+    if (image != null && image!.isNotEmpty) {
       return ClipOval(
         child: Image.file(
           File(image!),

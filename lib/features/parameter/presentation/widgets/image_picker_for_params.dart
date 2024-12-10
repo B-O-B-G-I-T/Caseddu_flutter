@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:caseddu/features/chat/presentation/providers/chat_provider.dart';
 import 'package:caseddu/features/parameter/presentation/providers/parameter_provider.dart';
 import 'package:flutter/material.dart';

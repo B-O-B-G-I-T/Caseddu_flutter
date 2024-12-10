@@ -48,6 +48,7 @@ dependencies:
   mime: ^1.0.6
   image: ^4.3.0
   image_cropper: ^8.0.2
+  flutter_image_compress: ^2.3.0
 
   # pour les chemins les photos
   path_provider: ^2.0.15

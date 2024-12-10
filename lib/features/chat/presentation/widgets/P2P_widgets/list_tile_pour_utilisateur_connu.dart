@@ -1,10 +1,8 @@
-import 'package:caseddu/features/chat/data/models/chat_user_model.dart';
 import 'package:flutter/material.dart';
 import '../../../../../core/utils/p2p/fonctions.dart';
-import '../../../../../core/utils/p2p/circle_avatar_with_text_or_image.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import '../../../domain/entities/chat_user_entity.dart';
+import '../chat_widgets/page_chat/chat_circle_avatar.dart';
 
 class ListTilePourUtilisateurConnu extends StatelessWidget {
   final String deviceName;
@@ -26,28 +24,38 @@ class ListTilePourUtilisateurConnu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatarWithTextOrImage(
-        text: deviceName.isNotEmpty ? deviceName[0].toUpperCase() : "?", // Utilisez le premier caractère du nom comme texte
-        radius: 24.0, // Rayon du cercle
-        image: userEntity.pathImageProfile,
-      ),
-      title: Text(
-        deviceName.isNotEmpty ? deviceName : "?",
-        style: Theme.of(context).textTheme.headlineSmall,
-      ),
-      subtitle: Row(
+    return Container(
+      margin: const EdgeInsets.all(8.0),
+      child: Column(
         children: [
-          typeMessage == "Payload"
-              ? Text(message)
-              : typeMessage == "DELETE"
-                  ? Text(AppLocalizations.of(context)!.message_deleted)
-                  : const Icon(Icons.image),
-          timestamp != "" ? Text(" - ${Utils.depuisQuandCeMessageEstRecu(timeStamp: timestamp, context: context)}") : const SizedBox(),
+          ListTile(
+            leading: ChatCircleAvatar(
+              text: deviceName,
+              context: context,
+            ),
+            title: Text(
+              deviceName.isNotEmpty ? deviceName : "?",
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            subtitle: Row(
+              children: [
+                typeMessage == "payload"
+                    ? Text(message)
+                    : typeMessage == "DELETE"
+                        ? Text(AppLocalizations.of(context)!.message_deleted)
+                        : const Icon(Icons.image),
+                timestamp != "" ? Text(" - ${Utils.depuisQuandCeMessageEstRecu(timeStamp: timestamp, context: context)}") : const SizedBox(),
+              ],
+            ),
+            trailing: const Icon(Icons.arrow_forward_ios_rounded),
+            onTap: onTap,
+          ),
+          const Divider(
+            height: 1,
+            color: Colors.grey,
+          ),
         ],
       ),
-      trailing: const Icon(Icons.arrow_forward_ios_rounded),
-      onTap: onTap,
     );
   }
 }

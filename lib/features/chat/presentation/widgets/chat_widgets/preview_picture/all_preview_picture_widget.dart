@@ -18,7 +18,6 @@ class AllPreviewPictureChatWidget extends StatelessWidget {
         Stack(
           children: [
             // Display the dark overlay only when ack == 0
-
             viewPicturesWidget(
               context: context,
               pictures: messageList.images.split(','),

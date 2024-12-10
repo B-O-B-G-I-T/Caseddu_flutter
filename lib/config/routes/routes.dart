@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:caseddu/features/chat/presentation/pages/chat_user_page.dart';
 import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/preview_picture/full_screen_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -93,6 +94,15 @@ class Routes {
           );
         },
       ),
+      GoRoute(
+          path: '/ProfilePage/:userName',
+          name: 'ProfilePage',
+          builder: (context, state) {
+            final String userName = state.pathParameters['userName'].toString();
+            return ChatUserPage(
+              userName: userName,
+            );
+          }),
       GoRoute(
         path: '/fullScreenImage/:filePath',
         name: 'fullScreenImage',

@@ -5,7 +5,6 @@ import 'package:caseddu/features/parameter/presentation/providers/parameter_prov
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'dataBase/base_donnees_general.dart';
 import 'features/chat/presentation/pages/chat_home_page.dart';
 import 'features/chat/presentation/pages/photo_pages/1_camera_page.dart';
 import 'features/chat/presentation/providers/chat_provider.dart';

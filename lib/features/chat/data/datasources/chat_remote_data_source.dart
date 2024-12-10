@@ -34,7 +34,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
 // Initiating NearbyService to start the connection
   Future<NearbyService> initiateNearbyService(String myName) async {
-    ;
+    
     NearbyService nearbyService = NearbyService();
     await nearbyService.init(
       serviceType: 'mp-connection',

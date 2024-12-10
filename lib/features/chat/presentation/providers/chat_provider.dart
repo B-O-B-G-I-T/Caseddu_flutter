@@ -1,7 +1,10 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:camera/camera.dart';
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/data/models/chat_user_model.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
@@ -127,6 +130,7 @@ class ChatProvider extends ChangeNotifier {
                           ? null
                           : () async {
                               setState(() => isProcessing = true);
+                              notifyListeners();
                               Navigator.of(context).pop(false);
                             },
                       child: Text(AppLocalizations.of(context)!.decline),
@@ -136,6 +140,7 @@ class ChatProvider extends ChangeNotifier {
                           ? null
                           : () async {
                               setState(() => isProcessing = true);
+                              notifyListeners();
                               Navigator.of(context).pop(true);
                             },
                       child: isProcessing ? const CircularProgressIndicator(color: Colors.white) : Text(AppLocalizations.of(context)!.accept),
@@ -146,8 +151,10 @@ class ChatProvider extends ChangeNotifier {
             );
           },
         );
+        notifyListeners();
         return result ?? false; // Retourne false si aucune action n'est prise
       } catch (e) {
+        notifyListeners();
         debugPrint("Error during invitation handling: $e");
         return false;
       }
@@ -171,40 +178,49 @@ class ChatProvider extends ChangeNotifier {
           // Ce code gère l'assignation ou la mise à jour des informations d'un utilisateur dans une liste d'utilisateurs existants.
           // Si une photo est associée à l'utilisateur, elle est encodée et comparée à l'image précédente pour décider d'envoyer ou non une mise à jour.
           // Si l'utilisateur n'existe pas dans la liste, il est ajouté avec ses paramètres.
-
+          //final stopwatch = Stopwatch()..start(); // Démarrer le chronomètre
           final existingUser = users.firstWhere(
             // Recherche de l'utilisateur correspondant dans la liste existante par nom.
             (user) => user.name == element.deviceName,
             // Si aucun utilisateur correspondant n'est trouvé, on retourne un utilisateur par défaut.
             orElse: () => UserModel(id: '', name: ''),
           );
-
           final String? path = parameterProvider?.parameter.photoUrl; // Récupération du chemin de l'image associée, si disponible.
-          final String? myLastStartEncodeImage; // Variable pour stocker l'image encodée (si elle existe).
+
+          String? myLastStartEncodeImage; // Variable pour stocker l'image encodée (si elle existe).
 
           if (path != null) {
-            // Si un chemin pour l'image est fourni, on l'encode.
-            final String imagesEncode = await Utils.convertFilePathToString(path); // Conversion du fichier d'image en chaîne.
-            myLastStartEncodeImage = Utils.imagesEncode(imagesEncode); // Encodage final de l'image.
+            // Compression de l'image avant encodage
+            final XFile? compressedImage = await Utils.compressImage(File(path));
+            if (compressedImage != null) {
+              // Si un chemin pour l'image est fourni, on l'encode.
+              final String imagesEncode = await Utils.convertFilePathToString(compressedImage.path); // Conversion du fichier d'image en chaîne.
+              myLastStartEncodeImage = Utils.imagesEncode(imagesEncode); // Encodage final de l'image.
 
-            if (existingUser.myLastStartEncodeImage != myLastStartEncodeImage) {
-              // Si l'image encodée ne correspond pas à celle enregistrée pour cet utilisateur.
-              nearbyService.sendMessage(element.deviceId, "PROFILE IMAGE $imagesEncode"); // Envoi de l'image encodée via le service.
+              if (existingUser.myLastStartEncodeImage != myLastStartEncodeImage) {
+                // Si l'image encodée ne correspond pas à celle enregistrée pour cet utilisateur.
+                nearbyService.sendMessage(element.deviceId, "PROFILE IMAGE $imagesEncode"); // Envoi de l'image encodée via le service.
 
-              final userParams = UserParams(
-                // Création des paramètres de l'utilisateur (ID, nom et image encodée si disponible).
-                id: element.deviceId,
-                name: element.deviceName,
-                myLastStartEncodeImage: myLastStartEncodeImage,
-              );
+                final userParams = UserParams(
+                    // Création des paramètres de l'utilisateur (ID, nom et image encodée si disponible).
+                    id: element.deviceId,
+                    name: element.deviceName,
+                    myLastStartEncodeImage: myLastStartEncodeImage,
+                    pathImageProfile: existingUser.pathImageProfile);
 
-              // Si l'utilisateur n'existe pas dans la liste (ID vide), on l'ajoute.
-              await eitherFailureOrSetUser(userParams: userParams); // Appel pour sauvegarder ou mettre à jour l'utilisateur.
-              return;
+                // Si l'utilisateur n'existe pas dans la liste (ID vide), on l'ajoute.
+                await eitherFailureOrSetUser(userParams: userParams); // Appel pour sauvegarder ou mettre à jour l'utilisateur.
+                // stopwatch.stop(); // Arrêter le chronomètre
+
+                // log("L'envoir a pris : ${stopwatch.elapsedMilliseconds} ms");
+                return;
+              }
+            } else {
+              print("Failed to compress image.");
             }
           } else {
             // Si aucun chemin d'image n'est fourni, aucune image encodée n'est associée.
-            myLastStartEncodeImage = null;
+            myLastStartEncodeImage = existingUser.myLastStartEncodeImage;
           }
 
           if (existingUser.id.isEmpty) {
@@ -218,6 +234,9 @@ class ChatProvider extends ChangeNotifier {
             // Si l'utilisateur n'existe pas dans la liste (ID vide), on l'ajoute.
             await eitherFailureOrSetUser(userParams: userParams); // Appel pour sauvegarder ou mettre à jour l'utilisateur.
           }
+          // stopwatch.stop(); // Arrêter le chronomètre
+
+          // log('La fonction a pris : ${stopwatch.elapsedMilliseconds} ms');
         }
       }
 
@@ -338,8 +357,7 @@ class ChatProvider extends ChangeNotifier {
             );
             //debugPrint("statement $userParams");
 
-              await eitherFailureOrSaveSendedImageProfile(userParams: userParams);
-
+            await eitherFailureOrSaveSendedImageProfile(userParams: userParams);
           }
           notifyListeners();
           return;
@@ -401,13 +419,13 @@ class ChatProvider extends ChangeNotifier {
   // Function to connect to a device
   Future<bool> connectToDevice(Device device) async {
     // TODO: Faire une alerte lorsque l'on n'arrive pas a ce connecté
-    // TODO: peut etre faire une validation pour l'invite
     switch (device.state) {
       case SessionState.notConnected:
         await controlerDevice?.invitePeer(
           deviceID: device.deviceId,
           deviceName: device.deviceName,
         );
+
         devices = devices.map((d) {
           if (d.deviceId == device.deviceId) {
             d.state = SessionState.connecting;
@@ -420,6 +438,7 @@ class ChatProvider extends ChangeNotifier {
         await controlerDevice?.disconnectPeer(deviceID: device.deviceId);
         break;
       case SessionState.connecting:
+        await controlerDevice?.disconnectPeer(deviceID: device.deviceId);
         break;
       case SessionState.tooFar:
         break;
@@ -567,12 +586,19 @@ class ChatProvider extends ChangeNotifier {
     final String? path = parameterProvider?.parameter.photoUrl;
 
     if (path != null) {
-      // Encode the image only once.
-      final String imagesEncode = await Utils.convertFilePathToString(path);
+      // Compression de l'image avant encodage
+      final XFile? compressedImage = await Utils.compressImage(File(path));
+      if (compressedImage != null) {
+        // Encode the image only once.
+        final String imagesEncode = await Utils.convertFilePathToString(compressedImage.path); // Conversion du fichier d'image en chaîne.
 
-      // Send the encoded image to all connected devices.
-      for (final device in connectedDevices) {
-        await controlerDevice?.sendMessage(device.deviceId, "PROFILE IMAGE $imagesEncode");
+        // Send the encoded image to all connected devices.
+        for (final device in connectedDevices) {
+          await controlerDevice?.sendMessage(device.deviceId, "PROFILE IMAGE $imagesEncode");
+          final index = users.indexWhere((u) => u.name == device.deviceName);
+
+          users[index].myLastStartEncodeImage = Utils.imagesEncode(imagesEncode);
+        }
       }
     }
   }

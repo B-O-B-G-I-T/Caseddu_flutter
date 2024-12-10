@@ -98,7 +98,7 @@ class _ChatKnownListPageState extends State<ChatKnownListPage> {
                             deviceName: conversation.name,
                             message: lastMessage?.message ?? AppLocalizations.of(context)!.no_old_messages,
                             timestamp: lastMessage?.timestamp.toString() ?? "",
-                            typeMessage: lastMessage?.type ?? "Payload",
+                            typeMessage: lastMessage?.type ?? "payload",
                             userEntity: user,
                             onTap: () {
                               context.push('/ChatPage/${conversation.name}');

@@ -30,7 +30,6 @@ class BaseDonneesGeneral {
     return db;
   }
 
-
   static Future<Database> get database async {
     //if (_database.isOpen) return _database;
     _database = await initDb();

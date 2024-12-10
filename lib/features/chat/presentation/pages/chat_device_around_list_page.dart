@@ -1,16 +1,15 @@
-import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../../../core/utils/p2p/circle_avatar_with_text_or_image.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
 import '../../../../core/utils/p2p/p2p_utils.dart';
-import '../../data/models/chat_user_model.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/P2P_widgets/connection_button.dart';
 import '../widgets/P2P_widgets/search_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import '../widgets/chat_widgets/page_chat/chat_circle_avatar.dart';
 
 enum DeviceType { advertiser, browser }
 
@@ -94,21 +93,15 @@ class DevicesListWidget extends StatelessWidget {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 final device = devices[index];
-                final chatProvider = context.read<ChatProvider>();
-                final UserEntity user = chatProvider.users
-                    .firstWhere((element) => element.name == device.deviceName, orElse: () => UserModel(id: device.deviceId, name: device.deviceName));
+
                 return Container(
                   margin: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
                       ListTile(
-                        leading: CircleAvatarWithTextOrImage(
-                          text: device.deviceName.isNotEmpty
-                              ? device.deviceName[0].toUpperCase()
-                              : "?", // Utilisez le premier caractère du nom comme texte
-                          radius: 24.0, // Rayon du cercle
-                          customImage: () {},
-                          image: user.pathImageProfile,
+                        leading: ChatCircleAvatar(
+                          text: device.deviceName, // Utilisez le premier caractère du nom comme texte
+                          context: context,
                         ),
                         title: Text("${device.deviceName}, ${device.deviceDescription}"),
                         subtitle: Text(

@@ -1,14 +1,18 @@
 // ignore_for_file: unused_element
+import 'package:caseddu/core/utils/genral_widgets/leading_button_go_back.dart';
+import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
+import '../../data/models/chat_user_model.dart';
 import '../../domain/entities/chat_message_entity.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/P2P_widgets/connection_button.dart';
 import '../widgets/chat_widgets/page_chat/chat_Bubble_widget.dart';
+import '../widgets/chat_widgets/page_chat/chat_circle_avatar.dart';
 import '../widgets/chat_widgets/page_chat/message_panel.dart';
 import '../widgets/chat_widgets/page_chat/lost_connexion_widget.dart';
 
@@ -24,7 +28,8 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
   List<ChatMessageEntity> messageList = [];
-  late Device? device;
+  late Device device;
+  late UserEntity userEntity;
   TextEditingController myController = TextEditingController();
   late String myName = '';
   late ChatProvider chatProvider;
@@ -100,6 +105,11 @@ class _ChatPageState extends State<ChatPage> {
         orElse: () => Device(widget.converser, widget.converser, SessionState.tooFar),
       );
 
+      userEntity = chatProvider.users.firstWhere(
+        (element) => element.name == widget.converser,
+        orElse: () => UserModel(id: widget.converser, name: widget.converser),
+      );
+
       // Assurer que les messages sont triés avant le rendu
       messageList = chatProvider.chat..sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
@@ -111,8 +121,8 @@ class _ChatPageState extends State<ChatPage> {
           // resizeToAvoidBottomInset: false,
           resizeToAvoidBottomInset: true,
 
-          appBar: CustomAppBar(device: device!, title: widget.converser),
-          body: device!.deviceId != "" && device!.deviceName != ""
+          appBar: CustomAppBar(device: device, title: widget.converser, userEntity: userEntity),
+          body: device.deviceId != "" && device.deviceName != ""
               ? Column(
                   children: [
                     // Affichage du texte de chargement si des messages sont en cours de chargement
@@ -184,7 +194,7 @@ class _ChatPageState extends State<ChatPage> {
                     SafeArea(
                       child: MessagePanel(
                         converser: widget.converser,
-                        device: device!,
+                        device: device,
                       ),
                     ),
                   ],
@@ -310,11 +320,13 @@ class LoadingScreen extends StatelessWidget {
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Device device;
+  final UserEntity userEntity;
 
   const CustomAppBar({
     super.key,
     required this.title,
     required this.device,
+    required this.userEntity,
   });
 
   @override
@@ -323,7 +335,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      leadingWidth: 120, // Ajuste la largeur maximale du leading
       title: Text(title),
+      leading: Row(
+        mainAxisSize: MainAxisSize.min, // Limite la taille de Row à son contenu
+        children: [
+          const LeadingButtonGoBack(),
+          ChatCircleAvatar(
+            text: device.deviceName, // Utilisez le premier caractère du nom comme texte
+            context: context,
+          ),
+        ],
+      ),
       actions: [
         ConnectionButton(
           device: device,

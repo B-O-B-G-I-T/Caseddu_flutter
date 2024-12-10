@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../core/utils/p2p/circle_avatar_with_text_or_image.dart';
 
 class CustomCircleAvatar extends StatelessWidget {

@@ -52,12 +52,24 @@ class DatabaseHelper {
     return user;
   }
 
-
   Future<UserModel> updateUserImage(UserModel userModel, String? image, String? myLastStartEncodeImage) async {
     final db = BaseDonneesGeneral.database;
-    await db.then((value) {
-      value.update('users', {'pathImageProfile': image, 'myLastStartEncodeImage': myLastStartEncodeImage}, where: 'id = ?', whereArgs: [userModel.id]);
+    if (image != null && myLastStartEncodeImage != null) {
+      await db.then((value) {
+      value.update('users', {'pathImageProfile': image, 'myLastStartEncodeImage': myLastStartEncodeImage},
+          where: 'id = ?', whereArgs: [userModel.id]);
     });
+    } else if (image != null) {
+      await db.then((value) {
+        value.update('users', {'pathImageProfile': image}, where: 'id = ?', whereArgs: [userModel.id]);
+      });
+      return UserModel(id: userModel.id, name: userModel.name, pathImageProfile: image, myLastStartEncodeImage: userModel.myLastStartEncodeImage);
+    }else if (myLastStartEncodeImage != null) {
+      await db.then((value) {
+        value.update('users', {'myLastStartEncodeImage': myLastStartEncodeImage}, where: 'id = ?', whereArgs: [userModel.id]);
+      });
+    }
+    
     return UserModel(id: userModel.id, name: userModel.name, pathImageProfile: image, myLastStartEncodeImage: myLastStartEncodeImage);
   }
 
@@ -202,5 +214,4 @@ class DatabaseHelper {
     Database dbClient = await BaseDonneesGeneral.database;
     return await dbClient.delete(table, where: where, whereArgs: whereArgs);
   }
-
 }

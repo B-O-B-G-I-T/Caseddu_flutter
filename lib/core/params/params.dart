@@ -39,7 +39,7 @@ class ChatMessageParams {
   String receiver = '';
   String message = '';
   String images = '';
-  String type = 'Payload';
+  String type = 'payload';
   String sendOrReceived = '';
   int ack = 0;
   DateTime timestamp = DateTime.now();
@@ -94,7 +94,7 @@ class ChatMessageParams {
       receiver: data['receiver'] ?? '',
       message : data['message'] ?? '',
       images: data['images'] ?? '',
-      type: data['type'] ?? 'Payload',
+      type: data['type'] ?? 'payload',
       sendOrReceived: data['sendOrReceived'] ?? '',
       timestamp: DateTime.tryParse(data['timestamp'] ?? '') ?? DateTime.now(),
       nearbyService: data['nearbyService'], ack:  data['ack'] , // Pour NearbyService si fourni
@@ -134,8 +134,8 @@ class UserParams{
       id: json['senderDeviceId'],
       name: json['senderDeviceId'],
       //dernierMessage: json['dernierMessage'] != null ? ChatMessageModel.fromJson(json['dernierMessage']) : null,
-      pathImageProfile: json['message'].substring(14) ?? '',
-      myLastStartEncodeImage: json['message'].substring(14, 24) ?? '',
+      pathImageProfile: json['message'] ?? '',
+      myLastStartEncodeImage: json['message'] ?? '',
     );
   }
 

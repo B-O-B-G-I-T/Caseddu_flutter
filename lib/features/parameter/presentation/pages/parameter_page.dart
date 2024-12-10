@@ -1,8 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:caseddu/features/parameter/presentation/widgets/custom_circle_avatar.dart';
 import 'package:caseddu/features/parameter/presentation/widgets/image_picker_for_params.dart';
-import 'package:caseddu/premiere_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -10,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
 import '../../../../core/params/params.dart';
+import '../../../../core/utils/genral_widgets/leading_button_go_back.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
 import '../providers/parameter_provider.dart';
 
@@ -64,6 +63,7 @@ class _ParameterPageState extends State<ParameterPage> {
     return Consumer<ParameterProvider>(builder: (context, provider, child) {
       return Scaffold(
         appBar: AppBar(
+          leading: const LeadingButtonGoBack(),
           title: Text(AppLocalizations.of(context)!.settings),
         ),
         body: SingleChildScrollView(

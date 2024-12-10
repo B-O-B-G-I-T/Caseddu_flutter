@@ -5,7 +5,7 @@ class UserEntity {
   final String name;
   ChatMessageModel? dernierMessage;
   final String? pathImageProfile;
-  final String? myLastStartEncodeImage;
+  String? myLastStartEncodeImage;
 
   UserEntity(  {
     required this.id,

@@ -1,10 +1,11 @@
-// ignore_for_file: unnecessary_import, depend_on_referenced_packages, use_build_context_synchronously
+// ignore_for_file: unnecessary_import, depend_on_referenced_packages, use_build_context_synchronously, avoid_print
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:path/path.dart' show join;
 import 'package:intl/intl.dart';
@@ -13,7 +14,6 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Utils {
-
   static String toDateTime(DateTime dateTime) {
     final date = DateFormat.yMMMEd().format(dateTime);
     final time = DateFormat.Hm().format(dateTime);
@@ -86,7 +86,6 @@ class Utils {
   }
 
   static Future<String> convertFilePathToString(String filePath) async {
- 
     // Créer un objet File en utilisant le chemin
     final file = File(filePath);
 
@@ -154,9 +153,35 @@ class Utils {
     // return imageFiles.isNotEmpty ? imageFiles.first : null;
   }
 
-  static String imagesEncode (String image){
+  static String imagesEncode(String image) {
     return image.substring(100, 200);
   }
+
+  /// Fonction pour compresser une image
+  static Future<XFile?> compressImage(File file) async {
+    try {
+      final String targetPath = file.path.replaceFirst(
+        RegExp(r'\.(\w+)$'),
+        '_compressed.jpg',
+      );
+
+      final XFile? compressedFile = await FlutterImageCompress.compressAndGetFile(
+        file.absolute.path, // Chemin source
+        targetPath, // Chemin cible
+        quality: 5, // Qualité de compression (1 à 100)
+        minWidth: 800, // Largeur minimale
+        minHeight: 800, // Hauteur minimale
+
+        format: CompressFormat.jpeg, // Format de compression
+      );
+
+      return compressedFile;
+    } catch (e) {
+      print("Error during image compression: $e");
+      return null;
+    }
+  }
+
   static void showLimitedAccessDialog({required BuildContext context}) {
     showDialog(
       context: context,
