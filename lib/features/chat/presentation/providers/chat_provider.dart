@@ -173,6 +173,16 @@ class ChatProvider extends ChangeNotifier {
           }
         }
 
+        if (element.state == SessionState.connecting) {
+          log("Connecting");
+          // TODO: on force le passage à connected il faudrait trouver une meilleure solution
+          devicesList = devicesList.map((d) {
+          if (d.deviceId == element.deviceId) {
+            d.state = SessionState.connected;
+          }
+          return d;
+        }).toList();
+        }
         // envoie de l'image de profile lors de la connection si elle existe
         if (element.state == SessionState.connected) {
           // Ce code gère l'assignation ou la mise à jour des informations d'un utilisateur dans une liste d'utilisateurs existants.
@@ -432,6 +442,7 @@ class ChatProvider extends ChangeNotifier {
           }
           return d;
         }).toList();
+
         //log("Want to connect");
         break;
       case SessionState.connected:
