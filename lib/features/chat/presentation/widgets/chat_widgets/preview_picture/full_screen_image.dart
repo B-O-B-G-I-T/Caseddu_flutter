@@ -60,7 +60,6 @@ class FullScreenImagePage extends StatelessWidget {
   }
 }
 
-
 class CircularIconButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onPressed;

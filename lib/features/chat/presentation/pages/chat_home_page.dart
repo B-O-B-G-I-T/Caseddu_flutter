@@ -25,6 +25,7 @@ class _ChatHomeScreenState extends State<ChatHomeScreen> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
+
   }
 
   @override

@@ -1,10 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:caseddu/features/parameter/presentation/providers/parameter_provider.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'features/chat/presentation/pages/chat_home_page.dart';
 import 'features/chat/presentation/pages/photo_pages/1_camera_page.dart';
 import 'features/chat/presentation/providers/chat_provider.dart';
+import 'features/parameter/presentation/widgets/custom_circle_avatar.dart';
 import 'main.dart';
 
 class PremierePage extends StatefulWidget {
@@ -19,9 +23,8 @@ class PremierePage extends StatefulWidget {
 class _PremierePageState extends State<PremierePage> {
   int _selectedIndex = 0;
 
-  final User _utilisateur = FirebaseAuth.instance.currentUser!;
-
   late ChatProvider chatProvider;
+  late ParameterProvider parameterProvider;
   @override
   void initState() {
     super.initState();
@@ -29,9 +32,12 @@ class _PremierePageState extends State<PremierePage> {
 
     chatProvider = Provider.of<ChatProvider>(context, listen: false);
     // Écoute des nouveaux messages pour faire défiler vers le bas
+    chatProvider.setupInvitationHandler(context);
     chatProvider.invitationController.listen((newMessage) {
       chatProvider.setupInvitationHandler(context);
     });
+
+    parameterProvider = Provider.of<ParameterProvider>(context, listen: false);
   }
 
 // dictionnaire des pages /////////////////////////////
@@ -82,59 +88,66 @@ class _PremierePageState extends State<PremierePage> {
 
 // appbar custom
   Widget myAppBar() {
-    return Positioned(
-      top: 0,
-      left: 0,
-      right: 0,
-      child: PreferredSize(
-        preferredSize: const Size.fromHeight(20.0), // hauteur personnalisée de l'AppBar
-        child: AppBar(
-          backgroundColor: Colors.transparent,
-          leadingWidth: 100,
-          leading: Padding(
-            padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  backgroundColor: Colors.black,
-                  child: IconButton(
-                      color: Colors.white,
-                      icon: const Icon(Icons.account_circle_outlined),
-                      onPressed: () {
-                        // Obtenir une référence à l'instance de GoRouter
-                        final router = GoRouter.of(context);
-                        // Naviguer vers la page des paramètres
-                        router.push('/parameter');
-                      }),
-                ),
-                Text(
-                  _utilisateur.displayName ?? "",
-                  style: const TextStyle(color: Colors.black),
-                )
-              ],
-            ),
-          ),
-
-          actions: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CircleAvatar(
-                backgroundColor: Colors.black,
-                child: IconButton(
-                  color: Colors.white,
-                  icon: const Icon(
-                    Icons.zoom_in_map_rounded,
+    return Consumer<ParameterProvider>(builder: (context, provider, child) {
+      return Positioned(
+        top: 0,
+        left: 0,
+        right: 0,
+        child: PreferredSize(
+          preferredSize: const Size.fromHeight(20.0), // hauteur personnalisée de l'AppBar
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            leadingWidth: 100,
+            leading: Padding(
+              padding: const EdgeInsets.fromLTRB(8.0, 0, 8.0, 0),
+              child: Row(
+                children: [
+                  // Image de profil ou texte
+                  CustomCircleAvatar(
+                    radius: 20,
+                    image: parameterProvider.parameter.photoUrl,
+                    ontap: () async {
+                      // Obtenir une référence à l'instance de GoRouter
+                      final router = GoRouter.of(context);
+                      // Naviguer vers la page des paramètres
+                      router.push('/parameter');
+                    },
                   ),
-                  onPressed: () {},
-                ),
+
+                  Expanded(
+                    child: Text(
+                      parameterProvider.parameter.displayName,
+                      style: const TextStyle(color: Colors.black),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  )
+                ],
               ),
             ),
-          ],
-          //c'est cool si pas centrer
-          centerTitle: true,
+
+            actions: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                  backgroundColor: Colors.black,
+                  child: IconButton(
+                    color: Colors.white,
+                    icon: const Icon(
+                      Icons.zoom_in_map_rounded,
+                    ),
+                    onPressed: () {
+
+                    },
+                  ),
+                ),
+              ),
+            ],
+            //c'est cool si pas centrer
+            centerTitle: true,
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget buildBottomBar(BuildContext context) {

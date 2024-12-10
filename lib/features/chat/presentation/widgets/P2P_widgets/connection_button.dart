@@ -20,7 +20,7 @@ class ConnectionButton extends StatelessWidget {
           aditionalFunction!();
           return;
         }
-        chatProvider.connectToDevice(device);
+        await chatProvider.connectToDevice(device);
       },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),

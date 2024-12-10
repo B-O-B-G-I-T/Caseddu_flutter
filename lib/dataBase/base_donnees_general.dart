@@ -15,9 +15,10 @@ class BaseDonneesGeneral {
   static Future<Database> initDb() async {
     String databasesPath = await getDatabasesPath();
     String path = join(databasesPath, 'messsageTables.db');
+
     debugPrint(path);
     // Delete the database if it already exists
-    // await deleteDatabase(path);
+    // deleteDatabase(path);
 
     // Open/create the database at a given path
     Database db = await openDatabase(
@@ -41,7 +42,9 @@ class BaseDonneesGeneral {
     await db.execute('''
       CREATE TABLE users (
           id TEXT PRIMARY KEY,
-          name TEXT
+          name TEXT,
+          pathImageProfile TEXT,
+          myLastStartEncodeImage TEXT
         )
     ''');
 

@@ -49,7 +49,6 @@
     "no_nearby_users": "No nearby users with the app, spread the app to those who aren't familiar with it. Expand your circle.",
     "no_conversations": "No conversations",
     "deleted": "Deleted",
-    "message_deleted": "Message deleted",
     "start_conversation": "Start conversation",
     "error_message": "Error: {snapshot}",
     "@error_message": {
@@ -101,7 +100,6 @@
     "me": "Me",
     "no_old_messages": "No old messages",
     "logout": "Logout",
-    "edit_name": "Edit name",
     "result": "Result",
     "image_successfully_saved_to_gallery": "Image successfully saved to gallery ✅",
     "error_while_saving_the_image": "Error while saving the image",
@@ -138,6 +136,15 @@
         }
     }
     },
+    "settings": "Settings",
+    "edit_name": "Edit Name",
+    "edit_email": "Edit Email",
+    "edit_password": "Edit Password",
+    "save_changes": "Save Changes",
+    "notifications": "Notifications",
+    "language": "Language",
+    "name_updated": "Name updated successfully",
+    "profile_updated": "Profile updated successfully",
     "template": "Template"
 
 }

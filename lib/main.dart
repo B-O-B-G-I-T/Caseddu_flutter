@@ -11,7 +11,7 @@ import 'config/routes/routes.dart';
 import 'features/auth/data/datasources/authentification_remote_data_source.dart';
 import 'features/auth/presentation/providers/authentification_provider.dart';
 import 'features/chat/presentation/providers/chat_provider.dart';
-import 'features/parametre/presentation/providers/parametre_provider.dart';
+import 'features/parameter/presentation/providers/parameter_provider.dart';
 import 'firebase_options.dart';
 
 late List<CameraDescription> cameras;
@@ -36,8 +36,10 @@ void main() async {
 
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  final chatProvider = await ChatProvider(); // Initialisation manuelle
+  final parameterProvider = ParameterProvider();
+  final chatProvider = ChatProvider(parameterProvider: parameterProvider); // Initialisation manuelle
 
+  parameterProvider.init();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
@@ -58,8 +60,8 @@ void main() async {
           create: (context) => AuthentificationProvider(firebaseAuth: firebaseAuth),
         ),
 
-        ChangeNotifierProvider(
-          create: (context) => ParametreProvider(),
+        ChangeNotifierProvider.value(
+          value: parameterProvider,
         ),
 
         ChangeNotifierProvider.value(

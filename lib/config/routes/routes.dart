@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:caseddu/features/chat/presentation/pages/chat_user_page.dart';
 import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/preview_picture/full_screen_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,7 @@ import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../features/chat/presentation/pages/photo_pages/2_prise_de_photo.dart';
 import '../../features/chat/presentation/pages/photo_pages/3_envoie_de_photo.dart';
 import '../../features/chat/presentation/providers/chat_provider.dart';
-import '../../features/parametre/presentation/pages/parameter_page.dart';
+import '../../features/parameter/presentation/pages/parameter_page.dart';
 import '../../premiere_page.dart';
 
 // doc officiel : https://docs.flutter.dev/ui/navigation
@@ -42,7 +43,6 @@ class Routes {
         Provider.of<ChatProvider>(context, listen: false).disabledNearbyService();
         return '/login';
       } else {
-        
         return null;
       }
     },
@@ -82,7 +82,7 @@ class Routes {
       GoRoute(
         path: '/parameter',
         builder: (context, state) {
-          return const ParametrePage();
+          return const ParameterPage();
         },
       ),
       GoRoute(
@@ -94,6 +94,15 @@ class Routes {
           );
         },
       ),
+      GoRoute(
+          path: '/ProfilePage/:userName',
+          name: 'ProfilePage',
+          builder: (context, state) {
+            final String userName = state.pathParameters['userName'].toString();
+            return ChatUserPage(
+              userName: userName,
+            );
+          }),
       GoRoute(
         path: '/fullScreenImage/:filePath',
         name: 'fullScreenImage',

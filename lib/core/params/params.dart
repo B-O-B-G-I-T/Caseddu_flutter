@@ -22,7 +22,14 @@ class AuthentificationParams {
   AuthentificationParams({required this.email, this.password, this.confirmPassword, this.numero, this.pseudo});
 }
 
-class ParametreParams {}
+class ParameterParams {
+  final String email;
+  final String? displayName;
+  final String? password;
+  final String? confirmPassword;
+  final String? numero;
+  ParameterParams( {required this.email, this.password, this.confirmPassword, this.numero, this.displayName});
+}
 
 class MenuParams {}
 
@@ -32,7 +39,7 @@ class ChatMessageParams {
   String receiver = '';
   String message = '';
   String images = '';
-  String type = 'Payload';
+  String type = 'payload';
   String sendOrReceived = '';
   int ack = 0;
   DateTime timestamp = DateTime.now();
@@ -87,7 +94,7 @@ class ChatMessageParams {
       receiver: data['receiver'] ?? '',
       message : data['message'] ?? '',
       images: data['images'] ?? '',
-      type: data['type'] ?? 'Payload',
+      type: data['type'] ?? 'payload',
       sendOrReceived: data['sendOrReceived'] ?? '',
       timestamp: DateTime.tryParse(data['timestamp'] ?? '') ?? DateTime.now(),
       nearbyService: data['nearbyService'], ack:  data['ack'] , // Pour NearbyService si fourni
@@ -109,6 +116,27 @@ class ChatMessageParams {
       'nearbyService': _nearbyService, // Peut nécessiter un traitement particulier
       'ack': ack,
     };
+  }
+
+}
+
+class UserParams{
+  final String id;
+  final String name;
+  final ChatMessageModel? dernierMessage;
+  String? pathImageProfile;
+  String? myLastStartEncodeImage;
+
+  UserParams({required this.id, required this.name, this.dernierMessage, this.pathImageProfile, this.myLastStartEncodeImage});
+  
+  factory UserParams.fromSender(Map<String, dynamic> json) {
+    return UserParams(
+      id: json['senderDeviceId'],
+      name: json['senderDeviceId'],
+      //dernierMessage: json['dernierMessage'] != null ? ChatMessageModel.fromJson(json['dernierMessage']) : null,
+      pathImageProfile: json['message'] ?? '',
+      myLastStartEncodeImage: json['message'] ?? '',
+    );
   }
 
 }

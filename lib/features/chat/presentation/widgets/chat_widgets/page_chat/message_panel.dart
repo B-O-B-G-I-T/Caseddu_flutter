@@ -2,7 +2,7 @@
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:io';
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
-import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/page_chat/image_picker.dart';
+import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/page_chat/image_picker_for_chat.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -83,7 +83,7 @@ class _MessagePanelState extends State<MessagePanel> {
             ],
           ),
           _showGallery
-              ? MyImagePicker(
+              ? MyImagePickerForChat(
                   chatProvider: chatProvider,
                   device: widget.device,
                   converser: widget.converser,
@@ -107,6 +107,7 @@ class _MessagePanelState extends State<MessagePanel> {
             if (widget.device.state != SessionState.connected) {
               await chatProvider.connectToDevice(widget.device);
             }
+            await chatProvider.loadImageChat(context);
             setState(() {
               _showGallery = !_showGallery;
             });

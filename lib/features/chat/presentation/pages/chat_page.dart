@@ -1,14 +1,18 @@
 // ignore_for_file: unused_element
+import 'package:caseddu/core/utils/genral_widgets/leading_button_go_back.dart';
+import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
+import '../../data/models/chat_user_model.dart';
 import '../../domain/entities/chat_message_entity.dart';
 import '../providers/chat_provider.dart';
 import '../widgets/P2P_widgets/connection_button.dart';
 import '../widgets/chat_widgets/page_chat/chat_Bubble_widget.dart';
+import '../widgets/chat_widgets/page_chat/chat_circle_avatar.dart';
 import '../widgets/chat_widgets/page_chat/message_panel.dart';
 import '../widgets/chat_widgets/page_chat/lost_connexion_widget.dart';
 
@@ -24,7 +28,8 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final ScrollController _scrollController = ScrollController();
   List<ChatMessageEntity> messageList = [];
-  late Device? device;
+  late Device device;
+  late UserEntity userEntity;
   TextEditingController myController = TextEditingController();
   late String myName = '';
   late ChatProvider chatProvider;
@@ -37,7 +42,7 @@ class _ChatPageState extends State<ChatPage> {
     myName = chatProvider.myName;
     device = chatProvider.devices.firstWhere((element) => element.deviceName == widget.converser, orElse: () => Device("", "", SessionState.tooFar));
     chatProvider.eitherFailureOrConversation(myName, widget.converser, limit: 20);
-  
+
     // Écoute des nouveaux messages pour faire défiler vers le bas
     chatProvider.newMessageStream.listen((newMessage) {
       _scrollToBottomOnNewMessage();
@@ -59,7 +64,7 @@ class _ChatPageState extends State<ChatPage> {
     chatProvider.chat = [];
     chatProvider.hasMoreMessages = true;
     chatProvider.removeListener(_scrollToBottomOnNewMessage);
-
+    chatProvider.selectedImages.clear();
     super.dispose();
   }
 
@@ -100,92 +105,102 @@ class _ChatPageState extends State<ChatPage> {
         orElse: () => Device(widget.converser, widget.converser, SessionState.tooFar),
       );
 
+      userEntity = chatProvider.users.firstWhere(
+        (element) => element.name == widget.converser,
+        orElse: () => UserModel(id: widget.converser, name: widget.converser),
+      );
+
       // Assurer que les messages sont triés avant le rendu
       messageList = chatProvider.chat..sort((a, b) => b.timestamp.compareTo(a.timestamp));
 
-      return Scaffold(
-        // resizeToAvoidBottomInset: false,
-        resizeToAvoidBottomInset: true,
+      return SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: Scaffold(
+          // resizeToAvoidBottomInset: false,
+          resizeToAvoidBottomInset: true,
 
-        appBar: CustomAppBar(device: device!, title: widget.converser),
-        body: device!.deviceId != "" && device!.deviceName != ""
-            ? Column(
-                children: [
-                  // Affichage du texte de chargement si des messages sont en cours de chargement
-                  Expanded(
-                    child: messageList.isEmpty
-                        ? chatProvider.isLoadingOldMessages
-                            ? const LoadingScreen()
-                            : Center(
-                                child: Text(AppLocalizations.of(context)!.start_conversation),
-                              )
-                        : Align(
-                            alignment: Alignment.topCenter,
-                            child: ListView.builder(
-                              controller: _scrollController,
-                              key: const PageStorageKey<String>('chatList'),
-                              // Builder to view messages chronologically
-                              shrinkWrap: true,
-                              reverse: true,
-                              padding: const EdgeInsets.all(0),
-                              itemCount: messageList.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                // Liste des messages
-                                // début de la structure des messages
-                                final message = messageList[index];
-                                final bool isMe = messageList[index].sender != myName;
+          appBar: CustomAppBar(device: device, title: widget.converser, userEntity: userEntity),
+          body: device.deviceId != "" && device.deviceName != ""
+              ? Column(
+                  children: [
+                    // Affichage du texte de chargement si des messages sont en cours de chargement
+                    Expanded(
+                      child: messageList.isEmpty
+                          ? chatProvider.isLoadingOldMessages
+                              ? const LoadingScreen()
+                              : Center(
+                                  child: Text(AppLocalizations.of(context)!.start_conversation),
+                                )
+                          : Align(
+                              alignment: Alignment.topCenter,
+                              child: ListView.builder(
+                                controller: _scrollController,
+                                key: const PageStorageKey<String>('chatList'),
+                                // Builder to view messages chronologically
+                                shrinkWrap: true,
+                                reverse: true,
+                                padding: const EdgeInsets.all(0),
+                                itemCount: messageList.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  // Liste des messages
+                                  // début de la structure des messages
+                                  final message = messageList[index];
+                                  final bool isMe = messageList[index].sender != myName;
 
-                                // Vérifiez si c'est un nouveau jour
-                                bool isNewDay = false;
-                                if (index == messageList.length - 1 || !_isSameDay(messageList[index + 1].timestamp, message.timestamp)) {
-                                  isNewDay = true;
-                                }
-
-                                // gère la colapse des messages
-                                bool collapseMessages = false;
-                                if (index < messageList.length - 1 && isMe == (messageList[index + 1].sender != myName)) {
-                                  final prevMessage = messageList[index + 1];
-                                  // Vérifie si les timestamps sont suffisamment différents
-                                  if (message.timestamp.difference(prevMessage.timestamp).inMinutes < 1) {
-                                    collapseMessages = true; // Cache le timestamp si proche du précédent
+                                  // Vérifiez si c'est un nouveau jour
+                                  bool isNewDay = false;
+                                  if (index == messageList.length - 1 || !_isSameDay(messageList[index + 1].timestamp, message.timestamp)) {
+                                    isNewDay = true;
                                   }
-                                }
 
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: [
-                                    // Texte de chargement superposé au-dessus de tout
-                                    if (chatProvider.isLoadingOldMessages && index == messageList.length - 1) const LoadingIndicator(),
-                                    // Message indiquant qu'il n'y a plus de messages à charger
-                                    if (!chatProvider.hasMoreMessages && index == messageList.length - 1) const NoMoreMessagesIndicator(),
-                                    // Affiche la date si c'est un nouveau jour
-                                    if (isNewDay) ...[
-                                      DateSeparator(date: message.timestamp), // Affiche la date si c'est un nouveau jour
-                                      // Affiche le temps écoulé depuis le premier message
-                                      TimeAgoIndicator(timeStamp: message.timestamp.toString()),
+                                  // gère la colapse des messages
+                                  bool collapseMessages = false;
+                                  if (index < messageList.length - 1 && isMe == (messageList[index + 1].sender != myName)) {
+                                    final prevMessage = messageList[index + 1];
+                                    // Vérifie si les timestamps sont suffisamment différents
+                                    if (message.timestamp.difference(prevMessage.timestamp).inMinutes < 1) {
+                                      collapseMessages = true; // Cache le timestamp si proche du précédent
+                                    }
+                                  }
+
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    children: [
+                                      // Texte de chargement superposé au-dessus de tout
+                                      if (chatProvider.isLoadingOldMessages && index == messageList.length - 1) const LoadingIndicator(),
+                                      // Message indiquant qu'il n'y a plus de messages à charger
+                                      if (!chatProvider.hasMoreMessages && index == messageList.length - 1) const NoMoreMessagesIndicator(),
+                                      // Affiche la date si c'est un nouveau jour
+                                      if (isNewDay) ...[
+                                        DateSeparator(date: message.timestamp), // Affiche la date si c'est un nouveau jour
+                                        // Affiche le temps écoulé depuis le premier message
+                                        TimeAgoIndicator(timeStamp: message.timestamp.toString()),
+                                      ],
+                                      // Affiche le message
+                                      ChatBubble(
+                                        isMe: isMe,
+                                        converser: widget.converser,
+                                        message: message,
+                                        collapseMessages: collapseMessages,
+                                      ),
                                     ],
-                                    // Affiche le message
-                                    ChatBubble(
-                                      isMe: isMe,
-                                      converser: widget.converser,
-                                      message: message,
-                                      collapseMessages: collapseMessages,
-                                    ),
-                                  ],
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             ),
-                          ),
-                  ),
-                  SafeArea(
-                    child: MessagePanel(
-                      converser: widget.converser,
-                      device: device!,
                     ),
-                  ),
-                ],
-              )
-            : const LostConnectionWidget(),
+                    SafeArea(
+                      child: MessagePanel(
+                        converser: widget.converser,
+                        device: device,
+                      ),
+                    ),
+                  ],
+                )
+              : const LostConnectionWidget(),
+        ),
       );
     });
   }
@@ -305,11 +320,13 @@ class LoadingScreen extends StatelessWidget {
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Device device;
+  final UserEntity userEntity;
 
   const CustomAppBar({
     super.key,
     required this.title,
     required this.device,
+    required this.userEntity,
   });
 
   @override
@@ -318,7 +335,18 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      leadingWidth: 120, // Ajuste la largeur maximale du leading
       title: Text(title),
+      leading: Row(
+        mainAxisSize: MainAxisSize.min, // Limite la taille de Row à son contenu
+        children: [
+          const LeadingButtonGoBack(),
+          ChatCircleAvatar(
+            text: device.deviceName, // Utilisez le premier caractère du nom comme texte
+            context: context,
+          ),
+        ],
+      ),
       actions: [
         ConnectionButton(
           device: device,

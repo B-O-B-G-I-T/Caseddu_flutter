@@ -8,7 +8,6 @@ import '../models/chat_message_model.dart';
 abstract class ChatRemoteDataSource {
   Future<NearbyService> init();
   Future<ChatMessageModel> sentToConversations({required ChatMessageParams chatMessageParams});
-  
 }
 
 class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
@@ -35,6 +34,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
 // Initiating NearbyService to start the connection
   Future<NearbyService> initiateNearbyService(String myName) async {
+    
     NearbyService nearbyService = NearbyService();
     await nearbyService.init(
       serviceType: 'mp-connection',
@@ -46,9 +46,11 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
           await startBrowsing(nearbyService);
         }
       },
+      description: 'easy to connect',
+
     );
-    // await startAdvertising(nearbyService);
-    // await startBrowsing(nearbyService);
+    await startAdvertising(nearbyService);
+    await startBrowsing(nearbyService);
 
     return nearbyService;
   }
@@ -68,7 +70,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<ChatMessageModel> sentToConversations({required ChatMessageParams chatMessageParams}) async {
     ChatMessageModel chatMessageModel = chatMessageParams.toModel();
-    
+
     final data = jsonEncode(chatMessageModel.toJson());
     chatMessageParams.nearbyService!.sendMessage(chatMessageParams.receiver, data);
 

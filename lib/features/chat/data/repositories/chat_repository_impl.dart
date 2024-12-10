@@ -40,7 +40,8 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<Either<Failure, List<ChatMessageModel>>> getConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20}) async {
+  Future<Either<Failure, List<ChatMessageModel>>> getConversation(String senderName, String receiverName,
+      {DateTime? beforeDate, int limit = 20}) async {
     //if (await networkInfo.isConnected!) {
     try {
       List<ChatMessageModel> listChatModel = await localDataSource.getConversation(senderName, receiverName, beforeDate: beforeDate, limit: limit);
@@ -58,6 +59,31 @@ class ChatRepositoryImpl implements ChatRepository {
       List<UserModel> listChatModel = await localDataSource.getAllConversation();
 
       return Right(listChatModel);
+    } catch (e) {
+      return Left(ServerFailure(errorMessage: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserModel>> saveSendedImageProfile({required UserParams userParams}) async {
+    try {
+      final File imageProfile = await Utils.base64StringToImage(userParams.pathImageProfile!);
+      userParams.pathImageProfile = imageProfile.path;
+      final UserModel fileGenered = await localDataSource.saveSendedImageProfile(userParams);
+      return Right(fileGenered);
+    } catch (e) {
+      return Left(ImageFailure(errorMessage: e.toString()));
+    }
+  }
+
+    
+  @override
+  Future<Either<Failure, UserEntity>> setUser({required UserParams userParams}) async {
+    try {
+      
+      final UserModel userModel = await  localDataSource.saveSendedImageProfile( userParams);
+
+      return Right(userModel);
     } catch (e) {
       return Left(ServerFailure(errorMessage: e.toString()));
     }
@@ -109,18 +135,18 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<Either<Failure, void>> deleteMessage({ required ChatMessageEntity chatMessageEntity}) async {
+  Future<Either<Failure, void>> deleteMessage({required ChatMessageEntity chatMessageEntity}) async {
     try {
       await localDataSource.deleteMessage(chatMessageEntity);
 
       return Right(true);
-
     } catch (e) {
       return Left(ServerFailure(errorMessage: e.toString()));
     }
   }
+
   @override
-  Future<Either<Failure, void>> deleteConversation({ required UserEntity userEntity}) async {
+  Future<Either<Failure, void>> deleteConversation({required UserEntity userEntity}) async {
     try {
       await localDataSource.deleteConversation(userEntity);
       return Right(true);
@@ -128,5 +154,7 @@ class ChatRepositoryImpl implements ChatRepository {
       return Left(ServerFailure(errorMessage: e.toString()));
     }
   }
-  
+
+
+
 }

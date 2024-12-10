@@ -9,6 +9,8 @@ import '../widgets/P2P_widgets/connection_button.dart';
 import '../widgets/P2P_widgets/search_widget.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../widgets/chat_widgets/page_chat/chat_circle_avatar.dart';
+
 enum DeviceType { advertiser, browser }
 
 class ChatDeviceAroundList extends StatefulWidget {
@@ -91,15 +93,42 @@ class DevicesListWidget extends StatelessWidget {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 final device = devices[index];
+
                 return Container(
                   margin: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
                       ListTile(
+                        leading: Stack(
+                          children: [
+                            ChatCircleAvatar(
+                              text: device.deviceName, // Utilisez le premier caractère du nom comme texte
+                              context: context,
+                            ),
+                            // je pense innutilecar redondant pour l'utilisateur
+                            // Positioned(
+                            //   bottom: 0,
+                            //   right: 0,
+                            //   child: Container(
+                            //     padding: const EdgeInsets.all(2),
+                            //     decoration: BoxDecoration(
+                            //       color: getStateColor(device.state),
+                            //       shape: BoxShape.circle,
+                            //     ),
+                            //     child: Text(
+                            //       getStateName(device.state, context)[0],
+                            //       style: const TextStyle(
+                            //         fontSize: 10,
+                            //         color: Colors.white,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
+                          ],
+                        ),
                         title: Text(device.deviceName),
                         subtitle: Text(
-                          getStateName(device.state, context),
-                          style: TextStyle(color: getStateColor(device.state)),
+                          device.deviceDescription?.isEmpty ?? true ? "" : device.deviceDescription!,
                         ),
                         trailing: ConnectionButton(device: device),
                         onTap: () {
