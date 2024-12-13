@@ -8,12 +8,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/errors/firebase_exceptions.dart';
 import '../models/parameter_model.dart';
 import 'package:path/path.dart' as path;
+import 'database_helper_params.dart';
 
 abstract class ParametreLocalDataSource {
   Future<void> cacheParametre({required ParameterModel? parametreToCache});
   Future<ParameterModel> getLastParametre();
   Future<String> saveImageProfile(AssetEntity image);
   Future<String?> getSavedProfileImage();
+  Future<String?> getDetailUser();
+  Future<void> insertDetailUser(String? insertUserDetail);
 }
 
 const cachedParametre = 'CACHED_TEMPLATE';
@@ -119,5 +122,18 @@ class ParametreLocalDataSourceImpl implements ParametreLocalDataSource {
     } catch (e) {
       throw Exception('Erreur lors de la récupération de l\'image de profil : ${e.toString()}');
     }
+  }
+  
+  @override
+  Future<String?> getDetailUser() {
+    final dbHelper = DatabaseHelperParams();
+    return dbHelper.getUserDetail();
+    
+  }
+  
+  @override
+  Future<void> insertDetailUser(String? insertUserDetail) async {
+    final dbHelper = DatabaseHelperParams();
+    await  dbHelper.insertOrUpdateUserDetail(insertUserDetail);
   }
 }

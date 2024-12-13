@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
+import '../../../parameter/presentation/providers/parameter_provider.dart';
 import '../repositories/chat_repository.dart';
 
 class GetChat {
@@ -11,8 +12,8 @@ class GetChat {
 
   GetChat({required this.chatRepository});
 
-  Future<Either<Failure, NearbyService>> init() async {
-    return await chatRepository.init();
+  Future<Either<Failure, NearbyService>> init(ParameterProvider parameterProvider) async {
+    return await chatRepository.init(parameterProvider);
   }
 
   Future<Either<Failure, List<ChatMessageEntity>>> getConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20}) async {

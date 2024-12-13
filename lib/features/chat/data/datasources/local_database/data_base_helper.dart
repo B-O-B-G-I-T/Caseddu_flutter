@@ -1,4 +1,3 @@
-// ignore_for_file: unused_field
 import 'dart:async';
 import 'package:caseddu/dataBase/base_donnees_general.dart';
 import 'package:nanoid/nanoid.dart';
@@ -7,7 +6,6 @@ import '../../models/chat_message_model.dart';
 import '../../models/chat_user_model.dart';
 
 class DatabaseHelper {
-  final BaseDonneesGeneral _baseDonnesGeneral = BaseDonneesGeneral();
 // ------------------------ CHECK TABLES ------------------------
   Future<bool> isTableEmpty(String tableName) async {
     final db = await BaseDonneesGeneral.database;

@@ -175,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
 
                           if (authentificationProvider.authentification != null) {
                             final parameterProvider = Provider.of<ParameterProvider>(context, listen: false);
-                            parameterProvider.init();
+                            await parameterProvider.init();
                             await Provider.of<ChatProvider>(context, listen: false).eitherFailureOrInit(parameterProvider);
                             context.push('/firstPage/0');
                           } else if (authentificationProvider.failure?.errorMessage != null) {

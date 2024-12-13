@@ -7,6 +7,10 @@ class ServerFailure extends Failure {
   ServerFailure({required super.errorMessage});
 }
 
+class BaseFailure extends Failure {
+  BaseFailure({required super.errorMessage});
+}
+
 class CacheFailure extends Failure {
   CacheFailure({required super.errorMessage});
 }

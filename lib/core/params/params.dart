@@ -28,7 +28,10 @@ class ParameterParams {
   final String? password;
   final String? confirmPassword;
   final String? numero;
-  ParameterParams( {required this.email, this.password, this.confirmPassword, this.numero, this.displayName});
+  final String? description;
+  final String? pathImageProfile;
+  ParameterParams( {required this.email, this.password, this.confirmPassword, this.numero, this.displayName, this.description, this.pathImageProfile });
+
 }
 
 class MenuParams {}

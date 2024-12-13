@@ -10,6 +10,7 @@ import '../../../../core/errors/widgets/firebase_error.dart';
 import '../../../../core/params/params.dart';
 import '../../../../core/utils/genral_widgets/leading_button_go_back.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
+import '../../../chat/presentation/providers/chat_provider.dart';
 import '../providers/parameter_provider.dart';
 
 class ParameterPage extends StatefulWidget {
@@ -23,6 +24,7 @@ class _ParameterPageState extends State<ParameterPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
   bool _notificationsEnabled = true;
   String _selectedLanguage = 'en'; // Default language
   late ParameterProvider provider;
@@ -39,6 +41,7 @@ class _ParameterPageState extends State<ParameterPage> {
     debugPrint('ParameterPage: initState');
     _nameController.text = provider.parameter.displayName;
     _emailController.text = provider.parameter.email;
+    _descriptionController.text = provider.parameter.description ?? '';
   }
 
   void _showBottomSheet() {
@@ -76,7 +79,7 @@ class _ParameterPageState extends State<ParameterPage> {
                   children: [
                     // Image de profil ou texte
                     CustomCircleAvatar(
-                      image: provider.parameter.photoUrl,
+                      image: provider.parameter.pathImageProfile,
                       ontap: () async {
                         //FocusScope.of(context).unfocus();
 
@@ -127,6 +130,18 @@ class _ParameterPageState extends State<ParameterPage> {
                     ),
                     const SizedBox(height: 16.0),
 
+                    // Description
+                    TextField(
+                      controller: _descriptionController,
+                      maxLength: 255,
+                      maxLines: null,
+                      decoration: InputDecoration(
+                        labelText: AppLocalizations.of(context)!.write_description,
+                        border: const OutlineInputBorder(),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16.0),
                     // Notifications
                     SwitchListTile(
                       title: Text(AppLocalizations.of(context)!.notifications),
@@ -161,14 +176,22 @@ class _ParameterPageState extends State<ParameterPage> {
                     // Sauvegarder les modifications
                     Center(
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           try {
                             final parameter = ParameterParams(
                               email: _emailController.text.trim(),
                               password: _passwordController.text.trim(),
                               displayName: _nameController.text.trim(),
+                              description: _descriptionController.text.trim(),
+                              pathImageProfile: provider.parameter.pathImageProfile,
                             );
-                            provider.eitherFailureOrUpdate(parameterParams: parameter);
+
+                            await provider.eitherFailureOrUpdate(parameterParams: parameter);
+                            await Provider.of<ChatProvider>(context, listen: false).eitherFailureOrInit(provider);
+                            // final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
+                            // chatProvider.controlerDevice!.setDescription(_descriptionController.text.trim());
+
+                            FocusScope.of(context).unfocus();
 
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(AppLocalizations.of(context)!.profile_updated)),

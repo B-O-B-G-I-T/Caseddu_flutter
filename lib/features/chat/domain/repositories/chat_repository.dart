@@ -4,9 +4,10 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
+import '../../../parameter/presentation/providers/parameter_provider.dart';
 
 abstract class ChatRepository {
-  Future<Either<Failure, NearbyService>> init();
+  Future<Either<Failure, NearbyService>> init(ParameterProvider parameterProvider);
   Future<Either<Failure, List<ChatMessageEntity>>> getConversation(String senderName, String receiverName, {DateTime? beforeDate, int limit = 20});
   Future<Either<Failure, List<UserEntity>>> getAllConversations();
   Future<Either<Failure, ChatMessageEntity>> envoieMessage({

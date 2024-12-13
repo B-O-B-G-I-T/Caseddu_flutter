@@ -5,14 +5,17 @@ class ParameterModel extends ParameterEntity {
     required super.email,
     required super.displayName,
     required super.numero,
-    required super.photoUrl,
+    required super.pathImageProfile,
+    super.description,
   });
 
   factory ParameterModel.fromJson({required Map<String, dynamic> json}) {
     return ParameterModel(
-      email: '',
-      displayName: '',
-      numero: '', photoUrl: null,
+      email: json['email'],
+      displayName: json['displayName'],
+      numero: json['numero'] ,
+      pathImageProfile: json['photoUrl'],
+      description: json['description'],
     );
   }
 
