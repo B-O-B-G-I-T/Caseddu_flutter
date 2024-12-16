@@ -63,6 +63,7 @@ class ChatProvider extends ChangeNotifier {
     required ParameterProvider parameterProvider,
     this.failure,
   }) {
+
     eitherFailureOrInit(parameterProvider);
     eitherFailureOrAllConversations();
   }
@@ -78,7 +79,8 @@ class ChatProvider extends ChangeNotifier {
       ),
     );
     chat = [];
-    final failureOrChat = await GetChat(chatRepository: repository).init();
+    // await parameterProvider.init();
+    final failureOrChat = await GetChat(chatRepository: repository).init(parameterProvider);
     if (myName == '') {
       myName = FirebaseAuth.instance.currentUser!.displayName.toString();
     }
@@ -92,7 +94,7 @@ class ChatProvider extends ChangeNotifier {
 
         checkDevices(controlerDevice!);
         checkReceiveData(controlerDevice!);
-
+        
         this.parameterProvider = parameterProvider;
         failure = null;
         // Diffuse le nouveau message via le Stream
@@ -142,7 +144,6 @@ class ChatProvider extends ChangeNotifier {
                               setState(() => isProcessing = true);
                               notifyListeners();
                               Navigator.of(context).pop(true);
-                              
                             },
                       child: isProcessing ? const CircularProgressIndicator(color: Colors.white) : Text(AppLocalizations.of(context)!.accept),
                     ),
@@ -178,11 +179,11 @@ class ChatProvider extends ChangeNotifier {
           log("Connecting");
           // TODO: on force le passage à connected il faudrait trouver une meilleure solution
           devicesList = devicesList.map((d) {
-          if (d.deviceId == element.deviceId) {
-            d.state = SessionState.connected;
-          }
-          return d;
-        }).toList();
+            if (d.deviceId == element.deviceId) {
+              d.state = SessionState.connected;
+            }
+            return d;
+          }).toList();
         }
         // envoie de l'image de profile lors de la connection si elle existe
         if (element.state == SessionState.connected) {
@@ -196,7 +197,7 @@ class ChatProvider extends ChangeNotifier {
             // Si aucun utilisateur correspondant n'est trouvé, on retourne un utilisateur par défaut.
             orElse: () => UserModel(id: '', name: ''),
           );
-          final String? path = parameterProvider?.parameter.photoUrl; // Récupération du chemin de l'image associée, si disponible.
+          final String? path = parameterProvider?.parameter.pathImageProfile; // Récupération du chemin de l'image associée, si disponible.
 
           String? myLastStartEncodeImage; // Variable pour stocker l'image encodée (si elle existe).
 
@@ -595,7 +596,7 @@ class ChatProvider extends ChangeNotifier {
 
   Future<void> sendImageProfileForAllConnected() async {
     // Retrieve the image path from the provider, if available.
-    final String? path = parameterProvider?.parameter.photoUrl;
+    final String? path = parameterProvider?.parameter.pathImageProfile;
 
     if (path != null) {
       // Compression de l'image avant encodage

@@ -8,14 +8,19 @@ class FireBaseException implements Exception {
 
   FireBaseException({required this.errMessage}) {
     if (errMessage == 'invalid-email') {
+      
       errMessage = "Email invalide";
     } else if (errMessage == 'wrong-password') {
       errMessage = "Mauvais mot de passe";
     } else if (errMessage == 'user-not-found') {
       errMessage = "L'utilisateur n'a pas été trouvé";
-    }else if (errMessage == 'network-request-failed') {
+    } else if (errMessage == 'network-request-failed') {
       errMessage = "Vérifie la connexion";
-    } else {
+    } else if (errMessage == "[firebase_auth/weak-password] Password should be at least 6 characters") {
+      errMessage = "Mot de passe faible"; 
+
+    } 
+    else {
       errMessage = "Nous n'avons pas identifié le problème";
     }
   }

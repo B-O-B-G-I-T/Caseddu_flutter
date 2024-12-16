@@ -26,18 +26,23 @@ class ParametreRemoteDataSourceImpl implements ParametreRemoteDataSource {
   Future<ParameterEntity> update({required ParameterParams parametreParams}) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
+      
       if (user != null) {
-        if (parametreParams.displayName != null) {
+        if (parametreParams.displayName != "" && parametreParams.displayName != user.displayName) {
           await user.updateDisplayName(parametreParams.displayName);
         }
         if (parametreParams.email.isNotEmpty && parametreParams.email != user.email) {
           await user.verifyBeforeUpdateEmail(parametreParams.email);
         }
-        if (parametreParams.password != null) {
+        if (parametreParams.password != "") {
           await user.updatePassword(parametreParams.password!);
         }
 
-        return ParameterEntity.fromUser(user);
+        ParameterEntity parameter = ParameterEntity.fromUser(user);
+        parameter.description = parametreParams.description;
+
+        parameter.pathImageProfile = parametreParams.pathImageProfile;
+        return parameter;
       } else {
         throw FireBaseException(errMessage: "Utilisateur non trouvé");
       }

@@ -37,9 +37,10 @@ void main() async {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
   final parameterProvider = ParameterProvider();
+  await parameterProvider.init();
   final chatProvider = ChatProvider(parameterProvider: parameterProvider); // Initialisation manuelle
 
-  parameterProvider.init();
+
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);

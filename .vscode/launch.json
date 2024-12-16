@@ -6,9 +6,10 @@
     "configurations": [
 
         {
-            "name": "Caseddu_flutter",
+            "name": "Caseddu",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "flutterMode": "debug"
         },
         {
             "name": "profile mode",

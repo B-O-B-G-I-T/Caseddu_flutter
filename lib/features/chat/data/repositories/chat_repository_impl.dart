@@ -1,7 +1,6 @@
 // ignore_for_file: void_checks, prefer_const_constructors
 
 import 'dart:io';
-
 import 'package:caseddu/core/utils/p2p/fonctions.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_message_entity.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
@@ -11,6 +10,7 @@ import '../../../../../core/connection/network_info.dart';
 import '../../../../core/errors/firebase_exceptions.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
+import '../../../parameter/presentation/providers/parameter_provider.dart';
 import '../../domain/repositories/chat_repository.dart';
 import '../datasources/chat_local_data_source.dart';
 import '../datasources/chat_remote_data_source.dart';
@@ -29,9 +29,10 @@ class ChatRepositoryImpl implements ChatRepository {
   });
 
   @override
-  Future<Either<Failure, NearbyService>> init() async {
+  Future<Either<Failure, NearbyService>> init(ParameterProvider parameterProvider) async {
     try {
-      NearbyService nearbyService = await remoteDataSource.init();
+      
+      NearbyService nearbyService = await remoteDataSource.init(parameterProvider);
 
       return Right(nearbyService);
     } catch (e) {

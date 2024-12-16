@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import '../../../../../core/params/params.dart';
+import '../../../parameter/presentation/providers/parameter_provider.dart';
 import '../models/chat_message_model.dart';
 
 abstract class ChatRemoteDataSource {
-  Future<NearbyService> init();
+  Future<NearbyService> init(ParameterProvider parameterProvider);
   Future<ChatMessageModel> sentToConversations({required ChatMessageParams chatMessageParams});
 }
 
@@ -24,21 +24,20 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<NearbyService> init() async {
-    myName = FirebaseAuth.instance.currentUser!.displayName.toString();
+  Future<NearbyService> init(ParameterProvider parameterProvider) async {
 
-    final NearbyService nearbyService = await initiateNearbyService(myName);
+    final NearbyService nearbyService = await initiateNearbyService(parameterProvider);
 
     return nearbyService;
   }
 
 // Initiating NearbyService to start the connection
-  Future<NearbyService> initiateNearbyService(String myName) async {
-    
+  Future<NearbyService> initiateNearbyService( ParameterProvider parameterProvider) async {
     NearbyService nearbyService = NearbyService();
     await nearbyService.init(
       serviceType: 'mp-connection',
-      deviceName: myName,
+      deviceName: parameterProvider.parameter.displayName,
+      description: parameterProvider.parameter.description,
       strategy: Strategy.P2P_CLUSTER,
       callback: (isRunning) async {
         if (isRunning) {
@@ -46,7 +45,6 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
           await startBrowsing(nearbyService);
         }
       },
-      description: 'easy to connect',
 
     );
     await startAdvertising(nearbyService);

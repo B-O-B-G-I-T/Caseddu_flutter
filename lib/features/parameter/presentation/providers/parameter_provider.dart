@@ -19,18 +19,20 @@ class ParameterProvider extends ChangeNotifier {
   // gestion des images du data picker
   List<AssetEntity> images = [];
   List<AssetEntity> selectedImages = [];
+  bool isloading = false;
 
   Failure? failure;
 
   ParameterProvider({
-
     this.failure,
   });
 
   Future<void> init() async {
+    failure = null;
     final User user = FirebaseAuth.instance.currentUser!;
     parameter = ParameterEntity.fromUser(user);
-    eitherFailureOrGetSavedProfileImage();
+    await eitherFailureOrGetSavedProfileImage();
+    await eitherFailureOrGetDetailUser();
     //notifyListeners();
   }
 
@@ -70,7 +72,6 @@ class ParameterProvider extends ChangeNotifier {
 
     failureOrParametre.fold(
       (Failure newFailure) {
-
         failure = newFailure;
         notifyListeners();
       },
@@ -83,7 +84,7 @@ class ParameterProvider extends ChangeNotifier {
     );
   }
 
-  void eitherFailureOrGetSavedProfileImage() async {
+  Future<void> eitherFailureOrGetSavedProfileImage() async {
     ParametreRepositoryImpl repository = ParametreRepositoryImpl(
       remoteDataSource: ParametreRemoteDataSourceImpl(
         firebaseAuth: FirebaseAuth.instance,
@@ -100,13 +101,68 @@ class ParameterProvider extends ChangeNotifier {
 
     failureOrParametre.fold(
       (Failure newFailure) {
-
         failure = newFailure;
         notifyListeners();
       },
       (String? imagePath) {
         failure = null;
         parameter.setImage(imagePath);
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> eitherFailureOrGetDetailUser() async {
+    ParametreRepositoryImpl repository = ParametreRepositoryImpl(
+      remoteDataSource: ParametreRemoteDataSourceImpl(
+        firebaseAuth: FirebaseAuth.instance,
+      ),
+      localDataSource: ParametreLocalDataSourceImpl(
+        sharedPreferences: await SharedPreferences.getInstance(),
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
+      ),
+    );
+    failure = null;
+    final failureOrParametre = await GetParametre(parametreRepository: repository).getDetailUser();
+
+    failureOrParametre.fold(
+      (Failure newFailure) {
+        failure = newFailure;
+        notifyListeners();
+      },
+      (String? detailUser) {
+        failure = null;
+        parameter.setDetailUser(detailUser);
+        notifyListeners();
+      },
+    );
+  }
+
+  Future<void> eitherFailureOrInsertDetailUser(String? insertUserDetail) async {
+    ParametreRepositoryImpl repository = ParametreRepositoryImpl(
+      remoteDataSource: ParametreRemoteDataSourceImpl(
+        firebaseAuth: FirebaseAuth.instance,
+      ),
+      localDataSource: ParametreLocalDataSourceImpl(
+        sharedPreferences: await SharedPreferences.getInstance(),
+      ),
+      networkInfo: NetworkInfoImpl(
+        DataConnectionChecker(),
+      ),
+    );
+
+    final failureOrParametre = await GetParametre(parametreRepository: repository).insertDetailUser(insertUserDetail);
+
+    failureOrParametre.fold(
+      (Failure newFailure) {
+        failure = newFailure;
+        notifyListeners();
+      },
+      (void d) {
+        failure = null;
+        parameter.setDetailUser(insertUserDetail);
         notifyListeners();
       },
     );
@@ -129,19 +185,17 @@ class ParameterProvider extends ChangeNotifier {
 
     failureOrParametre.fold(
       (Failure newFailure) {
-
         failure = newFailure;
         notifyListeners();
       },
       (void d) {
-
         failure = null;
         notifyListeners();
       },
     );
   }
 
-  void eitherFailureOrUpdate({required ParameterParams parameterParams}) async {
+  Future<void> eitherFailureOrUpdate({required ParameterParams parameterParams}) async {
     ParametreRepositoryImpl repository = ParametreRepositoryImpl(
       remoteDataSource: ParametreRemoteDataSourceImpl(
         firebaseAuth: FirebaseAuth.instance,
@@ -153,14 +207,16 @@ class ParameterProvider extends ChangeNotifier {
         DataConnectionChecker(),
       ),
     );
-
+    isloading = true;
+    notifyListeners();
     final failureOrParametre = await GetParametre(parametreRepository: repository).update(
       parametreParams: parameterParams,
     );
 
+    await eitherFailureOrInsertDetailUser(parameterParams.description);
+
     failureOrParametre.fold(
       (Failure newFailure) {
-
         failure = newFailure;
         notifyListeners();
       },
@@ -170,5 +226,6 @@ class ParameterProvider extends ChangeNotifier {
         notifyListeners();
       },
     );
+    isloading = false;
   }
 }

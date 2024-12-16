@@ -19,6 +19,14 @@ class GetParametre {
   Future<Either<Failure, String?>> getSavedProfileImage() async {
     return await parametreRepository.getSavedProfileImage();
   }
+  
+  Future<Either<Failure, String?>> getDetailUser() async {
+    return await parametreRepository.getDetailUser();
+  }
+
+  Future<Either<Failure, void>> insertDetailUser(String? insertUserDetail) async {
+    return await parametreRepository.insertDetailUser(insertUserDetail);
+  }
   Future<Either<Failure, ParameterEntity>> update({
     required ParameterParams parametreParams,
   }) async {

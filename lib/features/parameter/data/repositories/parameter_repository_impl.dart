@@ -43,7 +43,7 @@ class ParametreRepositoryImpl implements ParametreRepository {
 
         return Right(parameterEntity);
       } on FireBaseException catch (e) {
-        return Left(ServerFailure(errorMessage: e.errMessage));
+        return Left(FireBaseFailure(errorMessage: e.errMessage));
       }
     } else {
       return Left(ServerFailure(errorMessage: "Connecte toi à l'internet"));
@@ -76,5 +76,28 @@ class ParametreRepositoryImpl implements ParametreRepository {
         return Left(ServerFailure(errorMessage: e.errMessage));
       }
     } 
+  @override
+  Future<Either<Failure, String?>> getDetailUser() async {
+
+      try {
+        String? path = await localDataSource.getDetailUser();
+
+        return Right(path);
+      } on FireBaseException catch (e) {
+        return Left(BaseFailure(errorMessage: e.errMessage));
+      }
+    
+  }
   
+  @override
+  Future<Either<Failure, void>> insertDetailUser(String? insertUserDetail) async {
+    
+    try {
+      await localDataSource.insertDetailUser(insertUserDetail);
+
+      return const Right(null);
+    } on FireBaseException catch (e) {
+      return Left(BaseFailure(errorMessage: e.errMessage));
+    }
+  }
 }

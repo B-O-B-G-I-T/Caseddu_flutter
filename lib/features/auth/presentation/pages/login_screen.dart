@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/errors/widgets/attente_widget.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
+import '../../../../core/errors/widgets/forgot_password_widget.dart';
 import '../../../chat/presentation/providers/chat_provider.dart';
 import '../../../parameter/presentation/providers/parameter_provider.dart';
 import '../providers/authentification_provider.dart';
@@ -73,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
                       child: TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Entre ton email';
+                            return AppLocalizations.of(context)!.enter_your_valid_email;
                           }
                           bool emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value);
                           if (!emailValid) {
@@ -126,23 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
 
                   // mot de passe oublié
-                  GestureDetector(
-                    onTap: () {
-                      context.push('/oubliMotDePasse');
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 25),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            AppLocalizations.of(context)!.forgot_password,
-                            style: const TextStyle(color: Colors.blue),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                  const ForgotPasswordWidget(),
 
                   //BOUTTON CLICK
                   Padding(
@@ -175,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
 
                           if (authentificationProvider.authentification != null) {
                             final parameterProvider = Provider.of<ParameterProvider>(context, listen: false);
-                            parameterProvider.init();
+                            await parameterProvider.init();
                             await Provider.of<ChatProvider>(context, listen: false).eitherFailureOrInit(parameterProvider);
                             context.push('/firstPage/0');
                           } else if (authentificationProvider.failure?.errorMessage != null) {

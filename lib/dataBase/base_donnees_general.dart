@@ -38,8 +38,18 @@ class BaseDonneesGeneral {
 
 // ------------------------ CREATE TABLES ------------------------
   static void _onCreate(Database db, int version) async {
+
     // Create your tables here
+
+    await db.execute ('''
+      CREATE TABLE user (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        description TEXT
+      )
+    ''');
+
     await db.execute('''
+
       CREATE TABLE users (
           id TEXT PRIMARY KEY,
           name TEXT,

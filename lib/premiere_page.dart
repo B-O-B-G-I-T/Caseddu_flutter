@@ -105,7 +105,7 @@ class _PremierePageState extends State<PremierePage> {
                   // Image de profil ou texte
                   CustomCircleAvatar(
                     radius: 20,
-                    image: parameterProvider.parameter.photoUrl,
+                    image: parameterProvider.parameter.pathImageProfile,
                     ontap: () async {
                       // Obtenir une référence à l'instance de GoRouter
                       final router = GoRouter.of(context);
@@ -126,20 +126,20 @@ class _PremierePageState extends State<PremierePage> {
             ),
 
             actions: [
-              Padding(
+              Selector<ChatProvider, int>(
+              selector: (context, provider) => provider.devices.length,
+              builder: (BuildContext context, int deviceCount, Widget? child) {
+                return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: CircleAvatar(
                   backgroundColor: Colors.black,
-                  child: IconButton(
-                    color: Colors.white,
-                    icon: const Icon(
-                      Icons.zoom_in_map_rounded,
-                    ),
-                    onPressed: () {
-
-                    },
+                  child: Text(
+                  deviceCount.toString(),
+                  style: ThemeData().textTheme.bodyLarge!.copyWith(color: Colors.white),
                   ),
                 ),
+                );
+              },
               ),
             ],
             //c'est cool si pas centrer
