@@ -22,19 +22,6 @@ class AuthentificationParams {
   AuthentificationParams({required this.email, this.password, this.confirmPassword, this.numero, this.pseudo});
 }
 
-class ParameterParams {
-  final String email;
-  final String? displayName;
-  final String? password;
-  final String? confirmPassword;
-  final String? numero;
-  final String? description;
-  final String? pathImageProfile;
-  ParameterParams( {required this.email, this.password, this.confirmPassword, this.numero, this.displayName, this.description, this.pathImageProfile });
-
-}
-
-class MenuParams {}
 
 class ChatMessageParams {
   String id = '';
@@ -143,6 +130,22 @@ class UserParams{
   }
 
 }
+
+
+class ParameterParams {
+  final String email;
+  final String? displayName;
+  final String? password;
+  final String? confirmPassword;
+  final String? numero;
+  final String? description;
+  final String? pathImageProfile;
+  ParameterParams( {required this.email, this.password, this.confirmPassword, this.numero, this.displayName, this.description, this.pathImageProfile });
+
+}
+class QRCodeParams {}
+
+class MenuParams {}
 
 // class EventParams {
 //   final String title;

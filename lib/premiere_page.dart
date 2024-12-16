@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:caseddu/features/parameter/presentation/providers/parameter_provider.dart';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +8,7 @@ import 'features/chat/presentation/pages/chat_home_page.dart';
 import 'features/chat/presentation/pages/photo_pages/1_camera_page.dart';
 import 'features/chat/presentation/providers/chat_provider.dart';
 import 'features/parameter/presentation/widgets/custom_circle_avatar.dart';
+import 'features/QRCode/presentation/pages/qrcode_page.dart';
 import 'main.dart';
 
 class PremierePage extends StatefulWidget {
@@ -25,6 +25,7 @@ class _PremierePageState extends State<PremierePage> {
 
   late ChatProvider chatProvider;
   late ParameterProvider parameterProvider;
+
   @override
   void initState() {
     super.initState();
@@ -40,15 +41,16 @@ class _PremierePageState extends State<PremierePage> {
     parameterProvider = Provider.of<ParameterProvider>(context, listen: false);
   }
 
-// dictionnaire des pages /////////////////////////////
+  // dictionnaire des pages /////////////////////////////
   static final List<Widget> _pages = <Widget>[
     CameraPage(
       cameras: cameras,
     ),
     const ChatHomeScreen(),
+    const QRCodePage(), // Ajout de la page QR Code
   ];
 
-// fonction qui met à jour l'index de la page
+  // fonction qui met à jour l'index de la page
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -57,7 +59,6 @@ class _PremierePageState extends State<PremierePage> {
 
   @override
   Widget build(BuildContext context) {
-    // return _selectedIndex == 0 ? myAppBar() : justBottomBar();
     return Scaffold(
       // AppBar personnalisé transparent
       body: Stack(
@@ -75,7 +76,7 @@ class _PremierePageState extends State<PremierePage> {
     );
   }
 
-// bottom bar custom
+  // bottom bar custom
   Widget justBottomBar() {
     return Scaffold(
       body: IndexedStack(
@@ -86,7 +87,7 @@ class _PremierePageState extends State<PremierePage> {
     );
   }
 
-// appbar custom
+  // appbar custom
   Widget myAppBar() {
     return Consumer<ParameterProvider>(builder: (context, provider, child) {
       return Positioned(
@@ -127,19 +128,19 @@ class _PremierePageState extends State<PremierePage> {
 
             actions: [
               Selector<ChatProvider, int>(
-              selector: (context, provider) => provider.devices.length,
-              builder: (BuildContext context, int deviceCount, Widget? child) {
-                return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: CircleAvatar(
-                  backgroundColor: Colors.black,
-                  child: Text(
-                  deviceCount.toString(),
-                  style: ThemeData().textTheme.bodyLarge!.copyWith(color: Colors.white),
-                  ),
-                ),
-                );
-              },
+                selector: (context, provider) => provider.devices.length,
+                builder: (BuildContext context, int deviceCount, Widget? child) {
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.black,
+                      child: Text(
+                        deviceCount.toString(),
+                        style: ThemeData().textTheme.bodyLarge!.copyWith(color: Colors.white),
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
             //c'est cool si pas centrer
@@ -167,6 +168,10 @@ class _PremierePageState extends State<PremierePage> {
             BottomNavigationBarItem(
               icon: Icon(Icons.chat),
               label: 'Chats',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.qr_code), // Icône QR Code
+              label: 'QR Code',
             ),
           ],
           currentIndex: _selectedIndex, //New

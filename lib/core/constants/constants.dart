@@ -28,3 +28,5 @@ String kChatTypeMessage = "Image";
 String kChatId = "123";
 
 String kChatConverser = "converser";
+
+String kQRCode = "parametrte";
