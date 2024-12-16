@@ -19,6 +19,7 @@ class ParameterProvider extends ChangeNotifier {
   // gestion des images du data picker
   List<AssetEntity> images = [];
   List<AssetEntity> selectedImages = [];
+  bool isloading = false;
 
   Failure? failure;
 
@@ -27,6 +28,7 @@ class ParameterProvider extends ChangeNotifier {
   });
 
   Future<void> init() async {
+    failure = null;
     final User user = FirebaseAuth.instance.currentUser!;
     parameter = ParameterEntity.fromUser(user);
     await eitherFailureOrGetSavedProfileImage();
@@ -110,7 +112,7 @@ class ParameterProvider extends ChangeNotifier {
     );
   }
 
-    Future<void> eitherFailureOrGetDetailUser() async {
+  Future<void> eitherFailureOrGetDetailUser() async {
     ParametreRepositoryImpl repository = ParametreRepositoryImpl(
       remoteDataSource: ParametreRemoteDataSourceImpl(
         firebaseAuth: FirebaseAuth.instance,
@@ -122,7 +124,7 @@ class ParameterProvider extends ChangeNotifier {
         DataConnectionChecker(),
       ),
     );
-
+    failure = null;
     final failureOrParametre = await GetParametre(parametreRepository: repository).getDetailUser();
 
     failureOrParametre.fold(
@@ -205,7 +207,8 @@ class ParameterProvider extends ChangeNotifier {
         DataConnectionChecker(),
       ),
     );
-
+    isloading = true;
+    notifyListeners();
     final failureOrParametre = await GetParametre(parametreRepository: repository).update(
       parametreParams: parameterParams,
     );
@@ -223,5 +226,6 @@ class ParameterProvider extends ChangeNotifier {
         notifyListeners();
       },
     );
+    isloading = false;
   }
 }

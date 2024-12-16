@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import '../../../../../core/params/params.dart';
 import '../../../parameter/presentation/providers/parameter_provider.dart';

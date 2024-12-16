@@ -43,7 +43,7 @@ class ParametreRepositoryImpl implements ParametreRepository {
 
         return Right(parameterEntity);
       } on FireBaseException catch (e) {
-        return Left(ServerFailure(errorMessage: e.errMessage));
+        return Left(FireBaseFailure(errorMessage: e.errMessage));
       }
     } else {
       return Left(ServerFailure(errorMessage: "Connecte toi à l'internet"));

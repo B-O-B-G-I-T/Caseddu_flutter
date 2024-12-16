@@ -9,6 +9,8 @@
     "enter_a_valid_email": "Enter a valid email ",
     "enter_your_valid_email": "Enter your valid email",
     "write_description": "Write a description of yourself",
+    "too_long": "Too long",
+    "no_changes": "No change, modify a field to validate",
     "creation": "Creation",
     "connect_with_apple" :  "Connect with Apple",
     "connect_with_google": "Login with Google",

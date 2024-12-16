@@ -18,3 +18,7 @@ class CacheFailure extends Failure {
 class ImageFailure extends Failure {
   ImageFailure({required super.errorMessage});
 }
+
+class FireBaseFailure extends Failure {
+  FireBaseFailure({required super.errorMessage});
+}

@@ -21,6 +21,7 @@ class ParameterPage extends StatefulWidget {
 }
 
 class _ParameterPageState extends State<ParameterPage> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -38,7 +39,7 @@ class _ParameterPageState extends State<ParameterPage> {
     provider = Provider.of<ParameterProvider>(context, listen: false);
 
     // Préremplir les champs avec les informations actuelles
-    debugPrint('ParameterPage: initState');
+    //debugPrint('ParameterPage: initState');
     _nameController.text = provider.parameter.displayName;
     _emailController.text = provider.parameter.email;
     _descriptionController.text = provider.parameter.description ?? '';
@@ -69,166 +70,232 @@ class _ParameterPageState extends State<ParameterPage> {
           leading: const LeadingButtonGoBack(),
           title: Text(AppLocalizations.of(context)!.settings),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Form(
+                key: _formKey,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Image de profil ou texte
-                    CustomCircleAvatar(
-                      image: provider.parameter.pathImageProfile,
-                      ontap: () async {
-                        //FocusScope.of(context).unfocus();
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Image de profil ou texte
+                          CustomCircleAvatar(
+                            image: provider.parameter.pathImageProfile,
+                            ontap: () async {
+                              //FocusScope.of(context).unfocus();
 
-                        permissionStatus = await PhotoManager.requestPermissionExtend();
-                        if (permissionStatus == PermissionState.authorized) {
-                          await provider.loadImageParams(context);
-                          setState(() {
-                            _showBottomSheet();
-                          });
-                          // } else if (permissionStatus.hasAccess && !_showGallery) {
-                          //   Utils.showLimitedAccessDialog(context: context);
-                        } else {
-                          Utils.showPermissionDeniedDialog(context: context);
-                        }
-                      },
-                    ),
+                              permissionStatus = await PhotoManager.requestPermissionExtend();
+                              if (permissionStatus == PermissionState.authorized) {
+                                await provider.loadImageParams(context);
+                                setState(() {
+                                  _showBottomSheet();
+                                });
+                                // } else if (permissionStatus.hasAccess && !_showGallery) {
+                                //   Utils.showLimitedAccessDialog(context: context);
+                              } else {
+                                Utils.showPermissionDeniedDialog(context: context);
+                              }
+                            },
+                          ),
 
-                    const SizedBox(height: 16.0),
+                          const SizedBox(height: 16.0),
 
-                    // Nom
-                    TextField(
-                      controller: _nameController,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.edit_name,
-                        border: const OutlineInputBorder(),
+                          // Nom
+                          TextFormField(
+                            controller: _nameController,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!.edit_name,
+                              border: const OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return AppLocalizations.of(context)!.enter_pseudo;
+                              }
+
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16.0),
+
+                          // E-mail
+                          TextFormField(
+                            controller: _emailController,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!.edit_email,
+                              border: const OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return AppLocalizations.of(context)!.enter_email;
+                              }
+                              bool emailValid = RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").hasMatch(value);
+                              if (!emailValid) {
+                                return AppLocalizations.of(context)!.enter_a_valid_email;
+                              }
+
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16.0),
+
+                          // Mot de passe
+                          // TODO: je  suis mignon modifie et fais un truc plus costaud
+                          TextFormField(
+                            controller: _passwordController,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!.edit_password,
+                              border: const OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value != null) {
+                                if (value.length > 6) {
+                                  return AppLocalizations.of(context)!.i_hope_you_haven_t_forgotten_it;
+                                } else {
+                                  return null;
+                                }
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 16.0),
+
+                          // Description
+                          TextFormField(
+                            controller: _descriptionController,
+                            maxLength: 255,
+                            maxLines: null,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!.write_description,
+                              border: const OutlineInputBorder(),
+                            ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty || value.length > 255) {
+                                return AppLocalizations.of(context)!.too_long;
+                              }
+
+                              return null;
+                            },
+                          ),
+
+                          const SizedBox(height: 16.0),
+                          // Notifications
+                          SwitchListTile(
+                            title: Text(AppLocalizations.of(context)!.notifications),
+                            value: _notificationsEnabled,
+                            onChanged: (value) {
+                              setState(() {
+                                _notificationsEnabled = value;
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 16.0),
+
+                          // Langue
+                          DropdownButtonFormField<String>(
+                            value: _selectedLanguage,
+                            decoration: InputDecoration(
+                              labelText: AppLocalizations.of(context)!.language,
+                              border: const OutlineInputBorder(),
+                            ),
+                            items: const [
+                              DropdownMenuItem(value: 'en', child: Text('English')),
+                              DropdownMenuItem(value: 'fr', child: Text('Français')),
+                            ],
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedLanguage = value ?? 'en';
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 24.0),
+
+                          // Sauvegarder les modifications
+                          Center(
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  try {
+                                    final parameter = ParameterParams(
+                                      email: _emailController.text.trim(),
+                                      password: _passwordController.text.trim(),
+                                      displayName: _nameController.text.trim(),
+                                      description: _descriptionController.text.trim(),
+                                      pathImageProfile: provider.parameter.pathImageProfile,
+                                    );
+
+                                    if (provider.parameter.isEqualToParams(parameter)) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text(AppLocalizations.of(context)!.no_changes)),
+                                      );
+                                    } else {
+                                      await provider.eitherFailureOrUpdate(parameterParams: parameter);
+                                      await Provider.of<ChatProvider>(context, listen: false).eitherFailureOrInit(provider);
+
+                                      //TODO : peut être à supprimer, avec la methode implémenter la paire disparait puis réapparait  moi j'aime bien mais pour un utilisateur pas mieux sans
+
+                                      // final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
+                                      // chatProvider.controlerDevice!.setDescription(_descriptionController.text.trim());
+
+                                      FocusScope.of(context).unfocus();
+
+                                      _passwordController.text = ""; // Clear password field
+
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text(AppLocalizations.of(context)!.profile_updated)),
+                                      );
+                                    }
+                                    if (provider.failure != null && mounted) {
+                                      fireBaseError(context, 'Error', provider.failure!.errorMessage);
+                                    }
+                                  } catch (e) {
+                                    fireBaseError(context, 'Error', e.toString());
+                                  }
+                                }
+                              },
+                              child: Text(AppLocalizations.of(context)!.save_changes),
+                            ),
+                          ),
+                          const SizedBox(height: 16.0),
+
+                          // Bouton de déconnexion
+                          Center(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                              ),
+                              onPressed: () {
+                                provider.eitherFailureOrLogout();
+                                provider.dispose();
+                                context.push('/login');
+                              },
+                              child: Text(AppLocalizations.of(context)!.logout),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 16.0),
-
-                    // E-mail
-                    TextField(
-                      controller: _emailController,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.edit_email,
-                        border: const OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-
-                    // Mot de passe
-                    TextField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.edit_password,
-                        border: const OutlineInputBorder(),
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-
-                    // Description
-                    TextField(
-                      controller: _descriptionController,
-                      maxLength: 255,
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.write_description,
-                        border: const OutlineInputBorder(),
-                      ),
-                    ),
-
-                    const SizedBox(height: 16.0),
-                    // Notifications
-                    SwitchListTile(
-                      title: Text(AppLocalizations.of(context)!.notifications),
-                      value: _notificationsEnabled,
-                      onChanged: (value) {
-                        setState(() {
-                          _notificationsEnabled = value;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16.0),
-
-                    // Langue
-                    DropdownButtonFormField<String>(
-                      value: _selectedLanguage,
-                      decoration: InputDecoration(
-                        labelText: AppLocalizations.of(context)!.language,
-                        border: const OutlineInputBorder(),
-                      ),
-                      items: const [
-                        DropdownMenuItem(value: 'en', child: Text('English')),
-                        DropdownMenuItem(value: 'fr', child: Text('Français')),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _selectedLanguage = value ?? 'en';
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 24.0),
-
-                    // Sauvegarder les modifications
-                    Center(
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          try {
-                            final parameter = ParameterParams(
-                              email: _emailController.text.trim(),
-                              password: _passwordController.text.trim(),
-                              displayName: _nameController.text.trim(),
-                              description: _descriptionController.text.trim(),
-                              pathImageProfile: provider.parameter.pathImageProfile,
-                            );
-
-                            await provider.eitherFailureOrUpdate(parameterParams: parameter);
-                            await Provider.of<ChatProvider>(context, listen: false).eitherFailureOrInit(provider);
-                            // final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
-                            // chatProvider.controlerDevice!.setDescription(_descriptionController.text.trim());
-
-                            FocusScope.of(context).unfocus();
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(AppLocalizations.of(context)!.profile_updated)),
-                            );
-                          } on Exception catch (e) {
-                            fireBaseError(context, 'Error', e.toString());
-                          }
-                        },
-                        child: Text(AppLocalizations.of(context)!.save_changes),
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-
-                    // Bouton de déconnexion
-                    Center(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                        ),
-                        onPressed: () {
-                          provider.eitherFailureOrLogout();
-                          provider.dispose();
-                          context.push('/login');
-                        },
-                        child: Text(AppLocalizations.of(context)!.logout),
-                      ),
-                    ),
+                    _showGallery
+                        ? ImagePickerForParams(
+                            parameterProvider: provider,
+                          )
+                        : const Center(),
                   ],
                 ),
               ),
-              _showGallery
-                  ? ImagePickerForParams(
-                      parameterProvider: provider,
-                    )
-                  : const Center(),
-            ],
-          ),
+            ),
+            if (provider.isloading)
+              Container(
+                color: Colors.black.withOpacity(0.5), // Fond noir semi-transparent
+                child: const Center(
+                  child: CircularProgressIndicator(), // Indicateur de chargement au centre
+                ),
+              ),
+          ],
         ),
       );
     });
