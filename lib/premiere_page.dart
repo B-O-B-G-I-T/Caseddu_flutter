@@ -39,6 +39,7 @@ class _PremierePageState extends State<PremierePage> {
     });
 
     parameterProvider = Provider.of<ParameterProvider>(context, listen: false);
+    parameterProvider.init();
   }
 
   // dictionnaire des pages /////////////////////////////

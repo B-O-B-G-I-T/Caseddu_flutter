@@ -29,10 +29,12 @@ class ParameterProvider extends ChangeNotifier {
 
   Future<void> init() async {
     failure = null;
-    final User user = FirebaseAuth.instance.currentUser!;
-    parameter = ParameterEntity.fromUser(user);
-    await eitherFailureOrGetSavedProfileImage();
-    await eitherFailureOrGetDetailUser();
+    final User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      parameter = ParameterEntity.fromUser(user);
+      await eitherFailureOrGetSavedProfileImage();
+      await eitherFailureOrGetDetailUser();
+    }
     //notifyListeners();
   }
 
