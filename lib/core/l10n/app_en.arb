@@ -148,6 +148,18 @@
     "language": "Language",
     "name_updated": "Name updated successfully",
     "profile_updated": "Profile updated successfully",
+
+    "qrCodeTitleDefault": "Scan the QR code",
+    "qrCodeDescriptionDefault": "I am using the app {appName} and I would like to chat with you.",
+    "@qrCodeDescriptionDefault": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+        "appName": {
+        "type": "String",
+        "example": "Bob"
+        }
+    }
+    },
     "template": "Template"
 
 }

@@ -53,6 +53,9 @@ dependencies:
   # pour les chemins les photos
   path_provider: ^2.0.15
 
+  # pour les qr code
+  qr_flutter: ^4.1.0
+  
   # loading
   flutter_spinkit: ^5.2.0
   # pour la gestion des préférences utilisateurs
