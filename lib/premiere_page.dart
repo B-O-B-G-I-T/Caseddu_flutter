@@ -8,7 +8,7 @@ import 'features/chat/presentation/pages/chat_home_page.dart';
 import 'features/chat/presentation/pages/photo_pages/1_camera_page.dart';
 import 'features/chat/presentation/providers/chat_provider.dart';
 import 'features/parameter/presentation/widgets/custom_circle_avatar.dart';
-import 'features/QRCode/presentation/pages/qrcode_page.dart';
+import 'features/QRCode/presentation/pages/qrcode_generate_page.dart';
 import 'main.dart';
 
 class PremierePage extends StatefulWidget {
@@ -48,7 +48,7 @@ class _PremierePageState extends State<PremierePage> {
       cameras: cameras,
     ),
     const ChatHomeScreen(),
-    const QRCodePage(), // Ajout de la page QR Code
+    const QRCodeGeneratePage(), // Ajout de la page QR Code
   ];
 
   // fonction qui met à jour l'index de la page

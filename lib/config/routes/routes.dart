@@ -6,11 +6,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../../features/QRCode/presentation/pages/qrcode_camera_page.dart';
 import '../../features/auth/presentation/pages/connection_with.dart';
 import '../../features/auth/presentation/pages/login_screen.dart';
 import '../../features/auth/presentation/pages/oubli_mot_de_passe.dart';
 import '../../features/auth/presentation/pages/register_screen.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
+import '../../features/chat/presentation/pages/photo_pages/2_prise_de_photo copy.dart';
 import '../../features/chat/presentation/pages/photo_pages/2_prise_de_photo.dart';
 import '../../features/chat/presentation/pages/photo_pages/3_envoie_de_photo.dart';
 import '../../features/chat/presentation/providers/chat_provider.dart';
@@ -139,6 +141,23 @@ class Routes {
           );
         },
       ),
+      GoRoute(
+        path: '/PrisePhotoString/:filePath',
+        name: 'PrisePhotoString',
+        pageBuilder: (context, state) {
+          final String filePath = state.extra as String; // -> le casting est important
+
+          return CustomTransitionPage(
+            child: PrisePhotoString(lastImageCompleter: filePath),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              // Aucune transition, on retourne directement l'enfant
+              return child;
+            },
+            transitionDuration: Duration.zero, // Pas de délai de transition
+          );
+        },
+      ),
+    
     ],
   );
 
