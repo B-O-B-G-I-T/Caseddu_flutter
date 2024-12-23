@@ -1,16 +1,15 @@
+import 'package:caseddu/features/parameter/presentation/providers/parameter_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class QRCodeGeneratePage extends StatelessWidget {
-  const QRCodeGeneratePage({super.key});
-
-  final String userId = "12345"; // Exemple d'ID utilisateur
+  QRCodeGeneratePage({super.key});
 
   // URL schéma personnalisé pour ouvrir l'application si elle est installée
-  String _getAppUrl() {
+  String _getAppUrl(String userId) {
     return "Caseddu://user?id=$userId"; // Schéma personnalisé de votre app
   }
 
@@ -32,10 +31,14 @@ class QRCodeGeneratePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+  final ParameterProvider parameterProvider = Provider.of<ParameterProvider>(context, listen: false);
+  final String userId = parameterProvider.parameter.displayName; // Exemple d'ID utilisateur
+
     final TextEditingController titleController = TextEditingController(text: AppLocalizations.of(context)!.qrCodeTitleDefault);
     final TextEditingController descriptionController =
         TextEditingController(text: AppLocalizations.of(context)!.qrCodeDescriptionDefault("Caseddu"));
-    const String appLink = "https://testflight.apple.com/join/9Gpy3Vmx";
+    String appLink = "https://testflight.apple.com/join/9Gpy3Vmx id: $userId ";
 
     return Scaffold(
       appBar: AppBar(title: const Text('QR Code')),
@@ -86,7 +89,7 @@ class QRCodeGeneratePage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () async {
-                final appUrl = Uri.parse(_getAppUrl());
+                final appUrl = Uri.parse(_getAppUrl(parameterProvider.parameter.displayName));
                 final testFlightUrl = Uri.parse(_getTestFlightUrl());
 
                 // Vérifier si l'application est installée en essayant d'ouvrir le schéma personnalisé

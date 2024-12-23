@@ -3,13 +3,17 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:camera/camera.dart';
+import 'package:caseddu/features/chat/presentation/providers/chat_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image/image.dart' as IMG;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import '../../widgets/camera_widgets/background_buttons_widget.dart';
 import '../../widgets/camera_widgets/loader_for_camera.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -24,7 +28,19 @@ class CameraPage extends StatefulWidget {
 }
 
 class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
-  late CameraController _cameraController;
+  late CameraController _cameraController = CameraController(
+    const CameraDescription(
+      // pour eviter l'erreur de null
+      name: 'null',
+      lensDirection: CameraLensDirection.front,
+      sensorOrientation: 0,
+    ),
+    ResolutionPreset.medium,
+    imageFormatGroup: ImageFormatGroup.yuv420,
+
+    //fps: 30,
+  );
+
   Future<void>? initialiseControllerFuture;
   int _selecteCameraIndex = -1;
 
@@ -44,6 +60,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
   String _scannedText = '';
   bool _isScanning = false; // Contrôle si l'on est en train de scanner
+  int _frameSkip = 0;
   final BarcodeScanner _barcodeScanner = BarcodeScanner(
     formats: [BarcodeFormat.qrCode], // Spécifie que nous voulons scanner des QR codes
   );
@@ -120,10 +137,8 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 // FONCTIONS
 
   Future<void> _prendrePhoto() async {
-    // pour le faire en background
-    //initialiseControllerFuture.then((value) => null);
     try {
-      await initialiseControllerFuture;
+      //await initialiseControllerFuture;
 
       final XFile file = await _cameraController.takePicture();
       if (!mounted) return;
@@ -273,6 +288,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
             previewHeight,
           ),
         );
+        return null;
       });
     } catch (e) {
       print('Error initializing camera: $e');
@@ -339,27 +355,83 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     );
   }
 
-  // Fonction pour déclencher l'analyse et stopper le stream
-  Future<void> _onTapToScanIsolate() async {
-    if (_isScanning) return; // Eviter les scans multiples simultanés
-    _isScanning = true;
-
+  // Fonction pour prendre une photo et analyser le QR code
+  Future<void> _scanQRCode() async {
     try {
-      // Prendre une photo de l'image actuelle de la caméra
-      final XFile imageFile = await _cameraController.takePicture();
-      final String imagePath = imageFile.path;
+      final image = await _cameraController.takePicture(); // Prendre une photo
 
-      // Utiliser un Isolate pour analyser le QR code en arrière-plan
-      final result = await _performAnalysisInIsolate(imagePath);
+      final inputImage = InputImage.fromFilePath(image.path);
+      final barcodeScanner = BarcodeScanner(
+        formats: [
+          BarcodeFormat.qrCode, // Spécifie que nous voulons scanner des QR codes
+        ],
+      );
 
-      setState(() {
-        _scannedText = result ?? 'Aucun QR code détecté';
-      });
+      // Détecter les codes QR dans l'image
+      final List<Barcode> barcodes = await barcodeScanner.processImage(inputImage);
+
+      if (barcodes.isNotEmpty) {
+        // Si un QR code est détecté, affichez sa valeur
+        final qrCode = barcodes.first.rawValue;
+        if (qrCode != null) {
+          // Afficher ou traiter le QR code détecté
+          print('QR Code détecté: $qrCode');
+          String id = findIdInQRCode(qrCode);
+          noticiationQRCode(id);
+          final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
+          Device device = Device(id, id, SessionState.notConnected);
+          chatProvider.connectToDevice(device);
+          // Vous pouvez afficher le QR Code dans un dialog ou ailleurs
+        }
+      } else {
+        _scannedText = 'Pas de QR code détecté';
+        // Attendre 3 secondes et ensuite vider le texte et cacher le container
+        Future.delayed(const Duration(seconds: 3), () {
+          setState(() {
+            _scannedText = ""; // Vider le texte
+          });
+        });
+        print('Aucun QR code détecté');
+      }
     } catch (e) {
-      print('Erreur lors de la détection du QR code: $e');
-    } finally {
-      _isScanning = false; // Réactive la possibilité de scanner après un tap
+      print('Erreur lors du scan QR: $e');
     }
+  }
+
+  String findIdInQRCode(String qrCode) {
+    // Utilisation d'une expression régulière pour extraire la valeur de userId
+    RegExp regExp = RegExp(r"id: (\S+)");
+
+    // Chercher la correspondance dans la chaîne
+    var match = regExp.firstMatch(qrCode);
+
+    if (match != null) {
+      String userId = match.group(1)!; // Récupère la première correspondance (la valeur de userId)
+      return userId;
+    } else {
+      print("User ID not found");
+      return '';
+    }
+  }
+
+  void noticiationQRCode(String qrCode) {
+    // Vibrer pour indiquer la détection
+    HapticFeedback.mediumImpact();
+
+    // Afficher le résultat
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('QR Code'),
+        content: Text(qrCode),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget cameraWidget() {
@@ -381,7 +453,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                     return GestureDetector(
                       onTap: () {
                         hideAdditionnalButtons();
-                        _onTapToScanIsolate();
+                        _scanQRCode();
                       },
                       onTapDown: (details) => onViewFinderTap(details, constraints),
                       onDoubleTap: () {
@@ -596,7 +668,6 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        // TODO: essaie d'intégrer le qrview
         if (_scannedText.isNotEmpty)
           Container(
             decoration: BoxDecoration(
@@ -606,12 +677,12 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                'QR Code trouvé',
+                _scannedText,
                 style: ThemeData().textTheme.bodyLarge!.copyWith(color: Colors.white),
               ),
             ),
           ),
-        // const SizedBox(height: 10),
+        const SizedBox(height: 10),
         Container(
           width: 200,
           height: 70,
@@ -752,38 +823,5 @@ Future<void> cropImageToScreenSize(Map<String, dynamic> arguments) async {
   } catch (e) {
     print('Error during cropping: $e');
     sendPort.send('Error: $e');
-  }
-}
-
-// Fonction pour démarrer un Isolate et effectuer l'analyse du QR code
-Future<String?> _performAnalysisInIsolate(String imagePath) async {
-  final receivePort = ReceivePort();
-
-  // Démarrer l'Isolate et exécuter le traitement de l'image
-  await Isolate.spawn(_scanQRCodeInIsolate, [imagePath, receivePort.sendPort]);
-
-  // Attendre le résultat de l'Isolate
-  final result = await receivePort.first;
-  return result as String?;
-}
-
-// Fonction qui sera exécutée dans l'Isolate
-void _scanQRCodeInIsolate(List<dynamic> args) async {
-  final String imagePath = args[0];
-  final SendPort sendPort = args[1];
-
-  try {
-    final barcodeScanner = BarcodeScanner(formats: [BarcodeFormat.qrCode]);
-
-    // Créer un InputImage à partir du fichier image
-    final inputImage = InputImage.fromFilePath(imagePath);
-
-    // Utiliser ML Kit pour détecter le QR code
-    final List<Barcode> barcodes = await barcodeScanner.processImage(inputImage);
-
-    // Envoyer le résultat de l'analyse à l'UI thread via le SendPort
-    sendPort.send(barcodes.isNotEmpty ? barcodes.first.rawValue : null);
-  } catch (e) {
-    sendPort.send('Erreur lors de la détection du QR code');
   }
 }

@@ -63,7 +63,6 @@ class ChatProvider extends ChangeNotifier {
     required ParameterProvider parameterProvider,
     this.failure,
   }) {
-
     eitherFailureOrInit(parameterProvider);
     eitherFailureOrAllConversations();
   }
@@ -94,7 +93,7 @@ class ChatProvider extends ChangeNotifier {
 
         checkDevices(controlerDevice!);
         checkReceiveData(controlerDevice!);
-        
+
         this.parameterProvider = parameterProvider;
         failure = null;
         // Diffuse le nouveau message via le Stream
@@ -116,6 +115,7 @@ class ChatProvider extends ChangeNotifier {
   void setupInvitationHandler(BuildContext context) {
     controlerDevice?.registerInvitationHandler((peerName) async {
       try {
+
         final result = await showDialog<bool>(
           context: context,
           builder: (context) {
