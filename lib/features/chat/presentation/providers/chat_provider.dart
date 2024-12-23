@@ -115,6 +115,11 @@ class ChatProvider extends ChangeNotifier {
   void setupInvitationHandler(BuildContext context) {
     controlerDevice?.registerInvitationHandler((peerName) async {
       try {
+        debugPrint("Invitation received from $peerName");
+        if (devices.any((element) => element.deviceName == peerName)) {
+          notifyListeners();
+          return false;
+        }
 
         final result = await showDialog<bool>(
           context: context,
@@ -429,13 +434,15 @@ class ChatProvider extends ChangeNotifier {
   }
 
   // Function to connect to a device
-  Future<bool> connectToDevice(Device device) async {
+  Future<bool> connectToDevice(Device device, {String force = 'no-force'}) async {
     // TODO: Faire une alerte lorsque l'on n'arrive pas a ce connecté
     switch (device.state) {
       case SessionState.notConnected:
+
         await controlerDevice?.invitePeer(
           deviceID: device.deviceId,
           deviceName: device.deviceName,
+          force: force,
         );
 
         devices = devices.map((d) {

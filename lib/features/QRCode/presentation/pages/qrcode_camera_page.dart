@@ -11,7 +11,6 @@ class QRCodeCamera extends StatefulWidget {
 
 class _QRCodeCameraState extends State<QRCodeCamera> {
   String _scannedText = "";
-  bool _isCameraReady = false;
 
   // Fonction de création du QRView
 

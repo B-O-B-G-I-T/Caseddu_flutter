@@ -1,12 +1,10 @@
 import 'dart:async';
-
 import 'package:caseddu/features/chat/presentation/pages/chat_user_page.dart';
 import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/preview_picture/full_screen_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../../features/QRCode/presentation/pages/qrcode_camera_page.dart';
 import '../../features/auth/presentation/pages/connection_with.dart';
 import '../../features/auth/presentation/pages/login_screen.dart';
 import '../../features/auth/presentation/pages/oubli_mot_de_passe.dart';

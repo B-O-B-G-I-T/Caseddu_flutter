@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages, avoid_print, library_prefixes, file_names
+// ignore_for_file: depend_on_referenced_packages, avoid_print, library_prefixes, file_names, use_build_context_synchronously
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
@@ -59,11 +59,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   final GlobalKey _addButtonKey = GlobalKey(); // Key pour obtenir la position du bouton "add"
 
   String _scannedText = '';
-  bool _isScanning = false; // Contrôle si l'on est en train de scanner
-  int _frameSkip = 0;
-  final BarcodeScanner _barcodeScanner = BarcodeScanner(
-    formats: [BarcodeFormat.qrCode], // Spécifie que nous voulons scanner des QR codes
-  );
+
 
   @override
   void initState() {
@@ -375,12 +371,12 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         final qrCode = barcodes.first.rawValue;
         if (qrCode != null) {
           // Afficher ou traiter le QR code détecté
-          print('QR Code détecté: $qrCode');
+          debugPrint('QR Code détecté: $qrCode');
           String id = findIdInQRCode(qrCode);
           noticiationQRCode(id);
           final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
           Device device = Device(id, id, SessionState.notConnected);
-          chatProvider.connectToDevice(device);
+          chatProvider.connectToDevice(device, force: "qr-force");
           // Vous pouvez afficher le QR Code dans un dialog ou ailleurs
         }
       } else {
@@ -391,10 +387,10 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
             _scannedText = ""; // Vider le texte
           });
         });
-        print('Aucun QR code détecté');
+        debugPrint('Aucun QR code détecté');
       }
     } catch (e) {
-      print('Erreur lors du scan QR: $e');
+      debugPrint('Erreur lors du scan QR: $e');
     }
   }
 
