@@ -116,10 +116,10 @@ class ChatProvider extends ChangeNotifier {
     controlerDevice?.registerInvitationHandler((peerName) async {
       try {
         debugPrint("Invitation received from $peerName");
-        if (devices.any((element) => element.deviceName == peerName)) {
-          notifyListeners();
-          return false;
-        }
+        // if (connectedDevices.any((element) => element.deviceName == peerName)) {
+        //   notifyListeners();
+        //   return false;
+        // }
 
         final result = await showDialog<bool>(
           context: context,
