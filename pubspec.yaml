@@ -55,10 +55,8 @@ dependencies:
 
   # pour les qr code
   qr_flutter: ^4.1.0
-  mobile_scanner: ^6.0.2
   google_ml_kit: ^0.19.0
   google_mlkit_barcode_scanning: ^0.13.0
-  zxing2: ^0.2.0
 
   #sert pour les testes
   url_launcher: ^6.3.1
@@ -80,8 +78,6 @@ dependencies:
   flutter_nearby_connections:
     git:
       url: https://github.com/B-O-B-G-I-T/flutter_nearby_connections.git
-  
-  #flutter_nearby_connections: ^1.1.2
   
   # pour les taches de fond
   #workmanager: ^0.5.2

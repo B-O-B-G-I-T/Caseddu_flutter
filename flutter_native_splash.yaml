@@ -1,0 +1,9 @@
+flutter_native_splash:
+  color: "#FFFFFF"  # Couleur de fond
+  image: assets/icons/qrCodeIcon.png  # Logo
+  branding: assets/icons/CasedduTittle.png # Titre en anglais
+  branding_mode: center  # Le logo et le texte sont centrés
+
+  # Compatibilité avec les plateformes
+  android: true
+  ios: true

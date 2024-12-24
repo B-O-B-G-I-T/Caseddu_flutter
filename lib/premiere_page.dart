@@ -40,6 +40,7 @@ class _PremierePageState extends State<PremierePage> {
 
     parameterProvider = Provider.of<ParameterProvider>(context, listen: false);
     parameterProvider.init();
+    
   }
 
   // dictionnaire des pages /////////////////////////////
@@ -60,6 +61,7 @@ class _PremierePageState extends State<PremierePage> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       // AppBar personnalisé transparent
       body: Stack(
