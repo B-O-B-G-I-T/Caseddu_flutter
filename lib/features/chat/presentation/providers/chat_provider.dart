@@ -63,7 +63,6 @@ class ChatProvider extends ChangeNotifier {
     required ParameterProvider parameterProvider,
     this.failure,
   }) {
-
     eitherFailureOrInit(parameterProvider);
     eitherFailureOrAllConversations();
   }
@@ -94,7 +93,7 @@ class ChatProvider extends ChangeNotifier {
 
         checkDevices(controlerDevice!);
         checkReceiveData(controlerDevice!);
-        
+
         this.parameterProvider = parameterProvider;
         failure = null;
         // Diffuse le nouveau message via le Stream
@@ -116,6 +115,12 @@ class ChatProvider extends ChangeNotifier {
   void setupInvitationHandler(BuildContext context) {
     controlerDevice?.registerInvitationHandler((peerName) async {
       try {
+        debugPrint("Invitation received from $peerName");
+        // if (connectedDevices.any((element) => element.deviceName == peerName)) {
+        //   notifyListeners();
+        //   return false;
+        // }
+
         final result = await showDialog<bool>(
           context: context,
           builder: (context) {
@@ -429,13 +434,15 @@ class ChatProvider extends ChangeNotifier {
   }
 
   // Function to connect to a device
-  Future<bool> connectToDevice(Device device) async {
+  Future<bool> connectToDevice(Device device, {String force = 'no-force'}) async {
     // TODO: Faire une alerte lorsque l'on n'arrive pas a ce connecté
     switch (device.state) {
       case SessionState.notConnected:
+
         await controlerDevice?.invitePeer(
           deviceID: device.deviceId,
           deviceName: device.deviceName,
+          force: force,
         );
 
         devices = devices.map((d) {

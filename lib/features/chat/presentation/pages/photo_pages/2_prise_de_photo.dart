@@ -7,7 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PrisePhoto extends StatefulWidget {
   const PrisePhoto({super.key, required this.lastImageCompleter});
-  final Completer<String?> lastImageCompleter;
+  final Completer<String?>  lastImageCompleter;
 
   @override
   State<PrisePhoto> createState() => _PrisePhotoState();

@@ -1,14 +1,19 @@
-// ignore_for_file: depend_on_referenced_packages, avoid_print, library_prefixes, file_names
+// ignore_for_file: depend_on_referenced_packages, avoid_print, library_prefixes, file_names, use_build_context_synchronously
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 import 'package:camera/camera.dart';
+import 'package:caseddu/features/chat/presentation/providers/chat_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_nearby_connections/flutter_nearby_connections.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image/image.dart' as IMG;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import '../../widgets/camera_widgets/background_buttons_widget.dart';
 import '../../widgets/camera_widgets/loader_for_camera.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -35,6 +40,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
     //fps: 30,
   );
+
   Future<void>? initialiseControllerFuture;
   int _selecteCameraIndex = -1;
 
@@ -52,12 +58,15 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   bool _showExtraButtons = false; // Variable d'état pour afficher le conteneur supplémentaire
   final GlobalKey _addButtonKey = GlobalKey(); // Key pour obtenir la position du bouton "add"
 
+  String _scannedText = '';
+
+
   @override
   void initState() {
+    super.initState();
     // _cameraToggle();
     getAllPermission();
     // getPermissionStatus();
-    super.initState();
   }
 
   @override
@@ -79,6 +88,10 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     if (_showExtraButtons == true) {
       hideAdditionnalButtons();
     }
+    // On s'assure de libérer les ressources au bon moment
+    _cameraController.dispose();
+    //_qrViewController.dispose(); // S'assurer que le QRViewController est également disposé
+
     super.dispose();
   }
 
@@ -120,33 +133,13 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 // FONCTIONS
 
   Future<void> _prendrePhoto() async {
-    // pour le faire en background
-    //initialiseControllerFuture.then((value) => null);
     try {
-      await initialiseControllerFuture;
+      //await initialiseControllerFuture;
 
       final XFile file = await _cameraController.takePicture();
       if (!mounted) return;
-      cropImageToScreenSizeInIsolate(file, context);
-
-// peut etre utilisé une solution native
-
-      // final screenSize = MediaQuery.of(context).size;
-      // final double screenWidth = screenSize.width + 45;
-      // final double screenHeight = screenSize.height;
-
-      // CroppedFile? croppedFile = await ImageCropper().cropImage(
-      // sourcePath: file.path,
-      // Set the crop area to the size of the screen
-      // aspectRatio: CropAspectRatio(
-      //   ratioX: screenWidth,
-      //   ratioY: screenHeight,
-      // ),
-      //compressFormat: ImageCompressFormat.png,
-      //compressQuality: 100,
-      // maxHeight: screenHeight.toInt(),
-      // maxWidth: screenWidth.toInt(),
-      //);
+      context.push('/PrisePhotoString/:filePath', extra: file.path);
+      // cropImageToScreenSizeInIsolate(file, context);
     } catch (e) {
       print('Erreur lors de la capture de la photo : $e');
     }
@@ -254,7 +247,9 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     _cameraController = CameraController(
       camera,
       ResolutionPreset.max,
-      imageFormatGroup: ImageFormatGroup.bgra8888, //ImageFormatGroup.bgra8888
+      imageFormatGroup: Platform.isAndroid
+          ? ImageFormatGroup.yuv420 // Format optimisé pour Android
+          : ImageFormatGroup.bgra8888, //ImageFormatGroup.bgra8888
     );
 
     // Initialize controller
@@ -264,13 +259,41 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         _cameraController.getMinZoomLevel().then((value) => _minAvailableZoom = value);
         _cameraController.setFlashMode(FlashMode.off);
         _cameraController.lockCaptureOrientation();
+// Utilisation de MediaQuery pour obtenir la taille de l'écran
+        var screenSize = MediaQuery.of(context).size;
+        // _cameraController.enableQRScanning((String qrCode) {
+        //   print('QR Code détecté: $qrCode');
+        //   setState(() {
+        //     _scannedText = qrCode;
+        //   });
+        // });
+        // Calcul du ratio de la caméra
+        double aspectRatio = _cameraController.value.aspectRatio;
+        double previewWidth = screenSize.width;
+        double previewHeight = screenSize.height;
+
+        if (aspectRatio > 1) {
+          previewHeight = previewWidth / aspectRatio;
+        } else {
+          previewWidth = previewHeight * aspectRatio;
+        }
+
+        _cameraController.value = _cameraController.value.copyWith(
+          previewSize: Size(
+            previewWidth,
+            previewHeight,
+          ),
+        );
+        return null;
       });
-    } on CameraException catch (e) {
+    } catch (e) {
       print('Error initializing camera: $e');
     }
     _cameraController.addListener(() {
       if (mounted) {
-        setState(() {});
+        setState(() {
+          //_isCameraReady = true;
+        });
       }
 
       if (_cameraController.value.hasError) {
@@ -328,6 +351,85 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     );
   }
 
+  // Fonction pour prendre une photo et analyser le QR code
+  Future<void> _scanQRCode() async {
+    try {
+      final image = await _cameraController.takePicture(); // Prendre une photo
+
+      final inputImage = InputImage.fromFilePath(image.path);
+      final barcodeScanner = BarcodeScanner(
+        formats: [
+          BarcodeFormat.qrCode, // Spécifie que nous voulons scanner des QR codes
+        ],
+      );
+
+      // Détecter les codes QR dans l'image
+      final List<Barcode> barcodes = await barcodeScanner.processImage(inputImage);
+
+      if (barcodes.isNotEmpty) {
+        // Si un QR code est détecté, affichez sa valeur
+        final qrCode = barcodes.first.rawValue;
+        if (qrCode != null) {
+          // Afficher ou traiter le QR code détecté
+          debugPrint('QR Code détecté: $qrCode');
+          String id = findIdInQRCode(qrCode);
+          noticiationQRCode(id);
+          final ChatProvider chatProvider = Provider.of<ChatProvider>(context, listen: false);
+          Device device = Device(id, id, SessionState.notConnected);
+          chatProvider.connectToDevice(device, force: "qr-force");
+          // Vous pouvez afficher le QR Code dans un dialog ou ailleurs
+        }
+      } else {
+        _scannedText = 'Pas de QR code détecté';
+        // Attendre 3 secondes et ensuite vider le texte et cacher le container
+        Future.delayed(const Duration(seconds: 3), () {
+          setState(() {
+            _scannedText = ""; // Vider le texte
+          });
+        });
+        debugPrint('Aucun QR code détecté');
+      }
+    } catch (e) {
+      debugPrint('Erreur lors du scan QR: $e');
+    }
+  }
+
+  String findIdInQRCode(String qrCode) {
+    // Utilisation d'une expression régulière pour extraire la valeur de userId
+    RegExp regExp = RegExp(r"id: (\S+)");
+
+    // Chercher la correspondance dans la chaîne
+    var match = regExp.firstMatch(qrCode);
+
+    if (match != null) {
+      String userId = match.group(1)!; // Récupère la première correspondance (la valeur de userId)
+      return userId;
+    } else {
+      print("User ID not found");
+      return '';
+    }
+  }
+
+  void noticiationQRCode(String qrCode) {
+    // Vibrer pour indiquer la détection
+    HapticFeedback.mediumImpact();
+
+    // Afficher le résultat
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('QR Code'),
+        content: Text(qrCode),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget cameraWidget() {
     return SizedBox(
       width: double.infinity,
@@ -337,46 +439,54 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         child: SizedBox(
           width: _cameraController.value.previewSize?.height,
           height: _cameraController.value.previewSize?.width,
-          child: CameraPreview(
-            _cameraController,
-            child: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                return GestureDetector(
-                  onTap: () => hideAdditionnalButtons(),
-                  onTapDown: (details) => onViewFinderTap(details, constraints),
-                  onDoubleTap: () {
-                    _cameraToggle();
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              CameraPreview(
+                _cameraController,
+                child: LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                    return GestureDetector(
+                      onTap: () {
+                        hideAdditionnalButtons();
+                        _scanQRCode();
+                      },
+                      onTapDown: (details) => onViewFinderTap(details, constraints),
+                      onDoubleTap: () {
+                        _cameraToggle();
+                      },
+                      onVerticalDragStart: (details) async {
+                        _startZoom = details.globalPosition.dy;
+                      },
+                      onVerticalDragUpdate: (details) async {
+                        double dragDistance = _startZoom - details.globalPosition.dy;
+
+                        // Vérification de la zone morte
+                        if (dragDistance.abs() < _deadZone) return;
+
+                        // Ajuster la distance de glissement pour tenir compte de la zone morte
+                        double adjustedDragDistance = dragDistance - (_deadZone);
+
+                        // Appliquer une amplification quadratique pour un zoom plus rapide
+                        double zoomAdjustment = (adjustedDragDistance * 10) / _zoomSensitivity;
+
+                        // Limiter l'ajustement pour un zoom contrôlé
+                        zoomAdjustment = zoomAdjustment.clamp(-_maxZoomStep, _maxZoomStep);
+
+                        // Calcul du nouveau niveau de zoom
+                        double newZoomLevel = (_currentZoom + zoomAdjustment).clamp(_minAvailableZoom, _maxAvailableZoom);
+
+                        // Mise à jour du zoom si changement significatif
+                        if ((newZoomLevel - _currentZoom).abs() > 0.01) {
+                          await _cameraController.setZoomLevel(newZoomLevel);
+                          _currentZoom = newZoomLevel;
+                        }
+                      },
+                    );
                   },
-                  onVerticalDragStart: (details) async {
-                    _startZoom = details.globalPosition.dy;
-                  },
-                  onVerticalDragUpdate: (details) async {
-                    double dragDistance = _startZoom - details.globalPosition.dy;
-
-                    // Vérification de la zone morte
-                    if (dragDistance.abs() < _deadZone) return;
-
-                    // Ajuster la distance de glissement pour tenir compte de la zone morte
-                    double adjustedDragDistance = dragDistance - (_deadZone);
-
-                    // Appliquer une amplification quadratique pour un zoom plus rapide
-                    double zoomAdjustment = (adjustedDragDistance * 10) / _zoomSensitivity;
-
-                    // Limiter l'ajustement pour un zoom contrôlé
-                    zoomAdjustment = zoomAdjustment.clamp(-_maxZoomStep, _maxZoomStep);
-
-                    // Calcul du nouveau niveau de zoom
-                    double newZoomLevel = (_currentZoom + zoomAdjustment).clamp(_minAvailableZoom, _maxAvailableZoom);
-
-                    // Mise à jour du zoom si changement significatif
-                    if ((newZoomLevel - _currentZoom).abs() > 0.01) {
-                      await _cameraController.setZoomLevel(newZoomLevel);
-                      _currentZoom = newZoomLevel;
-                    }
-                  },
-                );
-              },
-            ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -551,40 +661,60 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
   }
 
   Widget floatingActionButton() {
-    return Container(
-      width: 70,
-      height: 70,
-      margin: const EdgeInsets.fromLTRB(10, 0, 0, 30),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(
-          width: 3,
-          color: Colors.white.withOpacity(0.8),
-        ),
-      ),
-      child: FittedBox(
-        child: InkWell(
-          onLongPress: () {
-            hideAdditionnalButtons();
-            print('long');
-          },
-          child: FloatingActionButton(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              onPressed: () async {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        if (_scannedText.isNotEmpty)
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.8),
+              borderRadius: BorderRadius.circular(50),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                _scannedText,
+                style: ThemeData().textTheme.bodyLarge!.copyWith(color: Colors.white),
+              ),
+            ),
+          ),
+        const SizedBox(height: 10),
+        Container(
+          width: 200,
+          height: 70,
+          margin: const EdgeInsets.fromLTRB(10, 0, 0, 30),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(
+              width: 3,
+              color: Colors.white.withOpacity(0.8),
+            ),
+          ),
+          child: FittedBox(
+            child: InkWell(
+              onLongPress: () {
                 hideAdditionnalButtons();
+                print('long');
+              },
+              child: FloatingActionButton(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  onPressed: () async {
+                    hideAdditionnalButtons();
 
-                if (widget.cameras.isEmpty) {
-                  // ignore: use_build_context_synchronously
-                  XFile file = XFile('/Users/bobsmac/Desktop/caseddu_flutter/assets/images/femmephoto.jpg');
+                    if (widget.cameras.isEmpty) {
+                      // ignore: use_build_context_synchronously
+                      XFile file = XFile('/Users/bobsmac/Desktop/caseddu_flutter/assets/images/femmephoto.jpg');
 
-                  cropImageToScreenSizeInIsolate(file, context);
-                } else {
-                  await _prendrePhoto();
-                }
-              }),
+                      cropImageToScreenSizeInIsolate(file, context);
+                    } else {
+                      await _prendrePhoto();
+                    }
+                  }),
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 }

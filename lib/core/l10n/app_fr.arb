@@ -149,6 +149,18 @@
     "language": "Langue",
     "name_updated": "Nom mis à jour avec succès",
     "profile_updated": "Profil mis à jour avec succès",
+
+    "qrCodeTitleDefault": "Scanne le QR code",
+    "qrCodeDescriptionDefault": "J'utilise l'application {appName} et j'aimerais discuter avec vous.",
+    "@qrCodeDescriptionDefault": {
+    "description": "A message with a single parameter",
+    "placeholders": {
+        "appName": {
+        "type": "String",
+        "example": "Bob"
+        }
+    }
+    },
     "template": "Modèle"
 
 }
