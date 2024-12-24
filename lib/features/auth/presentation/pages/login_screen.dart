@@ -159,9 +159,11 @@ class _LoginPageState extends State<LoginPage> {
                           context.pop(); // Ferme la boîte de dialogue
 
                           if (authentificationProvider.authentification != null) {
-                            final parameterProvider = Provider.of<ParameterProvider>(context, listen: false);
+                            final parameterProvider = ParameterProvider();
                             await parameterProvider.init();
-                            await Provider.of<ChatProvider>(context, listen: false).eitherFailureOrInit(parameterProvider);
+                            final chatProvider = ChatProvider(parameterProvider: parameterProvider); // Initialisation manuelle
+                            await chatProvider.eitherFailureOrInit(parameterProvider);
+                            
                             context.push('/firstPage/0');
                           } else if (authentificationProvider.failure?.errorMessage != null) {
                             fireBaseError(context, "Error", authentificationProvider.failure!.errorMessage);

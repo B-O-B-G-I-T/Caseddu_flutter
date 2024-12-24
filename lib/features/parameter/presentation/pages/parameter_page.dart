@@ -269,8 +269,7 @@ class _ParameterPageState extends State<ParameterPage> {
                                 backgroundColor: Colors.red,
                               ),
                               onPressed: () {
-                                provider.eitherFailureOrLogout();
-                                provider.dispose();
+                                Provider.of<ChatProvider>(context, listen: false).logout();
                                 context.push('/login');
                               },
                               child: Text(AppLocalizations.of(context)!.logout),
