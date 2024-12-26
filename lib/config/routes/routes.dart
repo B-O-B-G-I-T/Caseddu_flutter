@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:caseddu/features/auth/presentation/pages/Tutorial_page.dart';
 import 'package:caseddu/features/chat/presentation/pages/chat_user_page.dart';
 import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/preview_picture/full_screen_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,6 +26,7 @@ List<String> routesName = <String>[
   "/enroler",
   "/connectionWith",
   "/oubliMotDePasse",
+  "/tutorialPage",
 ];
 
 class Routes {
@@ -53,6 +55,13 @@ class Routes {
         builder: (context, state) {
           final index = int.parse(state.pathParameters['index']!);
           return PremierePage(selectedIndex: index);
+        },
+      ),
+      GoRoute(
+        path: '/tutorialPage',
+        builder: (context, state) {
+
+          return TutorialPage();
         },
       ),
       GoRoute(
