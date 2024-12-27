@@ -260,6 +260,14 @@ class _ParameterPageState extends State<ParameterPage> {
                               child: Text(AppLocalizations.of(context)!.save_changes),
                             ),
                           ),
+
+                          const SizedBox(height: 16.0),
+                          ElevatedButton(
+                              onPressed: () {
+                                context.push('/tutorialPage');
+                              },
+                              child: const Text('Tutorial')),
+                              
                           const SizedBox(height: 16.0),
 
                           // Bouton de déconnexion
