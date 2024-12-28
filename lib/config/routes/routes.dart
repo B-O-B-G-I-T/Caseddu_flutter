@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:caseddu/features/auth/presentation/pages/Tutorial_page.dart';
+import 'package:caseddu/features/auth/presentation/pages/tutorial_page.dart';
 import 'package:caseddu/features/chat/presentation/pages/chat_user_page.dart';
 import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/preview_picture/full_screen_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -59,9 +59,23 @@ class Routes {
       ),
       GoRoute(
         path: '/tutorialPage',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            child: const TutorialPage(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.ease;
 
-          return TutorialPage();
+              var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+
+              return SlideTransition(
+                position: offsetAnimation,
+                child: child,
+              );
+            },
+          );
         },
       ),
       GoRoute(
@@ -164,7 +178,6 @@ class Routes {
           );
         },
       ),
-    
     ],
   );
 

@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 import 'dart:io';
-import 'package:caseddu/features/auth/presentation/pages/Tutorial_page.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -238,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: () {
                           context.push('/tutorialPage');
                         },
-                        child: const Text('Tutorial')),
+                        child: Text(AppLocalizations.of(context)!.tutorial)),
                   ],
                 ),
               ),

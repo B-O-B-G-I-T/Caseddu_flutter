@@ -1,4 +1,4 @@
-import 'package:caseddu/core/utils/genral_widgets/leading_button_go_back.dart';
+import 'package:caseddu/core/utils/general_widgets/leading_button_go_back.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/utils/p2p/circle_avatar_with_text_or_image.dart';
