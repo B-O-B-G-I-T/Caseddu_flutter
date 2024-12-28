@@ -29,19 +29,19 @@ class _TutorialPageState extends State<TutorialPage> {
         "title": AppLocalizations.of(context)!.welcome_title,
         "body": AppLocalizations.of(context)!.welcome_body,
         "image": "assets/image_for_tutorial/tutorial_1.png",
-        "color": Colors.blue,
+        "color": Colors.amber,
       },
       {
         "title": AppLocalizations.of(context)!.geo_title,
         "body": AppLocalizations.of(context)!.geo_body,
         "image": "assets/image_for_tutorial/tutorial_2.png",
-        "color": Colors.green,
+        "color": Colors.indigo,
       },
       {
         "title": AppLocalizations.of(context)!.p2p_title,
         "body": AppLocalizations.of(context)!.p2p_body,
         "image": "assets/image_for_tutorial/tutorial_3.png",
-        "color": Colors.orange,
+        "color": Colors.green,
       },
       {
         "title": AppLocalizations.of(context)!.social_title,
