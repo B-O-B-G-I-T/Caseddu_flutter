@@ -29,7 +29,7 @@ class _TutorialPageState extends State<TutorialPage> {
         "title": AppLocalizations.of(context)!.welcome_title,
         "body": AppLocalizations.of(context)!.welcome_body,
         "image": "assets/image_for_tutorial/tutorial_1.png",
-        "color": Colors.amber,
+        "color": Colors.blue,
       },
       {
         "title": AppLocalizations.of(context)!.geo_title,
