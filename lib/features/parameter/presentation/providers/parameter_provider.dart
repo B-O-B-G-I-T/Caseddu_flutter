@@ -35,6 +35,7 @@ class ParameterProvider extends ChangeNotifier {
       await eitherFailureOrGetSavedProfileImage();
       await eitherFailureOrGetDetailUser();
     }
+
     //notifyListeners();
   }
 
@@ -170,31 +171,13 @@ class ParameterProvider extends ChangeNotifier {
     );
   }
 
-  void eitherFailureOrLogout() async {
-    ParametreRepositoryImpl repository = ParametreRepositoryImpl(
-      remoteDataSource: ParametreRemoteDataSourceImpl(
-        firebaseAuth: FirebaseAuth.instance,
-      ),
-      localDataSource: ParametreLocalDataSourceImpl(
-        sharedPreferences: await SharedPreferences.getInstance(),
-      ),
-      networkInfo: NetworkInfoImpl(
-        DataConnectionChecker(),
-      ),
-    );
-
-    final failureOrParametre = await GetParametre(parametreRepository: repository).call();
-
-    failureOrParametre.fold(
-      (Failure newFailure) {
-        failure = newFailure;
-        notifyListeners();
-      },
-      (void d) {
-        failure = null;
-        notifyListeners();
-      },
-    );
+  void logout() async {
+    await FirebaseAuth.instance.signOut();
+    images = [];
+    selectedImages = [];
+    isloading = false;
+    failure = null;
+    parameter = ParameterEntity(email: '', displayName: '', numero: '');
   }
 
   Future<void> eitherFailureOrUpdate({required ParameterParams parameterParams}) async {

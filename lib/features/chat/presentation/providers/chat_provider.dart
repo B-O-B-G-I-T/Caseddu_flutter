@@ -103,6 +103,16 @@ class ChatProvider extends ChangeNotifier {
     );
   }
 
+  void logout() {
+    controlerDevice = null;
+    chat = [];
+    devices = [];
+    connectedDevices = [];
+    users = [];
+    failure = null;
+    parameterProvider?.logout();
+    parameterProvider = null;
+  }
   void disabledNearbyService() {
     controlerDevice = null;
   }

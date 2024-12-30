@@ -19,7 +19,8 @@ late List<CameraDescription> cameras;
 void main() async {
   //pour la camera
   try {
-    WidgetsFlutterBinding.ensureInitialized();
+    //WidgetsFlutterBinding.ensureInitialized();
+    WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
     // identification
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -39,7 +40,6 @@ void main() async {
   final parameterProvider = ParameterProvider();
   await parameterProvider.init();
   final chatProvider = ChatProvider(parameterProvider: parameterProvider); // Initialisation manuelle
-
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

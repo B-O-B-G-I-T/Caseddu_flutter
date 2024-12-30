@@ -1,10 +1,14 @@
 //TODO: controler les mot de passe entré
 
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/errors/widgets/attente_widget.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
+import '../../../chat/presentation/providers/chat_provider.dart';
+import '../../../parameter/presentation/providers/parameter_provider.dart';
 import '../providers/authentification_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -266,6 +270,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
                           await authentificationProvider.eitherFailureOrRegister(email, password, confirmPassword, "0", pseudo);
                           if (!context.mounted) return;
+                          final parameterProvider = ParameterProvider();
+                            await parameterProvider.init();
+                          final chatProvider = ChatProvider(parameterProvider: parameterProvider); // Initialisation manuelle
+                            await chatProvider.eitherFailureOrInit(parameterProvider);
                           context.pop(); // Ferme la boîte de dialogue
 
                           if (authentificationProvider.failure == null) {

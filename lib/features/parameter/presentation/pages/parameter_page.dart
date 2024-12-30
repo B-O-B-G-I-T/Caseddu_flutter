@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../../../core/errors/widgets/firebase_error.dart';
 import '../../../../core/params/params.dart';
-import '../../../../core/utils/genral_widgets/leading_button_go_back.dart';
+import '../../../../core/utils/general_widgets/leading_button_go_back.dart';
 import '../../../../core/utils/p2p/fonctions.dart';
 import '../../../chat/presentation/providers/chat_provider.dart';
 import '../providers/parameter_provider.dart';
@@ -260,6 +260,14 @@ class _ParameterPageState extends State<ParameterPage> {
                               child: Text(AppLocalizations.of(context)!.save_changes),
                             ),
                           ),
+
+                          const SizedBox(height: 16.0),
+                          ElevatedButton(
+                              onPressed: () {
+                                context.push('/tutorialPage');
+                              },
+                              child: Text(AppLocalizations.of(context)!.tutorial)),
+
                           const SizedBox(height: 16.0),
 
                           // Bouton de déconnexion
@@ -269,8 +277,7 @@ class _ParameterPageState extends State<ParameterPage> {
                                 backgroundColor: Colors.red,
                               ),
                               onPressed: () {
-                                provider.eitherFailureOrLogout();
-                                provider.dispose();
+                                Provider.of<ChatProvider>(context, listen: false).logout();
                                 context.push('/login');
                               },
                               child: Text(AppLocalizations.of(context)!.logout),

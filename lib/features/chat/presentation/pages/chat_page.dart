@@ -1,5 +1,5 @@
 // ignore_for_file: unused_element
-import 'package:caseddu/core/utils/genral_widgets/leading_button_go_back.dart';
+import 'package:caseddu/core/utils/general_widgets/leading_button_go_back.dart';
 import 'package:caseddu/features/chat/domain/entities/chat_user_entity.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter/material.dart';

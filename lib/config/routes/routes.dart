@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:caseddu/features/auth/presentation/pages/tutorial_page.dart';
 import 'package:caseddu/features/chat/presentation/pages/chat_user_page.dart';
 import 'package:caseddu/features/chat/presentation/widgets/chat_widgets/preview_picture/full_screen_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,6 +26,7 @@ List<String> routesName = <String>[
   "/enroler",
   "/connectionWith",
   "/oubliMotDePasse",
+  "/tutorialPage",
 ];
 
 class Routes {
@@ -53,6 +55,27 @@ class Routes {
         builder: (context, state) {
           final index = int.parse(state.pathParameters['index']!);
           return PremierePage(selectedIndex: index);
+        },
+      ),
+      GoRoute(
+        path: '/tutorialPage',
+        pageBuilder: (context, state) {
+          return CustomTransitionPage(
+            child: const TutorialPage(),
+            transitionsBuilder: (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.ease;
+
+              var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+
+              return SlideTransition(
+                position: offsetAnimation,
+                child: child,
+              );
+            },
+          );
         },
       ),
       GoRoute(
@@ -155,7 +178,6 @@ class Routes {
           );
         },
       ),
-    
     ],
   );
 

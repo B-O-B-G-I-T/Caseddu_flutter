@@ -54,7 +54,6 @@
 			<string>_mp-connection._tcp</string>
 			<string>_mp-connection._udp</string>
 		</array>
-
 		<key>CFBundleURLTypes</key>
 		<array>
 			<dict>
@@ -64,7 +63,6 @@
 				</array>
 			</dict>
 		</array>
-
 		<key>NSCalendarsUsageDescription</key>
 		<string>L'application nécessite l'accès à vos calendriers pour planifier et synchroniser des événements avec votre agenda.</string>
 		<key>NSCameraUsageDescription</key>
@@ -125,5 +123,7 @@
 		<false/>
 		<key>aps-environment</key>
 		<string>development</string>
+		<key>UIStatusBarHidden</key>
+		<false/>
 	</dict>
 </plist>

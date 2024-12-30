@@ -42,10 +42,10 @@ packages:
     dependency: transitive
     description:
       name: args
-      sha256: "7cf60b9f0cc88203c5a190b4cd62a99feea42759a7fa695010eb5de1c0b2252a"
+      sha256: bf9f5caeea8d8fe6721a9c358dd8a5c1947b27f1cfaa18b39c301273594919e6
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.0"
+    version: "2.6.0"
   async:
     dependency: transitive
     description:
@@ -134,14 +134,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.0"
-  charcode:
-    dependency: transitive
-    description:
-      name: charcode
-      sha256: fb0f1107cac15a5ea6ef0a6ef71a807b9e4267c713bb93e00e92d737cc8dbd8a
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.4.0"
   checked_yaml:
     dependency: transitive
     description:
@@ -775,10 +767,10 @@ packages:
     dependency: transitive
     description:
       name: json_class
-      sha256: "668be1a27c493dd8822fe8c3ce3563ccd788e2b214d77a0b8b3bfad50272e7f9"
+      sha256: f27de435c3b47ceea23c13d0516afa98c71c62c7a762a6c8f1df665189eb855e
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0+16"
+    version: "3.0.1"
   json_schema:
     dependency: transitive
     description:
@@ -791,18 +783,18 @@ packages:
     dependency: "direct main"
     description:
       name: json_theme
-      sha256: ca0976a27b19896de057cee7e7385cc52a43cb3668c33d74a39d706b288cf1c1
+      sha256: b4fc265f689061f9da557c1709125307f978aabb3b65ddbfb275f6bc5f679e6f
       url: "https://pub.dev"
     source: hosted
-    version: "6.5.3"
+    version: "6.5.4+1"
   json_theme_annotation:
     dependency: transitive
     description:
       name: json_theme_annotation
-      sha256: "1be9def487510c90407dac2bc1ac4c396a4f5857e8e6ce791ebc97a0368706d6"
+      sha256: "66d09bb85e132acb5aab50fab2e2f3475e36b3e060fa19509140f56b7f32dd4f"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.3+10"
+    version: "1.0.3+14"
   leak_tracker:
     dependency: transitive
     description:
@@ -839,10 +831,10 @@ packages:
     dependency: transitive
     description:
       name: logging
-      sha256: "623a88c9594aa774443aa3eb2d41807a48486b5613e67599fb4c41c0ad47c340"
+      sha256: c8245ada5f1717ed44271ed1c26b8ce85ca3228fd2ffdb75468ab01979309d61
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.0"
+    version: "1.3.0"
   macros:
     dependency: transitive
     description:
@@ -883,14 +875,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
-  mobile_scanner:
-    dependency: "direct main"
-    description:
-      name: mobile_scanner
-      sha256: "728828a798d1a2ee506beb652ca23d974c542c96ed03dcbd5eaf97bef96cdaad"
-      url: "https://pub.dev"
-    source: hosted
-    version: "6.0.2"
   mockito:
     dependency: "direct dev"
     description:
@@ -1512,14 +1496,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.2"
-  zxing2:
-    dependency: "direct main"
-    description:
-      name: zxing2
-      sha256: "6cf995abd3c86f01ba882968dedffa7bc130185e382f2300239d2e857fc7912c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.3"
 sdks:
   dart: ">=3.5.0 <4.0.0"
   flutter: ">=3.24.0"

@@ -1651,9 +1651,6 @@ PODS:
   - MLKitXenoCommon (1.0.0-beta14):
     - MLKitCommon (~> 12.0)
     - MLKitVision (~> 8.0)
-  - mobile_scanner (6.0.2):
-    - Flutter
-    - GoogleMLKit/BarcodeScanning (~> 7.0.0)
   - nanopb (3.30910.0):
     - nanopb/decode (= 3.30910.0)
     - nanopb/encode (= 3.30910.0)
@@ -1723,7 +1720,6 @@ DEPENDENCIES:
   - google_mlkit_translation (from `.symlinks/plugins/google_mlkit_translation/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
   - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
-  - mobile_scanner (from `.symlinks/plugins/mobile_scanner/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - photo_manager (from `.symlinks/plugins/photo_manager/ios`)
@@ -1855,8 +1851,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/google_sign_in_ios/darwin"
   image_cropper:
     :path: ".symlinks/plugins/image_cropper/ios"
-  mobile_scanner:
-    :path: ".symlinks/plugins/mobile_scanner/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
   permission_handler_apple:
@@ -1957,7 +1951,6 @@ SPEC CHECKSUMS:
   MLKitVision: 45e79d68845a2de77e2dd4d7f07947f0ed157b0e
   MLKitVisionKit: 8a7abd5f11aeb1add2942a694c2685eca422a849
   MLKitXenoCommon: ce5047943af6b4be7ae035dd81b3a56fdb29aab3
-  mobile_scanner: fd0054c52ede661e80bf5a4dea477a2467356bee
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   permission_handler_apple: 9878588469a2b0d0fc1e048d9f43605f92e6cec2
