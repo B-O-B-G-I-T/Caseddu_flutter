@@ -396,7 +396,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
   String findIdInQRCode(String qrCode) {
     // Utilisation d'une expression régulière pour extraire la valeur de userId
-    RegExp regExp = RegExp(r"id: (\S+)");
+    RegExp regExp = RegExp(r"[?&]id=([^&]+)");
 
     // Chercher la correspondance dans la chaîne
     var match = regExp.firstMatch(qrCode);
