@@ -19,8 +19,8 @@ late List<CameraDescription> cameras;
 void main() async {
   //pour la camera
   try {
-    //WidgetsFlutterBinding.ensureInitialized();
-    WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+    // WidgetsFlutterBinding.ensureInitialized();
+    // WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
     // identification
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,

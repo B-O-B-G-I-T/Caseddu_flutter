@@ -128,7 +128,7 @@ class _ImageItemState extends State<ImageItem> {
               ),
               if (widget.isSelected)
                 Container(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                 ),
               if (widget.isSelected)
                 const Positioned(

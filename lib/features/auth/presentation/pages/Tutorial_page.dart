@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:go_router/go_router.dart';
 
 class TutorialPage extends StatefulWidget {
-  const TutorialPage({Key? key}) : super(key: key);
+  const TutorialPage({super.key});
 
   @override
   State<TutorialPage> createState() => _TutorialPageState();

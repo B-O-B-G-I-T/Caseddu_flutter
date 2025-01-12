@@ -1875,7 +1875,7 @@ SPEC CHECKSUMS:
   camera_avfoundation: dd002b0330f4981e1bbcb46ae9b62829237459a4
   cloud_firestore: efded0403c9e674954e2788d93bc2772a5089557
   device_info_plus: 97af1d7e84681a90d0693e63169a5d50e0839a0d
-  emoji_picker_flutter: fe2e6151c5b548e975d546e6eeb567daf0962a58
+  emoji_picker_flutter: 8e50ec5caac456a23a78637e02c6293ea0ac8771
   Firebase: 9f574c08c2396885b5e7e100ed4293d956218af9
   firebase_auth: f27287630c4d9e2c3c63e64d9240822ad6b07e5b
   firebase_core: 2ec6b789859c7c24766344ec71fdf78639402d56

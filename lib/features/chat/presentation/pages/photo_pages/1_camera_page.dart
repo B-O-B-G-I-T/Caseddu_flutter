@@ -667,7 +667,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         if (_scannedText.isNotEmpty)
           Container(
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(50),
             ),
             child: Padding(
@@ -687,7 +687,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
             shape: BoxShape.circle,
             border: Border.all(
               width: 3,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
           child: FittedBox(
@@ -703,7 +703,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                     hideAdditionnalButtons();
 
                     if (widget.cameras.isEmpty) {
-                      // ignore: use_build_context_synchronously
+
                       XFile file = XFile('/Users/bobsmac/Desktop/caseddu_flutter/assets/images/femmephoto.jpg');
 
                       cropImageToScreenSizeInIsolate(file, context);

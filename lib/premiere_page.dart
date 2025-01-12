@@ -49,7 +49,7 @@ class _PremierePageState extends State<PremierePage> {
       cameras: cameras,
     ),
     const ChatHomeScreen(),
-    QRCodeGeneratePage(), // Ajout de la page QR Code
+    const QRCodeGeneratePage(), // Ajout de la page QR Code
   ];
 
   // fonction qui met à jour l'index de la page

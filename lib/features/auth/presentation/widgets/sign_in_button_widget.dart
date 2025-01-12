@@ -26,7 +26,7 @@ class SignInButton extends StatelessWidget {
             border: Border.all(color: Colors.grey),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 spreadRadius: 2,
                 blurRadius: 5,
               ),

@@ -147,7 +147,7 @@ class _PreviewImgPageState extends State<PreviewImgPage> {
           filter: ui.ImageFilter.blur(sigmaX: 6, sigmaY: 6),
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.5),
+              color: Colors.black.withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(7),
             ),
             padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),

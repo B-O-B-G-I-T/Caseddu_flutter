@@ -297,7 +297,7 @@ class _ParameterPageState extends State<ParameterPage> {
             ),
             if (provider.isloading)
               Container(
-                color: Colors.black.withOpacity(0.5), // Fond noir semi-transparent
+                color: Colors.black.withValues(alpha: 0.5), // Fond noir semi-transparent
                 child: const Center(
                   child: CircularProgressIndicator(), // Indicateur de chargement au centre
                 ),

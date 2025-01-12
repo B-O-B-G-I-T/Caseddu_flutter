@@ -85,7 +85,7 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
                   boxShadow: _isPressed
                       ? [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.4), spreadRadius: 1, blurRadius: 10,
+                            color: Colors.black.withValues(alpha: 0.4), spreadRadius: 1, blurRadius: 10,
                             offset: const Offset(0, 2), // changes position of shadow
                           ),
                         ]
@@ -95,7 +95,7 @@ class _ChatBubbleState extends State<ChatBubble> with SingleTickerProviderStateM
                     ? DeleteMessageWidget(isMe: widget.isMe, deviceName: widget.converser)
                     : Material(
                         elevation: _isPressed ? 3 : 0,
-                        shadowColor: Colors.black.withOpacity(0.4),
+                        shadowColor: Colors.black.withValues(alpha: 0.4),
                         color: Colors.white,
                         child: IntrinsicHeight(
                           child: Padding(
