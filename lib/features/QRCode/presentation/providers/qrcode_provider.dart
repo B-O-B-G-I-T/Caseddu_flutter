@@ -36,7 +36,7 @@ class QRCodeProvider extends ChangeNotifier {
     );
 
     final failureOrQRCode = await GetQRCode(QR_CodeRepository: repository).call(
-      QRCodeParams: QRCodeParams(),
+      params: QRCodeParams(),
     );
 
     failureOrQRCode.fold(

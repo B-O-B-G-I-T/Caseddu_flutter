@@ -139,7 +139,8 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       final XFile file = await _cameraController.takePicture();
       if (!mounted) return;
       context.push('/PrisePhotoString/:filePath', extra: file.path);
-      // cropImageToScreenSizeInIsolate(file, context);
+      //cropImageToScreenSizeInIsolate(file, context);
+      
     } catch (e) {
       print('Erreur lors de la capture de la photo : $e');
     }
@@ -156,6 +157,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     final double screenHeight = screenSize.height;
     // file
     final String path = file.path;
+    final int frontCam = _selecteCameraIndex;
 
     // Lance l'Isolate
     await Isolate.spawn<Map<String, dynamic>>(
@@ -165,6 +167,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         'screenWidth': screenWidth,
         'screenHeight': screenHeight,
         'path': path,
+        'frontCam':frontCam,
       },
     );
 
@@ -725,6 +728,7 @@ Future<void> _cropImageToScreenSizeInIsolateWithPort(Map<String, dynamic> argume
   final SendPort sendPort = arguments['sendPort'];
   final double screenWidth = arguments['screenWidth'];
   final double screenHeight = arguments['screenHeight'];
+  final int frontCam = arguments['frontCam'];
 
   final String path = arguments['path'];
 
@@ -748,6 +752,10 @@ Future<void> _cropImageToScreenSizeInIsolateWithPort(Map<String, dynamic> argume
       img = IMG.copyRotate(img, angle: 90);
       oldWidth = img.width;
       oldHeight = img.height;
+    }
+
+    if (frontCam == 1) {
+      img = IMG.flipHorizontal(img);
     }
 
     double newWidth = oldWidth.toDouble();

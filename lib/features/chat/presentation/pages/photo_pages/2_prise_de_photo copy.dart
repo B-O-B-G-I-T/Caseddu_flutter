@@ -60,6 +60,7 @@ class _PrisePhotoState extends State<PrisePhotoString> {
                 color: Colors.black,
                 // ici on affiche l'image
                 child: ModifierPictureWidget(
+                  
                   pathImage: widget.lastImageCompleter!,
                 ),
               ),

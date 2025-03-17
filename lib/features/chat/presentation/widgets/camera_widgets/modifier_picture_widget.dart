@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 // Flutter imports:
+import 'package:caseddu/features/chat/presentation/widgets/camera_widgets/editing_widgets/text_bottomBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -34,6 +35,7 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
   /// Opens the sticker/emoji editor.
   void _openStickerEditor(ProImageEditorState editor) async {
     Layer? layer = await editor.openPage(FrostedGlassStickerPage(
+
       configs: editor.configs,
       callbacks: editor.callbacks,
     ));
@@ -53,180 +55,188 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      return Expanded(
-        child: ProImageEditor.file(
-          File(widget.pathImage),
-          key: editorKey,
-          callbacks: ProImageEditorCallbacks(
-              onImageEditingStarted: onImageEditingStarted,
-              onImageEditingComplete: onImageEditingComplete,
-              onCloseEditor: onCloseEditor,
-              stickerEditorCallbacks: StickerEditorCallbacks(
-                onSearchChanged: (value) {
-                  /// Filter your stickers
-                  debugPrint(value);
-                },
-              )),
-          configs: ProImageEditorConfigs(
-            designMode: platformDesignMode,
-            theme: Theme.of(context).copyWith(iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white)),
-            mainEditor: MainEditorConfigs(
-              widgets: MainEditorWidgets(
-                closeWarningDialog: (editor) async {
-                  if (!context.mounted) return false;
-                  return await showDialog<bool>(
-                        context: context,
-                        builder: (BuildContext context) => FrostedGlassCloseDialog(editor: editor),
-                      ) ??
-                      false;
-                },
-                appBar: (editor, rebuildStream) => null,
-                bottomBar: (editor, rebuildStream, key) => null,
-                bodyItems: _buildMainBodyWidgets,
+      return ProImageEditor.file(
+
+        File(widget.pathImage),
+        key: editorKey,
+        callbacks: ProImageEditorCallbacks(
+            onImageEditingStarted: onImageEditingStarted,
+            onImageEditingComplete: onImageEditingComplete,
+            onCloseEditor: onCloseEditor,
+            stickerEditorCallbacks: StickerEditorCallbacks(
+              onSearchChanged: (value) {
+                /// Filter your stickers
+                debugPrint(value);
+              },
+            )),
+        configs: ProImageEditorConfigs(
+
+          
+          designMode: platformDesignMode,
+          theme: Theme.of(context).copyWith(iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white)),
+          mainEditor: MainEditorConfigs(
+            
+            enableZoom: true,
+            widgets: MainEditorWidgets(
+              
+              closeWarningDialog: (editor) async {
+                if (!context.mounted) return false;
+                return await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext context) => FrostedGlassCloseDialog(editor: editor),
+                    ) ??
+                    false;
+              },
+              appBar: (editor, rebuildStream) => null,
+              bottomBar: (editor, rebuildStream, key) => null,
+              bodyItems: _buildMainBodyWidgets,
+              
+            ),
+          ),
+          
+          paintEditor: PaintEditorConfigs(
+            icons: const PaintEditorIcons(
+              bottomNavBar: Icons.edit,
+            ),
+            widgets: PaintEditorWidgets(
+              appBar: (paintEditor, rebuildStream) => null,
+              bottomBar: (paintEditor, rebuildStream) => null,
+              colorPicker: (paintEditor, rebuildStream, currentColor, setColor) => null,
+              bodyItems: _buildPaintEditorBody,
+            ),
+            style: const PaintEditorStyle(
+              initialStrokeWidth: 5,
+            ),
+          ),
+          textEditor: TextEditorConfigs(
+            
+            customTextStyles: [
+              GoogleFonts.roboto(),
+              GoogleFonts.averiaLibre(),
+              GoogleFonts.lato(),
+              GoogleFonts.comicNeue(),
+              GoogleFonts.actor(),
+              GoogleFonts.odorMeanChey(),
+              GoogleFonts.nabla(),
+            ],
+            style: TextEditorStyle(
+              textFieldMargin: const EdgeInsets.only(top: kToolbarHeight),
+              bottomBarBackground: Colors.transparent,
+              bottomBarMainAxisAlignment: !_useMaterialDesign ? MainAxisAlignment.spaceEvenly : MainAxisAlignment.start,
+            ),
+            widgets: TextEditorWidgets(
+
+              appBar: (textEditor, rebuildStream) => null,
+              colorPicker: (textEditor, rebuildStream, currentColor, setColor) => null,
+              bottomBar: (textEditor, rebuildStream) => null,
+              bodyItems: _buildTextEditorBody,
+            ),
+          ),
+          cropRotateEditor: CropRotateEditorConfigs(
+            widgets: CropRotateEditorWidgets(
+              appBar: (cropRotateEditor, rebuildStream) => null,
+              bottomBar: (cropRotateEditor, rebuildStream) => ReactiveWidget(
+                stream: rebuildStream,
+                builder: (_) => FrostedGlassCropRotateToolbar(
+                  configs: cropRotateEditor.configs,
+                  onCancel: cropRotateEditor.close,
+                  onRotate: cropRotateEditor.rotate,
+                  onDone: cropRotateEditor.done,
+                  onReset: cropRotateEditor.reset,
+                  openAspectRatios: cropRotateEditor.openAspectRatioOptions,
+                ),
               ),
             ),
-            paintEditor: PaintEditorConfigs(
-              icons: const PaintEditorIcons(
-                bottomNavBar: Icons.edit,
-              ),
-              widgets: PaintEditorWidgets(
-                appBar: (paintEditor, rebuildStream) => null,
-                bottomBar: (paintEditor, rebuildStream) => null,
-                colorPicker: (paintEditor, rebuildStream, currentColor, setColor) => null,
-                bodyItems: _buildPaintEditorBody,
-              ),
-              style: const PaintEditorStyle(
-                initialStrokeWidth: 5,
-              ),
+          ),
+          filterEditor: FilterEditorConfigs(
+            style: const FilterEditorStyle(
+              filterListSpacing: 7,
+              filterListMargin: EdgeInsets.fromLTRB(8, 15, 8, 10),
             ),
-            textEditor: TextEditorConfigs(
-              customTextStyles: [
-                GoogleFonts.roboto(),
-                GoogleFonts.averiaLibre(),
-                GoogleFonts.lato(),
-                GoogleFonts.comicNeue(),
-                GoogleFonts.actor(),
-                GoogleFonts.odorMeanChey(),
-                GoogleFonts.nabla(),
+            widgets: FilterEditorWidgets(
+              slider: (editorState, rebuildStream, value, onChanged, onChangeEnd) => ReactiveWidget(
+                stream: rebuildStream,
+                builder: (_) => Slider(
+                  onChanged: onChanged,
+                  onChangeEnd: onChangeEnd,
+                  value: value,
+                  activeColor: Colors.blue.shade200,
+                ),
+              ),
+              appBar: (filterEditor, rebuildStream) => null,
+              bodyItems: (filterEditor, rebuildStream) => [
+                ReactiveWidget(
+                  stream: rebuildStream,
+                  builder: (_) => FrostedGlassFilterAppbar(filterEditor: filterEditor),
+                ),
               ],
-              style: TextEditorStyle(
-                textFieldMargin: const EdgeInsets.only(top: kToolbarHeight),
-                bottomBarBackground: Colors.transparent,
-                bottomBarMainAxisAlignment: !_useMaterialDesign ? MainAxisAlignment.spaceEvenly : MainAxisAlignment.start,
-              ),
-              widgets: TextEditorWidgets(
-                appBar: (textEditor, rebuildStream) => null,
-                colorPicker: (textEditor, rebuildStream, currentColor, setColor) => null,
-                bottomBar: (textEditor, rebuildStream) => null,
-                bodyItems: _buildTextEditorBody,
-              ),
             ),
-            cropRotateEditor: CropRotateEditorConfigs(
-              widgets: CropRotateEditorWidgets(
-                appBar: (cropRotateEditor, rebuildStream) => null,
-                bottomBar: (cropRotateEditor, rebuildStream) => ReactiveWidget(
-                  stream: rebuildStream,
-                  builder: (_) => FrostedGlassCropRotateToolbar(
-                    configs: cropRotateEditor.configs,
-                    onCancel: cropRotateEditor.close,
-                    onRotate: cropRotateEditor.rotate,
-                    onDone: cropRotateEditor.done,
-                    onReset: cropRotateEditor.reset,
-                    openAspectRatios: cropRotateEditor.openAspectRatioOptions,
-                  ),
+          ),
+          tuneEditor: TuneEditorConfigs(
+            widgets: TuneEditorWidgets(
+              appBar: (filterEditor, rebuildStream) => null,
+              bottomBar: (filterEditor, rebuildStream) => null,
+              bodyItems: _buildTuneEditorBody,
+            ),
+          ),
+          blurEditor: BlurEditorConfigs(
+            widgets: BlurEditorWidgets(
+              slider: (editorState, rebuildStream, value, onChanged, onChangeEnd) => ReactiveWidget(
+                stream: rebuildStream,
+                builder: (_) => Slider(
+                  onChanged: onChanged,
+                  onChangeEnd: onChangeEnd,
+                  value: value,
+                  max: editorState.configs.blurEditor.maxBlur,
+                  activeColor: Colors.blue.shade200,
                 ),
               ),
-            ),
-            filterEditor: FilterEditorConfigs(
-              style: const FilterEditorStyle(
-                filterListSpacing: 7,
-                filterListMargin: EdgeInsets.fromLTRB(8, 15, 8, 10),
-              ),
-              widgets: FilterEditorWidgets(
-                slider: (editorState, rebuildStream, value, onChanged, onChangeEnd) => ReactiveWidget(
+              appBar: (blurEditor, rebuildStream) => null,
+              bodyItems: (blurEditor, rebuildStream) => [
+                ReactiveWidget(
                   stream: rebuildStream,
-                  builder: (_) => Slider(
-                    onChanged: onChanged,
-                    onChangeEnd: onChangeEnd,
-                    value: value,
-                    activeColor: Colors.blue.shade200,
-                  ),
+                  builder: (_) => FrostedGlassBlurAppbar(blurEditor: blurEditor),
                 ),
-                appBar: (filterEditor, rebuildStream) => null,
-                bodyItems: (filterEditor, rebuildStream) => [
-                  ReactiveWidget(
-                    stream: rebuildStream,
-                    builder: (_) => FrostedGlassFilterAppbar(filterEditor: filterEditor),
-                  ),
-                ],
-              ),
+              ],
             ),
-            tuneEditor: TuneEditorConfigs(
-              widgets: TuneEditorWidgets(
-                appBar: (filterEditor, rebuildStream) => null,
-                bottomBar: (filterEditor, rebuildStream) => null,
-                bodyItems: _buildTuneEditorBody,
+          ),
+          emojiEditor: EmojiEditorConfigs(
+            checkPlatformCompatibility: !kIsWeb,
+            style: EmojiEditorStyle(
+              backgroundColor: Colors.transparent,
+              textStyle: DefaultEmojiTextStyle.copyWith(
+                fontFamily: !kIsWeb ? null : GoogleFonts.notoColorEmoji().fontFamily,
+                fontSize: _useMaterialDesign ? 48 : 30,
               ),
-            ),
-            blurEditor: BlurEditorConfigs(
-              widgets: BlurEditorWidgets(
-                slider: (editorState, rebuildStream, value, onChanged, onChangeEnd) => ReactiveWidget(
-                  stream: rebuildStream,
-                  builder: (_) => Slider(
-                    onChanged: onChanged,
-                    onChangeEnd: onChangeEnd,
-                    value: value,
-                    max: editorState.configs.blurEditor.maxBlur,
-                    activeColor: Colors.blue.shade200,
-                  ),
-                ),
-                appBar: (blurEditor, rebuildStream) => null,
-                bodyItems: (blurEditor, rebuildStream) => [
-                  ReactiveWidget(
-                    stream: rebuildStream,
-                    builder: (_) => FrostedGlassBlurAppbar(blurEditor: blurEditor),
-                  ),
-                ],
-              ),
-            ),
-            emojiEditor: EmojiEditorConfigs(
-              checkPlatformCompatibility: !kIsWeb,
-              style: EmojiEditorStyle(
+              emojiViewConfig: EmojiViewConfig(
+                gridPadding: EdgeInsets.zero,
+                horizontalSpacing: 0,
+                verticalSpacing: 0,
+                recentsLimit: 40,
                 backgroundColor: Colors.transparent,
-                textStyle: DefaultEmojiTextStyle.copyWith(
-                  fontFamily: !kIsWeb ? null : GoogleFonts.notoColorEmoji().fontFamily,
-                  fontSize: _useMaterialDesign ? 48 : 30,
-                ),
-                emojiViewConfig: EmojiViewConfig(
-                  gridPadding: EdgeInsets.zero,
-                  horizontalSpacing: 0,
-                  verticalSpacing: 0,
-                  recentsLimit: 40,
-                  backgroundColor: Colors.transparent,
-                  buttonMode: !_useMaterialDesign ? ButtonMode.CUPERTINO : ButtonMode.MATERIAL,
-                  loadingIndicator: const Center(child: CircularProgressIndicator()),
-                  columns: _calculateEmojiColumns(constraints),
-                  emojiSizeMax: !_useMaterialDesign ? 32 : 64,
-                  replaceEmojiOnLimitExceed: false,
-                ),
-                bottomActionBarConfig: const BottomActionBarConfig(enabled: false),
+                buttonMode: !_useMaterialDesign ? ButtonMode.CUPERTINO : ButtonMode.MATERIAL,
+                loadingIndicator: const Center(child: CircularProgressIndicator()),
+                columns: _calculateEmojiColumns(constraints),
+                emojiSizeMax: !_useMaterialDesign ? 32 : 64,
+                replaceEmojiOnLimitExceed: false,
               ),
+              bottomActionBarConfig: const BottomActionBarConfig(enabled: false),
             ),
-            stickerEditor: StickerEditorConfigs(
-              enabled: true,
-              buildStickers: (setLayer, scrollController) => StickersWidget(setLayer: setLayer, scrollController: scrollController),
+          ),
+          stickerEditor: StickerEditorConfigs(
+            enabled: true,
+            buildStickers: (setLayer, scrollController) => StickersWidget(setLayer: setLayer, scrollController: scrollController),
+          ),
+          layerInteraction: const LayerInteractionConfigs(
+            style: LayerInteractionStyle(
+              removeAreaBackgroundInactive: Colors.black12,
             ),
-            layerInteraction: const LayerInteractionConfigs(
-              style: LayerInteractionStyle(
-                removeAreaBackgroundInactive: Colors.black12,
-              ),
-            ),
-            dialogConfigs: DialogConfigs(
-              widgets: DialogWidgets(
-                loadingDialog: (message, configs) => FrostedGlassLoadingDialog(
-                  message: message,
-                  configs: configs,
-                ),
+          ),
+          dialogConfigs: DialogConfigs(
+            widgets: DialogWidgets(
+              loadingDialog: (message, configs) => FrostedGlassLoadingDialog(
+                message: message,
+                configs: configs,
               ),
             ),
           ),
@@ -235,7 +245,8 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
     });
   }
 
-  List<ReactiveWidget> _buildMainBodyWidgets(
+  List<ReactiveWidget> 
+  _buildMainBodyWidgets(
     ProImageEditorState editor,
     Stream rebuildStream,
   ) {
@@ -293,7 +304,10 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
     ];
   }
 
-  List<ReactiveWidget> _buildTextEditorBody(TextEditorState textEditor, Stream rebuildStream) {
+  List<ReactiveWidget> _buildTextEditorBody(
+    TextEditorState textEditor,
+    Stream<dynamic> rebuildStream,
+  ) {
     return [
       /// Background
       ReactiveWidget(
@@ -310,6 +324,20 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
         builder: (_) => Padding(
           padding: const EdgeInsets.only(top: kToolbarHeight),
           child: FrostedGlassTextSizeSlider(textEditor: textEditor),
+        ),
+      ),
+
+      /// Bottombar
+      ReactiveWidget(
+        stream: rebuildStream,
+        builder: (_) => TextBottomBar(
+          textEditor: textEditor,
+          initColor: textEditor.primaryColor,
+          onColorChanged: (color) {
+            textEditor.primaryColor = color;
+          },
+          selectedStyle: textEditor.selectedTextStyle,
+          onFontChange: textEditor.setTextStyle,
         ),
       ),
     ];
