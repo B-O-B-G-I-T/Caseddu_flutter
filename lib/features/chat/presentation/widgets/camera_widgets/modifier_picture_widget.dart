@@ -35,7 +35,6 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
   /// Opens the sticker/emoji editor.
   void _openStickerEditor(ProImageEditorState editor) async {
     Layer? layer = await editor.openPage(FrostedGlassStickerPage(
-
       configs: editor.configs,
       callbacks: editor.callbacks,
     ));
@@ -56,7 +55,6 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       return ProImageEditor.file(
-
         File(widget.pathImage),
         key: editorKey,
         callbacks: ProImageEditorCallbacks(
@@ -70,15 +68,21 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
               },
             )),
         configs: ProImageEditorConfigs(
-
-          
           designMode: platformDesignMode,
           theme: Theme.of(context).copyWith(iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white)),
+          imageGeneration: const ImageGenerationConfigs(
+            cropToImageBounds: false,
+            cropToDrawingBounds: false,
+            enableIsolateGeneration: false,
+            enableBackgroundGeneration: false,
+            enableUseOriginalBytes: false,
+            customPixelRatio: 1,
+            singleFrame: false,
+            allowEmptyEditingCompletion: false,
+          ),
           mainEditor: MainEditorConfigs(
-            
             enableZoom: true,
             widgets: MainEditorWidgets(
-              
               closeWarningDialog: (editor) async {
                 if (!context.mounted) return false;
                 return await showDialog<bool>(
@@ -90,10 +94,8 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
               appBar: (editor, rebuildStream) => null,
               bottomBar: (editor, rebuildStream, key) => null,
               bodyItems: _buildMainBodyWidgets,
-              
             ),
           ),
-          
           paintEditor: PaintEditorConfigs(
             icons: const PaintEditorIcons(
               bottomNavBar: Icons.edit,
@@ -109,7 +111,6 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
             ),
           ),
           textEditor: TextEditorConfigs(
-            
             customTextStyles: [
               GoogleFonts.roboto(),
               GoogleFonts.averiaLibre(),
@@ -125,7 +126,6 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
               bottomBarMainAxisAlignment: !_useMaterialDesign ? MainAxisAlignment.spaceEvenly : MainAxisAlignment.start,
             ),
             widgets: TextEditorWidgets(
-
               appBar: (textEditor, rebuildStream) => null,
               colorPicker: (textEditor, rebuildStream, currentColor, setColor) => null,
               bottomBar: (textEditor, rebuildStream) => null,
@@ -245,8 +245,7 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
     });
   }
 
-  List<ReactiveWidget> 
-  _buildMainBodyWidgets(
+  List<ReactiveWidget> _buildMainBodyWidgets(
     ProImageEditorState editor,
     Stream rebuildStream,
   ) {
