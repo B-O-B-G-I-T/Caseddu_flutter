@@ -3,19 +3,19 @@
 import 'package:dartz/dartz.dart';
 import '../../../../../core/errors/failure.dart';
 import '../../../../../core/params/params.dart';
+import '../../../../common/usecas.dart';
 import '../entities/qrcode_entity.dart';
 import '../repositories/qrcode_repository.dart';
 
-
-class GetQRCode {
+class GetQRCode implements UseCase<QRCodeEntity, QRCodeParams> {
   final QRCodeRepository QR_CodeRepository;
 
   GetQRCode({required this.QR_CodeRepository});
-
+  @override
   Future<Either<Failure, QRCodeEntity>> call({
-    required QRCodeParams QRCodeParams,
+    required QRCodeParams params,
   }) async {
-    return await QR_CodeRepository.getQRCode(qrCodeParams: QRCodeParams);
+    return await QR_CodeRepository.getQRCode(qrCodeParams: params);
   }
 }
 

@@ -167,14 +167,14 @@ class _MainPictureScreenState extends State<MainPictureScreen> {
                         alignment: WrapAlignment.start,
                         direction: Axis.vertical,
                         children: [
-                          if (widget.editor.configs.paintEditorConfigs.enabled)
+                          if (widget.editor.configs.paintEditor.enabled)
                             IconButton(
                               tooltip: widget.editor.configs.i18n.paintEditor.bottomNavigationBarText,
-                              onPressed: widget.editor.openPaintingEditor,
+                              onPressed: widget.editor.openPaintEditor,
                               // ignore: prefer_const_constructors
                               icon: Icon(Icons.edit),
                             ),
-                          if (widget.editor.configs.textEditorConfigs.enabled)
+                          if (widget.editor.configs.textEditor.enabled)
                             IconButton(
                               tooltip: widget.editor.configs.i18n.textEditor.bottomNavigationBarText,
                               onPressed: () => widget.editor.openTextEditor(
@@ -182,25 +182,25 @@ class _MainPictureScreenState extends State<MainPictureScreen> {
                               ),
                               icon: const Icon(Icons.title),
                             ),
-                          if (widget.editor.configs.cropRotateEditorConfigs.enabled)
+                          if (widget.editor.configs.cropRotateEditor.enabled)
                             IconButton(
                               tooltip: widget.editor.configs.i18n.cropRotateEditor.bottomNavigationBarText,
                               onPressed: widget.editor.openCropRotateEditor,
                               icon: const Icon(Icons.crop_rotate),
                             ),
-                          if (widget.editor.configs.filterEditorConfigs.enabled)
+                          if (widget.editor.configs.filterEditor.enabled)
                             IconButton(
                               tooltip: widget.editor.configs.i18n.filterEditor.bottomNavigationBarText,
                               onPressed: widget.editor.openFilterEditor,
                               icon: const Icon(Icons.filter),
                             ),
-                          if (widget.editor.configs.blurEditorConfigs.enabled)
+                          if (widget.editor.configs.blurEditor.enabled)
                             IconButton(
                               tooltip: widget.editor.configs.i18n.blurEditor.bottomNavigationBarText,
                               onPressed: widget.editor.openBlurEditor,
                               icon: const Icon(Icons.blur_on),
                             ),
-                          if (widget.editor.configs.stickerEditorConfigs?.enabled == true || widget.editor.configs.emojiEditorConfigs.enabled)
+                          if (widget.editor.configs.stickerEditor.enabled == true || widget.editor.configs.emojiEditor.enabled)
                             IconButton(
                               key: const ValueKey('whatsapp-open-sticker-editor-btn'),
                               tooltip: widget.editor.configs.i18n.stickerEditor.bottomNavigationBarText,

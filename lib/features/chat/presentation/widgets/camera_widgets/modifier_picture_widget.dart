@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 
 // Flutter imports:
+import 'package:caseddu/features/chat/presentation/widgets/camera_widgets/editing_widgets/text_bottomBar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -29,7 +30,7 @@ class ModifierPictureWidget extends StatefulWidget {
 }
 
 class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with ExampleHelperState<ModifierPictureWidget> {
-  final bool _useMaterialDesign = platformDesignMode == ImageEditorDesignModeE.material;
+  final bool _useMaterialDesign = platformDesignMode == ImageEditorDesignMode.material;
 
   /// Opens the sticker/emoji editor.
   void _openStickerEditor(ProImageEditorState editor) async {
@@ -40,8 +41,8 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
 
     if (layer == null || !mounted) return;
 
-    if (layer.runtimeType != StickerLayerData) {
-      layer.scale = editor.configs.emojiEditorConfigs.initScale;
+    if (layer.runtimeType != WidgetLayer) {
+      layer.scale = editor.configs.emojiEditor.initScale;
     }
 
     editor.addLayer(layer);
@@ -53,11 +54,8 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-
       return ProImageEditor.file(
-
         File(widget.pathImage),
-
         key: editorKey,
         callbacks: ProImageEditorCallbacks(
             onImageEditingStarted: onImageEditingStarted,
@@ -68,29 +66,143 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
                 /// Filter your stickers
                 debugPrint(value);
               },
-            ),),
+            )),
         configs: ProImageEditorConfigs(
-
           designMode: platformDesignMode,
           theme: Theme.of(context).copyWith(iconTheme: Theme.of(context).iconTheme.copyWith(color: Colors.white)),
-          icons: const ImageEditorIcons(
-            paintingEditor: IconsPaintingEditor(
-              bottomNavBar: Icons.edit,
+          imageGeneration: const ImageGenerationConfigs(
+            cropToImageBounds: false,
+            cropToDrawingBounds: false,
+            enableIsolateGeneration: false,
+            enableBackgroundGeneration: false,
+            enableUseOriginalBytes: false,
+            customPixelRatio: 1,
+            singleFrame: false,
+            allowEmptyEditingCompletion: false,
+          ),
+          mainEditor: MainEditorConfigs(
+            enableZoom: true,
+            widgets: MainEditorWidgets(
+              closeWarningDialog: (editor) async {
+                if (!context.mounted) return false;
+                return await showDialog<bool>(
+                      context: context,
+                      builder: (BuildContext context) => FrostedGlassCloseDialog(editor: editor),
+                    ) ??
+                    false;
+              },
+              appBar: (editor, rebuildStream) => null,
+              bottomBar: (editor, rebuildStream, key) => null,
+              bodyItems: _buildMainBodyWidgets,
             ),
           ),
-          imageEditorTheme: ImageEditorTheme(
-            textEditor: TextEditorTheme(
-                textFieldMargin: const EdgeInsets.only(top: kToolbarHeight),
-                bottomBarBackgroundColor: Colors.transparent,
-                bottomBarMainAxisAlignment: !_useMaterialDesign ? MainAxisAlignment.spaceEvenly : MainAxisAlignment.start),
-            paintingEditor: const PaintingEditorTheme(
+          paintEditor: PaintEditorConfigs(
+            icons: const PaintEditorIcons(
+              bottomNavBar: Icons.edit,
+            ),
+            widgets: PaintEditorWidgets(
+              appBar: (paintEditor, rebuildStream) => null,
+              bottomBar: (paintEditor, rebuildStream) => null,
+              colorPicker: (paintEditor, rebuildStream, currentColor, setColor) => null,
+              bodyItems: _buildPaintEditorBody,
+            ),
+            style: const PaintEditorStyle(
               initialStrokeWidth: 5,
             ),
-            filterEditor: const FilterEditorTheme(
+          ),
+          textEditor: TextEditorConfigs(
+            customTextStyles: [
+              GoogleFonts.roboto(),
+              GoogleFonts.averiaLibre(),
+              GoogleFonts.lato(),
+              GoogleFonts.comicNeue(),
+              GoogleFonts.actor(),
+              GoogleFonts.odorMeanChey(),
+              GoogleFonts.nabla(),
+            ],
+            style: TextEditorStyle(
+              textFieldMargin: const EdgeInsets.only(top: kToolbarHeight),
+              bottomBarBackground: Colors.transparent,
+              bottomBarMainAxisAlignment: !_useMaterialDesign ? MainAxisAlignment.spaceEvenly : MainAxisAlignment.start,
+            ),
+            widgets: TextEditorWidgets(
+              appBar: (textEditor, rebuildStream) => null,
+              colorPicker: (textEditor, rebuildStream, currentColor, setColor) => null,
+              bottomBar: (textEditor, rebuildStream) => null,
+              bodyItems: _buildTextEditorBody,
+            ),
+          ),
+          cropRotateEditor: CropRotateEditorConfigs(
+            widgets: CropRotateEditorWidgets(
+              appBar: (cropRotateEditor, rebuildStream) => null,
+              bottomBar: (cropRotateEditor, rebuildStream) => ReactiveWidget(
+                stream: rebuildStream,
+                builder: (_) => FrostedGlassCropRotateToolbar(
+                  configs: cropRotateEditor.configs,
+                  onCancel: cropRotateEditor.close,
+                  onRotate: cropRotateEditor.rotate,
+                  onDone: cropRotateEditor.done,
+                  onReset: cropRotateEditor.reset,
+                  openAspectRatios: cropRotateEditor.openAspectRatioOptions,
+                ),
+              ),
+            ),
+          ),
+          filterEditor: FilterEditorConfigs(
+            style: const FilterEditorStyle(
               filterListSpacing: 7,
               filterListMargin: EdgeInsets.fromLTRB(8, 15, 8, 10),
             ),
-            emojiEditor: EmojiEditorTheme(
+            widgets: FilterEditorWidgets(
+              slider: (editorState, rebuildStream, value, onChanged, onChangeEnd) => ReactiveWidget(
+                stream: rebuildStream,
+                builder: (_) => Slider(
+                  onChanged: onChanged,
+                  onChangeEnd: onChangeEnd,
+                  value: value,
+                  activeColor: Colors.blue.shade200,
+                ),
+              ),
+              appBar: (filterEditor, rebuildStream) => null,
+              bodyItems: (filterEditor, rebuildStream) => [
+                ReactiveWidget(
+                  stream: rebuildStream,
+                  builder: (_) => FrostedGlassFilterAppbar(filterEditor: filterEditor),
+                ),
+              ],
+            ),
+          ),
+          tuneEditor: TuneEditorConfigs(
+            widgets: TuneEditorWidgets(
+              appBar: (filterEditor, rebuildStream) => null,
+              bottomBar: (filterEditor, rebuildStream) => null,
+              bodyItems: _buildTuneEditorBody,
+            ),
+          ),
+          blurEditor: BlurEditorConfigs(
+            widgets: BlurEditorWidgets(
+              slider: (editorState, rebuildStream, value, onChanged, onChangeEnd) => ReactiveWidget(
+                stream: rebuildStream,
+                builder: (_) => Slider(
+                  onChanged: onChanged,
+                  onChangeEnd: onChangeEnd,
+                  value: value,
+                  max: editorState.configs.blurEditor.maxBlur,
+                  activeColor: Colors.blue.shade200,
+                ),
+              ),
+              appBar: (blurEditor, rebuildStream) => null,
+              bodyItems: (blurEditor, rebuildStream) => [
+                ReactiveWidget(
+                  stream: rebuildStream,
+                  builder: (_) => FrostedGlassBlurAppbar(blurEditor: blurEditor),
+                ),
+              ],
+            ),
+          ),
+          emojiEditor: EmojiEditorConfigs(
+            checkPlatformCompatibility: !kIsWeb,
+            style: EmojiEditorStyle(
               backgroundColor: Colors.transparent,
               textStyle: DefaultEmojiTextStyle.copyWith(
                 fontFamily: !kIsWeb ? null : GoogleFonts.notoColorEmoji().fontFamily,
@@ -110,111 +222,22 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
               ),
               bottomActionBarConfig: const BottomActionBarConfig(enabled: false),
             ),
-            layerInteraction: const ThemeLayerInteraction(
-              removeAreaBackgroundInactive: Colors.black12,
-            ),
           ),
-          textEditorConfigs: TextEditorConfigs(
-            customTextStyles: [
-              GoogleFonts.roboto(),
-              GoogleFonts.averiaLibre(),
-              GoogleFonts.lato(),
-              GoogleFonts.comicNeue(),
-              GoogleFonts.actor(),
-              GoogleFonts.odorMeanChey(),
-              GoogleFonts.nabla(),
-            ],
-          ),
-          emojiEditorConfigs: const EmojiEditorConfigs(
-            checkPlatformCompatibility: !kIsWeb,
-          ),
-          stickerEditorConfigs: StickerEditorConfigs(
+          stickerEditor: StickerEditorConfigs(
             enabled: true,
             buildStickers: (setLayer, scrollController) => StickersWidget(setLayer: setLayer, scrollController: scrollController),
           ),
-          customWidgets: ImageEditorCustomWidgets(
-            loadingDialog: (message, configs) => FrostedGlassLoadingDialog(
-              message: message,
-              configs: configs,
+          layerInteraction: const LayerInteractionConfigs(
+            style: LayerInteractionStyle(
+              removeAreaBackgroundInactive: Colors.black12,
             ),
-            mainEditor: CustomWidgetsMainEditor(
-              closeWarningDialog: (editor) async {
-                if (!context.mounted) return false;
-                return await showDialog<bool>(
-                      context: context,
-                      builder: (BuildContext context) => FrostedGlassCloseDialog(editor: editor),
-                    ) ??
-                    false;
-              },
-              appBar: (editor, rebuildStream) => null,
-              bottomBar: (editor, rebuildStream, key) => null,
-              bodyItems: (editor, rebuildStream) {
-                return _buildMainBodyWidgets(editor, rebuildStream);
-              },
-
-            ),
-            paintEditor: CustomWidgetsPaintEditor(
-              appBar: (paintEditor, rebuildStream) => null,
-              bottomBar: (paintEditor, rebuildStream) => null,
-              colorPicker: (paintEditor, rebuildStream, currentColor, setColor) => null,
-              bodyItems: _buildPaintEditorBody,
-            ),
-            textEditor: CustomWidgetsTextEditor(
-              appBar: (textEditor, rebuildStream) => null,
-              colorPicker: (textEditor, rebuildStream, currentColor, setColor) => null,
-              bottomBar: (textEditor, rebuildStream) => null,
-              bodyItems: _buildTextEditorBody,
-            ),
-            cropRotateEditor: CustomWidgetsCropRotateEditor(
-              appBar: (cropRotateEditor, rebuildStream) => null,
-              bottomBar: (cropRotateEditor, rebuildStream) => ReactiveCustomWidget(
-                stream: rebuildStream,
-                builder: (_) => FrostedGlassCropRotateToolbar(
-                  configs: cropRotateEditor.configs,
-                  onCancel: cropRotateEditor.close,
-                  onRotate: cropRotateEditor.rotate,
-                  onDone: cropRotateEditor.done,
-                  onReset: cropRotateEditor.reset,
-                  openAspectRatios: cropRotateEditor.openAspectRatioOptions,
-                ),
+          ),
+          dialogConfigs: DialogConfigs(
+            widgets: DialogWidgets(
+              loadingDialog: (message, configs) => FrostedGlassLoadingDialog(
+                message: message,
+                configs: configs,
               ),
-            ),
-            filterEditor: CustomWidgetsFilterEditor(
-              slider: (editorState, rebuildStream, value, onChanged, onChangeEnd) => ReactiveCustomWidget(
-                stream: rebuildStream,
-                builder: (_) => Slider(
-                  onChanged: onChanged,
-                  onChangeEnd: onChangeEnd,
-                  value: value,
-                  activeColor: Colors.blue.shade200,
-                ),
-              ),
-              appBar: (filterEditor, rebuildStream) => null,
-              bodyItems: (filterEditor, rebuildStream) => [
-                ReactiveCustomWidget(
-                  stream: rebuildStream,
-                  builder: (_) => FrostedGlassFilterAppbar(filterEditor: filterEditor),
-                ),
-              ],
-            ),
-            blurEditor: CustomWidgetsBlurEditor(
-              slider: (editorState, rebuildStream, value, onChanged, onChangeEnd) => ReactiveCustomWidget(
-                stream: rebuildStream,
-                builder: (_) => Slider(
-                  onChanged: onChanged,
-                  onChangeEnd: onChangeEnd,
-                  value: value,
-                  max: editorState.configs.blurEditorConfigs.maxBlur,
-                  activeColor: Colors.blue.shade200,
-                ),
-              ),
-              appBar: (blurEditor, rebuildStream) => null,
-              bodyItems: (blurEditor, rebuildStream) => [
-                ReactiveCustomWidget(
-                  stream: rebuildStream,
-                  builder: (_) => FrostedGlassBlurAppbar(blurEditor: blurEditor),
-                ),
-              ],
             ),
           ),
         ),
@@ -222,13 +245,13 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
     });
   }
 
-  List<ReactiveCustomWidget> _buildMainBodyWidgets(
+  List<ReactiveWidget> _buildMainBodyWidgets(
     ProImageEditorState editor,
     Stream rebuildStream,
   ) {
     return [
       if (editor.selectedLayerIndex < 0)
-        ReactiveCustomWidget(
+        ReactiveWidget(
           stream: rebuildStream,
           builder: (_) => MainPictureScreen(
             editor: editor,
@@ -238,31 +261,55 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
     ];
   }
 
-  List<ReactiveCustomWidget> _buildPaintEditorBody(
-    PaintingEditorState paintEditor,
+  List<ReactiveWidget> _buildPaintEditorBody(
+    PaintEditorState paintEditor,
     Stream rebuildStream,
   ) {
     return [
       /// Appbar
-      ReactiveCustomWidget(
+      ReactiveWidget(
         stream: rebuildStream,
         builder: (_) {
-          return paintEditor.activePainting ? const SizedBox.shrink() : FrostedGlassPaintingAppbar(paintEditor: paintEditor);
+          return paintEditor.isActive ? const SizedBox.shrink() : FrostedGlassPaintAppbar(paintEditor: paintEditor);
         },
       ),
 
       /// Bottombar
-      ReactiveCustomWidget(
+      ReactiveWidget(
         stream: rebuildStream,
         builder: (_) => FrostedGlassPaintBottomBar(paintEditor: paintEditor),
       ),
     ];
   }
 
-  List<ReactiveCustomWidget> _buildTextEditorBody(TextEditorState textEditor, Stream rebuildStream) {
+  List<ReactiveWidget> _buildTuneEditorBody(
+    TuneEditorState tuneEditor,
+    Stream<dynamic> rebuildStream,
+  ) {
+    return [
+      /// Appbar
+      ReactiveWidget(
+        stream: rebuildStream,
+        builder: (_) {
+          return FrostedGlassTuneAppbar(tuneEditor: tuneEditor);
+        },
+      ),
+
+      /// Bottombar
+      ReactiveWidget(
+        stream: rebuildStream,
+        builder: (_) => FrostedGlassTuneBottombar(tuneEditor: tuneEditor),
+      ),
+    ];
+  }
+
+  List<ReactiveWidget> _buildTextEditorBody(
+    TextEditorState textEditor,
+    Stream<dynamic> rebuildStream,
+  ) {
     return [
       /// Background
-      ReactiveCustomWidget(
+      ReactiveWidget(
         stream: rebuildStream,
         builder: (_) => const FrostedGlassEffect(
           radius: BorderRadius.zero,
@@ -271,11 +318,25 @@ class _ModifierPictureWidgetState extends State<ModifierPictureWidget> with Exam
       ),
 
       /// Slider Text size
-      ReactiveCustomWidget(
+      ReactiveWidget(
         stream: rebuildStream,
         builder: (_) => Padding(
           padding: const EdgeInsets.only(top: kToolbarHeight),
           child: FrostedGlassTextSizeSlider(textEditor: textEditor),
+        ),
+      ),
+
+      /// Bottombar
+      ReactiveWidget(
+        stream: rebuildStream,
+        builder: (_) => TextBottomBar(
+          textEditor: textEditor,
+          initColor: textEditor.primaryColor,
+          onColorChanged: (color) {
+            textEditor.primaryColor = color;
+          },
+          selectedStyle: textEditor.selectedTextStyle,
+          onFontChange: textEditor.setTextStyle,
         ),
       ),
     ];

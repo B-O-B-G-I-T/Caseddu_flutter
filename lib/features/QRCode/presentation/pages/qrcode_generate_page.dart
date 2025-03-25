@@ -6,7 +6,7 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class QRCodeGeneratePage extends StatelessWidget {
-  QRCodeGeneratePage({super.key});
+  const QRCodeGeneratePage({super.key});
 
   // URL schéma personnalisé pour ouvrir l'application si elle est installée
   String _getAppUrl(String userId) {
@@ -31,14 +31,13 @@ class QRCodeGeneratePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-  final ParameterProvider parameterProvider = Provider.of<ParameterProvider>(context, listen: false);
-  final String userId = parameterProvider.parameter.displayName; // Exemple d'ID utilisateur
+    final ParameterProvider parameterProvider = Provider.of<ParameterProvider>(context, listen: false);
+    final String userId = parameterProvider.parameter.displayName; // Exemple d'ID utilisateur
 
     final TextEditingController titleController = TextEditingController(text: AppLocalizations.of(context)!.qrCodeTitleDefault);
     final TextEditingController descriptionController =
         TextEditingController(text: AppLocalizations.of(context)!.qrCodeDescriptionDefault("Caseddu"));
-    String appLink = "https://testflight.apple.com/join/9Gpy3Vmx id: $userId ";
+    String appLink = "https://testflight.apple.com/join/9Gpy3Vmx?id=$userId";
 
     return Scaffold(
       appBar: AppBar(title: const Text('QR Code')),
@@ -145,7 +144,6 @@ class QRCodeGeneratePage extends StatelessWidget {
                 },
               ),
             ),
-            
           ],
         ),
       ),

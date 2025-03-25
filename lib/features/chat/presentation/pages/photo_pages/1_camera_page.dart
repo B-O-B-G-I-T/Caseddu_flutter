@@ -139,7 +139,8 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
       final XFile file = await _cameraController.takePicture();
       if (!mounted) return;
       context.push('/PrisePhotoString/:filePath', extra: file.path);
-      // cropImageToScreenSizeInIsolate(file, context);
+      //cropImageToScreenSizeInIsolate(file, context);
+      
     } catch (e) {
       print('Erreur lors de la capture de la photo : $e');
     }
@@ -156,6 +157,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
     final double screenHeight = screenSize.height;
     // file
     final String path = file.path;
+    final int frontCam = _selecteCameraIndex;
 
     // Lance l'Isolate
     await Isolate.spawn<Map<String, dynamic>>(
@@ -165,6 +167,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         'screenWidth': screenWidth,
         'screenHeight': screenHeight,
         'path': path,
+        'frontCam':frontCam,
       },
     );
 
@@ -396,7 +399,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
 
   String findIdInQRCode(String qrCode) {
     // Utilisation d'une expression régulière pour extraire la valeur de userId
-    RegExp regExp = RegExp(r"id: (\S+)");
+    RegExp regExp = RegExp(r"[?&]id=([^&]+)");
 
     // Chercher la correspondance dans la chaîne
     var match = regExp.firstMatch(qrCode);
@@ -667,7 +670,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
         if (_scannedText.isNotEmpty)
           Container(
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(50),
             ),
             child: Padding(
@@ -687,7 +690,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
             shape: BoxShape.circle,
             border: Border.all(
               width: 3,
-              color: Colors.white.withOpacity(0.8),
+              color: Colors.white.withValues(alpha: 0.8),
             ),
           ),
           child: FittedBox(
@@ -703,7 +706,7 @@ class _CameraPageState extends State<CameraPage> with WidgetsBindingObserver {
                     hideAdditionnalButtons();
 
                     if (widget.cameras.isEmpty) {
-                      // ignore: use_build_context_synchronously
+
                       XFile file = XFile('/Users/bobsmac/Desktop/caseddu_flutter/assets/images/femmephoto.jpg');
 
                       cropImageToScreenSizeInIsolate(file, context);
@@ -725,6 +728,7 @@ Future<void> _cropImageToScreenSizeInIsolateWithPort(Map<String, dynamic> argume
   final SendPort sendPort = arguments['sendPort'];
   final double screenWidth = arguments['screenWidth'];
   final double screenHeight = arguments['screenHeight'];
+  final int frontCam = arguments['frontCam'];
 
   final String path = arguments['path'];
 
@@ -748,6 +752,10 @@ Future<void> _cropImageToScreenSizeInIsolateWithPort(Map<String, dynamic> argume
       img = IMG.copyRotate(img, angle: 90);
       oldWidth = img.width;
       oldHeight = img.height;
+    }
+
+    if (frontCam == 1) {
+      img = IMG.flipHorizontal(img);
     }
 
     double newWidth = oldWidth.toDouble();

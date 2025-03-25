@@ -19,7 +19,7 @@ late List<CameraDescription> cameras;
 void main() async {
   //pour la camera
   try {
-    //WidgetsFlutterBinding.ensureInitialized();
+    // WidgetsFlutterBinding.ensureInitialized();
     WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
     // identification
     await Firebase.initializeApp(
@@ -51,6 +51,7 @@ void main() async {
         Provider<AuthentificationRemoteDataSourceImpl>(
             create: (_) => AuthentificationRemoteDataSourceImpl(
                   firebaseAuth: firebaseAuth,
+                  
                 )),
         StreamProvider(
           create: (context) => context.read<AuthentificationRemoteDataSourceImpl>().authStateChange,
@@ -68,10 +69,9 @@ void main() async {
         ChangeNotifierProvider.value(
           value: chatProvider,
         ),
-
-        //ChangeNotifierProvider(create: (_) => Global()),
       ],
       child: MyApp(theme: theme, cameras: cameras),
+
     ),
   );
   // }
