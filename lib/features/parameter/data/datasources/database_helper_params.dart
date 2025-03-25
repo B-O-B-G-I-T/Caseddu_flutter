@@ -1,5 +1,5 @@
 import 'package:sqflite/sqflite.dart';
-import '../../../../dataBase/base_donnees_general.dart';
+import '../../../../core/dataBase/base_donnees_general.dart';
 
 class DatabaseHelperParams {
 
